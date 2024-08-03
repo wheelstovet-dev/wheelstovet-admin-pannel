@@ -35,12 +35,8 @@
     --radius: 0.5rem;
   }
 
-<<<<<<< HEAD
-  /* .dark {
-=======
 
   .dark {
->>>>>>> 1bdecbcec0d41e49114f6c13918437b0ac1965ca
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
@@ -68,7 +64,7 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
-  } */
+  } 
 }
 
 @layer base {
