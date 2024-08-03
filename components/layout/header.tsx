@@ -33,7 +33,11 @@ const Header = () => {
           <HelpCircle className="h-6 w-6 text-gray-600 cursor-pointer" />
           <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
           <UserNav user={user} />
+<<<<<<< HEAD
           <ThemeToggle />
+=======
+         <ThemeToggle />
+>>>>>>> 1bdecbcec0d41e49114f6c13918437b0ac1965ca
         </div>
 
         {/* Mobile Sidebar Toggle (Optional) */}
