@@ -4,7 +4,9 @@ import NextTopLoader from 'nextjs-toploader';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '@/provider/auth.provider';
-
+import "@fontsource/playfair-display"; // Defaults to weight 400
+import "@fontsource/playfair-display/400.css"; // Specify weight
+import "@fontsource/playfair-display/400-italic.css"; // Specify weight and style
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
