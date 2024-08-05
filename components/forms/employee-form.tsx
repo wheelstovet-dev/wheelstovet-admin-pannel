@@ -1,6 +1,6 @@
 'use client';
 import { useState, ChangeEvent, FormEvent } from 'react';
-import MainLayout from '@/components/layout/main-layout';
+
 
 export default function EmployeeForm() {
   const [formData, setFormData] = useState({
@@ -11,9 +11,14 @@ export default function EmployeeForm() {
     phoneNumber: '',
     emailId: '',
     role: '',
+    dateOfBirth: '',
+    gender: '',
+    streetAddress: '',
+    city: '',
+    state: '',
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -28,6 +33,7 @@ export default function EmployeeForm() {
   };
 
   return (
+   
     <div className="flex-1 p-6 md:p-8 bg-white rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-4">Employee Profile</h2>
       <p className="text-gray-500 mb-6">For business, band or celebrity.</p>
@@ -39,7 +45,7 @@ export default function EmployeeForm() {
               type="text"
               name="firstName"
               id="firstName"
-              placeholder="xyz"
+              placeholder="Enter First Name"
               value={formData.firstName}
               onChange={handleChange}
               className="border border-gray-300 rounded-lg px-4 py-2"
@@ -51,32 +57,8 @@ export default function EmployeeForm() {
               type="text"
               name="lastName"
               id="lastName"
-              placeholder="abc"
+              placeholder="Enter Last Name"
               value={formData.lastName}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="adharNo" className="font-medium">Adhar No</label>
-            <input
-              type="text"
-              name="adharNo"
-              id="adharNo"
-              placeholder="01234567893"
-              value={formData.adharNo}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="totalExperience" className="font-medium">Total Experience</label>
-            <input
-              type="text"
-              name="totalExperience"
-              id="totalExperience"
-              placeholder="10"
-              value={formData.totalExperience}
               onChange={handleChange}
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
@@ -87,20 +69,82 @@ export default function EmployeeForm() {
               type="text"
               name="phoneNumber"
               id="phoneNumber"
-              placeholder="+91 9888098980"
+              placeholder="Enter Phone Number"
               value={formData.phoneNumber}
               onChange={handleChange}
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
           </div>
           <div className="flex flex-col space-y-2">
-            <label htmlFor="emailId" className="font-medium">Email ID</label>
+            <label htmlFor="emailId" className="font-medium">Email</label>
             <input
               type="email"
               name="emailId"
               id="emailId"
-              placeholder="abc@gmail.com"
+              placeholder="Enter Email"
               value={formData.emailId}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="dateOfBirth" className="font-medium">Date of Birth</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              id="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="gender" className="font-medium">Gender</label>
+            <select
+              name="gender"
+              id="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="streetAddress" className="font-medium">Street Address</label>
+            <input
+              type="text"
+              name="streetAddress"
+              id="streetAddress"
+              placeholder="Enter Street Address"
+              value={formData.streetAddress}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="city" className="font-medium">City</label>
+            <input
+              type="text"
+              name="city"
+              id="city"
+              placeholder="Enter City"
+              value={formData.city}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="state" className="font-medium">State</label>
+            <input
+              type="text"
+              name="state"
+              id="state"
+              placeholder="Enter State"
+              value={formData.state}
               onChange={handleChange}
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
@@ -111,7 +155,7 @@ export default function EmployeeForm() {
               type="text"
               name="role"
               id="role"
-              placeholder="Dog Walking"
+              placeholder="Enter Role"
               value={formData.role}
               onChange={handleChange}
               className="border border-gray-300 rounded-lg px-4 py-2"
@@ -128,5 +172,6 @@ export default function EmployeeForm() {
         </div>
       </form>
     </div>
+    
   );
 }

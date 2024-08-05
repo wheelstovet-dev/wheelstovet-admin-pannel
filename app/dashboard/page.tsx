@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
@@ -23,6 +24,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler // Import Filler for area chart
 } from 'chart.js';
 
 ChartJS.register(
@@ -32,7 +34,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler // Register Filler
 );
 
 interface GaugeChartProps {
@@ -123,7 +126,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
 };
 
 const initialData = {
-  labels: ['September', 'October', 'November', 'December', 'January', 'February', 'March', 'April'],
+  labels: ['September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
   datasets: [
     {
       label: 'Dog Walking',
@@ -131,6 +134,7 @@ const initialData = {
       borderColor: 'orange',
       backgroundColor: 'rgba(255, 165, 0, 0.2)',
       borderWidth: 2,
+      fill: true, // Fill the area under the line
     },
   ],
 };
@@ -146,6 +150,14 @@ const options = {
     y: {
       beginAtZero: true,
       max: 10,
+      grid: {
+        display: false, // Remove grid lines
+      },
+    },
+    x: {
+      grid: {
+        display: false, // Remove grid lines
+      },
     },
   },
 };
@@ -198,6 +210,7 @@ export default function Page() {
             borderColor: 'orange',
             backgroundColor: 'rgba(255, 165, 0, 0.2)',
             borderWidth: 2,
+            fill: true,
           },
         ],
       });
@@ -211,6 +224,7 @@ export default function Page() {
             borderColor: 'blue',
             backgroundColor: 'rgba(0, 0, 255, 0.2)',
             borderWidth: 2,
+            fill: true,
           },
         ],
       });
@@ -224,6 +238,7 @@ export default function Page() {
             borderColor: 'green',
             backgroundColor: 'rgba(0, 255, 0, 0.2)',
             borderWidth: 2,
+            fill: true,
           },
         ],
       });
@@ -264,25 +279,23 @@ export default function Page() {
               </div>
               <div className="grid grid-cols-1 gap-4">
                 <Card className="col-span-1">
-
-                <CardHeader>
-  <div className="flex justify-between items-center w-full">
-    <CardTitle>Total Cases</CardTitle>
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded px-2 py-1">
-        {graphDropdownValue} <ChevronDown className="ml-1 h-4 w-4" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {['Daily', 'Weekly', 'Monthly'].map((value) => (
-          <DropdownMenuItem key={value} onClick={() => handleGraphChange(value)}>
-            {value}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>
-</CardHeader>
-
+                  <CardHeader>
+                    <div className="flex justify-between items-center w-full">
+                      <CardTitle>Total Cases</CardTitle>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded px-2 py-1">
+                          {graphDropdownValue} <ChevronDown className="ml-1 h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {['Daily', 'Weekly', 'Monthly'].map((value) => (
+                            <DropdownMenuItem key={value} onClick={() => handleGraphChange(value)}>
+                              {value}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardHeader>
                   <CardContent>
                     <div className="flex justify-center space-x-4 mb-4">
                       <button

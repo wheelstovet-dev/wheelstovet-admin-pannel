@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import UserAuthForm from '@/components/forms/sign-form';
 import '@/app/globals.css';
-
+import { Inter } from 'next/font/google'
 export const metadata: Metadata = {
   title: 'Authentication',
   description: 'Authentication forms built using the components.'
