@@ -1,4 +1,4 @@
-'use client';  // Add this directive at the top
+'use client'; // Add this directive at the top
 
 import { useState } from 'react';
 import {
@@ -52,7 +52,7 @@ const GaugeChart: React.FC<GaugeChartProps> = ({ percentage, color }) => {
       <div className="absolute inset-0 flex items-center justify-center">
         <span className="text-2xl font-bold">{percentage}%</span>
       </div>
-      <svg className="h-24 w-24" viewBox="0 0 36 36">
+      <svg className="h-20 w-20" viewBox="0 0 36 36">
         <path
           className="text-gray-200"
           d="M18 2.0845
@@ -93,7 +93,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
 
   return (
     <Card className="w-full md:w-auto">
-      <CardHeader className="flex flex-col space-y-2 pb-4">
+      <CardHeader className="flex flex-col space-y-1 pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-sm font-medium text-gray-500 uppercase tracking-wide">
             {title}
@@ -111,12 +111,12 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <CardTitle className="text-2xl font-bold">
+        <CardTitle className="text-lg font-bold">
           {subtitle}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center justify-between">
-        <img src={image} alt={subtitle} className="h-24 w-24" />
+      <CardContent className="flex items-center justify-between p-2">
+        <img src={image} alt={subtitle} className="h-20 w-20" />
         <div className="flex flex-col items-center">
           <GaugeChart percentage={percentage} color={color} />
         </div>
@@ -178,7 +178,7 @@ export default function Page() {
           {
             ...initialData.datasets[0],
             data: [1, 2, 3, 4, 5, 6, 7],
-          },
+          }, 
         ],
       });
     } else if (value === 'Weekly') {
@@ -242,6 +242,34 @@ export default function Page() {
           },
         ],
       });
+    } else if (caseType === 'Pet Handling') {
+      setGraphData({
+        ...initialData,
+        datasets: [
+          {
+            label: 'Pet Handling',
+            data: [3, 4, 5, 6, 4, 5, 6, 7],
+            borderColor: 'purple',
+            backgroundColor: 'rgba(128, 0, 128, 0.2)',
+            borderWidth: 2,
+            fill: true,
+          },
+        ],
+      });
+    } else if (caseType === 'Pet Taxi') {
+      setGraphData({
+        ...initialData,
+        datasets: [
+          {
+            label: 'Pet Taxi',
+            data: [2, 2, 3, 3, 4, 4, 5, 5],
+            borderColor: 'red',
+            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+            borderWidth: 2,
+            fill: true,
+          },
+        ],
+      });
     }
   };
 
@@ -251,7 +279,7 @@ export default function Page() {
         <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
           <Tabs defaultValue="dashboard" className="space-y-4">
             <TabsContent value="dashboard" className="space-y-4">
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+              <div className="grid gap-2 grid-cols-1 md:grid-cols-3">
                 <CardComponent
                   title="CASE"
                   subtitle="DOG WALKING"
@@ -275,6 +303,30 @@ export default function Page() {
                   color="text-yellow-500"
                   defaultDropdown="Daily"
                   initialPercentage={20}
+                />
+                <CardComponent
+                  title="CASE"
+                  subtitle="PET HANDLING"
+                  image="/images/Frame (2).png"
+                  color="text-purple-500"
+                  defaultDropdown="Weekly"
+                  initialPercentage={30}
+                />
+                <CardComponent
+                  title="CASE"
+                  subtitle="PET TAXI"
+                  image="/images/Frame (3).png"
+                  color="text-red-500"
+                  defaultDropdown="Monthly"
+                  initialPercentage={40}
+                />
+                 <CardComponent
+                  title="CASE"
+                  subtitle="PET TAXI"
+                  image="/images/Frame (3).png"
+                  color="text-red-500"
+                  defaultDropdown="Monthly"
+                  initialPercentage={40}
                 />
               </div>
               <div className="grid grid-cols-1 gap-4">
@@ -316,6 +368,18 @@ export default function Page() {
                       >
                         Client Escalated
                       </button>
+                      {/* <button
+                        className={`px-4 py-2 rounded ${selectedCase === 'Pet Handling' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
+                        onClick={() => handleCaseChange('Pet Handling')}
+                      >
+                        Pet Handling
+                      </button> */}
+                      {/* <button
+                        className={`px-4 py-2 rounded ${selectedCase === 'Pet Taxi' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
+                        onClick={() => handleCaseChange('Pet Taxi')}
+                      >
+                        Pet Taxi
+                      </button> */}
                     </div>
                     <Line data={graphData} options={options} />
                   </CardContent>
