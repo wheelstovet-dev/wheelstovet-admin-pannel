@@ -8,7 +8,7 @@ import ViewUser from '@/components/forms/viewUser';
 
 const breadcrumbItems = [{ title: 'View', link: '/user-management/page.tsx' }];
 
-export default function ProductPage() {
+export default function View() {
   return (
     <MainLayout meta={{ title: 'View User' }}>
       <ScrollArea className="h-full">

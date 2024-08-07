@@ -9,7 +9,7 @@ import EditUser from '@/components/forms/editUser';
 
 const breadcrumbItems = [{ title: 'View', link: '/user-management/page.tsx' }];
 
-export default function ProductPage() {
+export default function Edit() {
   return (
     <MainLayout meta={{ title: 'Edit User' }}>
       <ScrollArea className="h-full">
