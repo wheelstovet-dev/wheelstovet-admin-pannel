@@ -19,12 +19,12 @@ const Header = () => {
         {/* Search Bar */}
         <div className="flex-1 mx-4">
           <div className="relative">
-            <input
+            {/* <input
               type="text"
               placeholder="Search..."
               className="w-96 p-2 pl-10 rounded-md text-grey border border-gray-300"
             />
-            <Search className="absolute top-2 left-2 h-5 w-5 text-gray-500" />
+            <Search className="absolute top-2 left-2 h-5 w-5 text-gray-500" /> */}
           </div>
         </div>
 
