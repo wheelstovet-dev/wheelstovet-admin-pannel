@@ -52,8 +52,8 @@ export const CouponsManagementClient: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Coupons (${data.length})`}
-          description="Manage Coupons (Client side table functionalities.)"
+          title={`Coupons `}
+          description=""
         />
         <Button
           className="text-xs md:text-sm"
@@ -62,13 +62,13 @@ export const CouponsManagementClient: React.FC = () => {
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
-      <Separator />
+      {/* <Separator /> */}
       <DataTable
-        searchKeys={["code"]}
+        // searchKeys={["code"]}
         columns={columns}
         data={data}
-        onSearch={handleSearch} 
-        filters={filters}
+        // onSearch={handleSearch} 
+        // filters={filters}
 
         // onSort={handleSort} 
       />

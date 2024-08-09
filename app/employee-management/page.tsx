@@ -32,12 +32,12 @@ export default function EmployeeManagementPage() {
   };
 
   const handleView = (index: number) => {
-    // Implement view logic here
+   router.push("/employee-management/view")
     console.log(`Viewing employee: ${employees[index].firstName} ${employees[index].lastName}`);
   };
 
   const handleEdit = (index: number) => {
-    // Implement edit logic here
+    router.push("/employee-management/update")
     console.log(`Editing employee: ${employees[index].firstName} ${employees[index].lastName}`);
   };
 
@@ -86,15 +86,15 @@ export default function EmployeeManagementPage() {
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-left text-gray-600">
-                  <th className="px-4 py-5 border-b">Serial No</th>
-                  <th className="px-4 py-5 border-b">Employee Name</th>
-                  <th className="px-4 py-5 border-b">Gender</th>
-                  <th className="px-4 py-5 border-b">Role Type</th>
-                  <th className="px-4 py-5 border-b">Address</th>
-                  <th className="px-4 py-5 border-b">Contact</th>
-                  <th className="px-4 py-5 border-b">Status</th>
-                  <th className="px-4 py-5 border-b">Action</th>
+                <tr className="bg-gray-100 text-gray-600">
+                  <th className="px-4 py-5 border-b text-center">Serial No</th>
+                  <th className="px-4 py-5 border-b text-center">Employee Name</th>
+                  <th className="px-4 py-5 border-b text-center">Gender</th>
+                  <th className="px-4 py-5 border-b text-center">Role Type</th>
+                  <th className="px-4 py-5 border-b text-center">Address</th>
+                  <th className="px-4 py-5 border-b text-center">Contact</th>
+                  <th className="px-4 py-5 border-b text-center">Status</th>
+                  <th className="px-4 py-5 border-b text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -105,23 +105,23 @@ export default function EmployeeManagementPage() {
                   )
                   .map((employee, index) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-6 border-b">{employee.serialNo}</td>
-                      <td className="px-4 py-6 border-b">{employee.firstName} {employee.lastName}</td>
-                      <td className="px-4 py-6 border-b">{employee.gender}</td>
-                      <td className="px-4 py-6 border-b">{employee.roleType}</td>
-                      <td className="px-4 py-6 border-b">{employee.address}</td>
-                      <td className="px-4 py-6 border-b">
-                        <div className="flex flex-col">
+                      <td className="px-4 py-6 border-b text-center">{employee.serialNo}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.firstName} {employee.lastName}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.gender}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.roleType}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.address}</td>
+                      <td className="px-4 py-6 border-b text-center">
+                        <div className="flex flex-col items-center">
                           <span>{employee.mobileNo}</span>
                           <span className="text-gray-500 text-sm">{employee.emailId}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-6 border-b">
+                      <td className="px-4 py-6 border-b text-center">
                         <span className={`px-2 py-1 rounded-lg ${employee.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                           {employee.status}
                         </span>
                       </td>
-                      <td className="px-4 py-6 border-b">
+                      <td className="px-4 py-6 border-b text-center">
                         <div className="flex justify-center space-x-1">
                           <DropdownMenu>
                             <DropdownMenuTrigger className="flex items-center text-gray-600 p-1">

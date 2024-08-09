@@ -14,7 +14,7 @@ import { Input } from './input';
 import { Button } from './button';
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { useState } from 'react';
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, ChevronDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from './dropdown-menu';
 
 interface FilterOption {
@@ -68,16 +68,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-4">
         {/* <Input
           value={filterInput}
           onChange={handleSearchChange}
-          placeholder={Search by ${searchKeys.join(', ') || 'defaultSearchKey'}}
-          className="mb-4 max-w-64"
+          placeholder={`Search by ${searchKeys.join(', ') || 'defaultSearchKey'}`}
+          className="max-w-xs"
         /> */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button style={{ background: "#04894d", color: 'white' }} className="text-xs md:text-sm ms-4">
+            <Button style={{ background: "#04894d", color: 'white' }} className="text-xs md:text-sm">
               Filter <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
               </DropdownMenuSub>
             ))}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
 
       <ScrollArea className="rounded-md border min-h-[70vh]">
@@ -133,7 +133,7 @@ export function DataTable<TData, TValue>({
         </UiTable>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="flex items-center justify-end space-x-2 py-4">
+<div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
@@ -146,6 +146,6 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-    </>
-  );
+    </>
+  );
 }

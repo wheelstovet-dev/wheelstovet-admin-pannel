@@ -2,10 +2,10 @@
 import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, MoreHorizontal, Eye, Trash, Edit3 } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
-
+import { useRouter } from 'next/navigation';
 
 const breadcrumbItems = [{ title: 'Cases', link: '/dashboard/cases' }];
 
@@ -23,6 +23,7 @@ export default function CaseManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
   const [sortStatus, setSortStatus] = useState('');
+  const router = useRouter();
 
   const filteredCases = casesData
     .filter((caseItem) =>
@@ -35,6 +36,18 @@ export default function CaseManagementPage() {
       }
       return 0;
     });
+
+  const handleView = (index: number) => {
+    router.push(`/case-management/view`);
+  };
+
+  const handleEdit = (index: number) => {
+    router.push(`/case-management/update`);
+  };
+
+  const handleDelete = (index: number) => {
+    // Implement delete logic here
+  };
 
   return (
     <MainLayout meta={{ title: 'Case Management' }}>
@@ -81,13 +94,12 @@ export default function CaseManagementPage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              
             </div>
           </div>
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-left text-gray-600">
+                <tr className="bg-gray-100 text-gray-600 text-center">
                   <th className="px-4 py-5 border-b">Case ID</th>
                   <th className="px-4 py-5 border-b">Pet Name</th>
                   <th className="px-4 py-5 border-b">Start Date</th>
@@ -97,7 +109,7 @@ export default function CaseManagementPage() {
                   <th className="px-4 py-5 border-b">Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-center">
                 {filteredCases.map((caseItem, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-6 border-b">{caseItem.caseId}</td>
@@ -128,11 +140,17 @@ export default function CaseManagementPage() {
                           <MoreHorizontal className="h-5 w-5" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={() => alert('View case')}>
+                          <DropdownMenuItem onClick={() => handleView(index)}>
+                            <Eye className="h-4 w-4 mr-2" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => alert('Update case')}>
+                          <DropdownMenuItem onClick={() => handleEdit(index)}>
+                            <Edit3 className="h-4 w-4 mr-2" />
                             Update
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(index)}>
+                            <Trash className="h-4 w-4 mr-2 text-red-500" />
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -143,6 +161,7 @@ export default function CaseManagementPage() {
             </table>
           </div>
         </div>
+        
       </ScrollArea>
     </MainLayout>
   );

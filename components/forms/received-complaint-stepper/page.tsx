@@ -142,7 +142,7 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
   return (
     <div className="container mx-auto p-4">
       <Heading title={initialData ? 'Edit Complaint' : 'Create Complaint'} description="Fill in the details below" />
-      <Separator />
+      {/* <Separator /> */}
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -298,10 +298,10 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
               </tr>
             </thead>
             <tbody>
-              <tr>
+              {/* <tr>
                 <td className="py-2 px-4 border">Order ID</td>
                 <td className="py-2 px-4 border">{selectedCustomer.orderId}</td>
-              </tr>
+              </tr> */}
               <tr>
                 <td className="py-2 px-4 border">Employee ID</td>
                 <td className="py-2 px-4 border">{selectedCustomer.empId}</td>
@@ -314,18 +314,18 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
                 <td className="py-2 px-4 border">Assigned Employee</td>
                 <td className="py-2 px-4 border">{selectedCustomer.assignedEmployee}</td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td className="py-2 px-4 border">Assigned Routes</td>
                 <td className="py-2 px-4 border">{selectedCustomer.assignedRoutes}</td>
-              </tr>
+              </tr> */}
               <tr>
                 <td className="py-2 px-4 border">Subscription Type</td>
                 <td className="py-2 px-4 border">{selectedCustomer.subscriptionType}</td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td className="py-2 px-4 border">Total Weight (Kg)</td>
                 <td className="py-2 px-4 border">{selectedCustomer.totalWeightKg}</td>
-              </tr>
+              </tr> */}
               <tr>
                 <td className="py-2 px-4 border">Total Price (₹)</td>
                 <td className="py-2 px-4 border">{selectedCustomer.totalPriceInr}</td>
@@ -334,10 +334,10 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
                 <td className="py-2 px-4 border">Add-ons</td>
                 <td className="py-2 px-4 border">{selectedCustomer.addOns}</td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td className="py-2 px-4 border">Special Instructions</td>
                 <td className="py-2 px-4 border">{selectedCustomer.specialInstructions}</td>
-              </tr>
+              </tr> */}
            
             </tbody>
           </table>

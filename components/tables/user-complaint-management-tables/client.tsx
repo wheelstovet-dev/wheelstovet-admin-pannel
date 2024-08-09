@@ -48,8 +48,8 @@ const ComplaintManagementUserPage: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Received Complaint  (${data.length})`}
-          description="Complaint Subscription (Client side table functionalities.)"
+          title={`Received Complaint`}
+          description=""
         />
         {/* <Button
           className="text-xs md:text-sm"
@@ -58,7 +58,7 @@ const ComplaintManagementUserPage: React.FC = () => {
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button> */}
       </div>
-      <Separator />
+     
       <DataTable
         searchKeys={["name"]}
         columns={columns}

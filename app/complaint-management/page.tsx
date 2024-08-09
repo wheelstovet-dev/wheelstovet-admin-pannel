@@ -1,4 +1,4 @@
-import BreadCrumb from "@/components/breadcrumb";
+// import BreadCrumb from "@/components/breadcrumb";
 import MainLayout from "@/components/layout/main-layout";
 import { ComplaintManagementClient } from "@/components/tables/complaint-management-tables/client";
 import ComplaintManagementUserPage from "@/components/tables/user-complaint-management-tables/client";
@@ -9,7 +9,7 @@ export default function SubscriptionManagementPage() {
   return (
     <MainLayout meta={{ title: 'Complaint Management' }}>
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
-        <BreadCrumb items={breadcrumbItems} />
+        {/* <BreadCrumb items={breadcrumbItems} /> */}
         {/* <ComplaintManagementClient  /> */}
         <ComplaintManagementUserPage  />
       </div>
