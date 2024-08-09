@@ -183,12 +183,12 @@ export const navItems: NavItem[] = [
         icon: 'billSummary',
         label: 'bill-summary'
       },
-      {
-        title: 'Product Stock',
-        href: '/report-management/product-stock',
-        icon: 'productStock',
-        label: 'product-stock'
-      },
+      // {
+      //   title: 'Product Stock',
+      //   href: '/report-management/product-stock',
+      //   icon: 'productStock',
+      //   label: 'product-stock'
+      // },
       // {
       //   title: 'Cash Flow',
       //   href: '/report-management/cash-flow',
