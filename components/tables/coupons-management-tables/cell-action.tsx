@@ -51,7 +51,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
           <DropdownMenuItem onClick={handleEditCoupon}>
             <Edit className="mr-2 h-4 w-4" /> Edit Coupon Details
           </DropdownMenuItem>

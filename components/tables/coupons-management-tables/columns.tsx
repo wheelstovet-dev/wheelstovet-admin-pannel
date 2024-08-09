@@ -28,16 +28,16 @@ export const columns: ColumnDef<CouponManagement>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'sno',
+    accessorKey: 'Sno',
     header: 'Sno',
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: 'code',
+    accessorKey: 'Code',
     header: 'Coupon Code'
   },
   {
-    accessorKey: 'image',
+    accessorKey: 'Image',
     header: 'Image',
     cell: ({ row }) => (
       <div className="flex items-center">

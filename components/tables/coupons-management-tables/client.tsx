@@ -6,8 +6,9 @@ import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 // import { UserManagement, userManagementData } from '@/constants/user-management-data';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-import { Plus } from 'lucide-react';
+import { ChevronDown, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 
@@ -36,38 +37,65 @@ export const CouponsManagementClient: React.FC = () => {
     });
     setData(sortedData);
   };
-  const filters = [
-    {
-      label: 'Season ',
-      subOptions: ['Winter', 'Autumn',],
-    },
-    {
-      label: 'Priority',
-      subOptions: ['High', 'Medium', 'Low'],
-    },
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('By type');
+  // const filters = [
+  //   // {
+  //   //   label: 'Season ',
+  //   //   subOptions: ['Winter', 'Autumn',],
+  //   // },
+  //   {
+  //     label: 'Priority',
+  //     subOptions: ['High', 'Medium', 'Low'],
+  //   },
   
-  ];
+  // ];
 
   return (
     <>
-      <div className="flex items-start justify-between">
-        <Heading
+      <div className="flex items-end justify-end">
+        {/* <Heading
           title={`Coupons `}
           description=""
-        />
+        /> */}
         <Button
-          className="text-xs md:text-sm"
+          className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-400"
           onClick={() => router.push(`/coupons-management`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
+       
       </div>
+      <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Coupons</h2>
+            <div className="flex space-x-2 w-full max-w-3xl">
+              <input
+                type="text"
+                placeholder="Search by name or phone number"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
+              />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
+                  {filterType} <ChevronDown className="ml-1 h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {['Type 1', 'Type 2', 'Type 3'].map((type) => (
+                    <DropdownMenuItem key={type} onClick={() => setFilterType(type)}>
+                      {type}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
       {/* <Separator /> */}
       <DataTable
-        // searchKeys={["code"]}
+        searchKeys={["code"]}
         columns={columns}
         data={data}
-        // onSearch={handleSearch} 
+        onSearch={handleSearch} 
         // filters={filters}
 
         // onSort={handleSort} 
