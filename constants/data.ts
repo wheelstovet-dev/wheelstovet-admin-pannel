@@ -118,18 +118,6 @@ export const navItems: NavItem[] = [
     label: 'Dashboard'
   },
   {
-    title: 'Case Management',
-    href: '/case-management',
-    icon: 'case_management',
-    label: 'Case Management'
-  },
-  {
-    title: 'User Management',
-    href: '/user-management',
-    icon: 'user_management',
-    label: 'User Management'
-  },
-  {
     title: 'Employee Management',
     href: '/employee-management',
     icon: 'user_management',
@@ -140,6 +128,30 @@ export const navItems: NavItem[] = [
     href: '/service-management',
     icon: 'service_management',
     label: 'Service Management'
+  },
+  {
+    title: 'User Management',
+    href: '/user-management',
+    icon: 'user_management',
+    label: 'User Management'
+  },
+  {
+    title: 'Case Management',
+    href: '/case-management',
+    icon: 'case_management',
+    label: 'Case Management'
+  },
+  {
+    title: 'Coupon/Offers Management',
+    href: '/coupons-management',
+    icon: 'coupon_management',
+    label: 'Coupon Management'
+  },
+  {
+    title: 'Complaint Management',
+    href: '/complaint-management',
+    icon: 'complaint_management',
+    label: 'Complaint Management'
   },
   {
     title: 'Settings',

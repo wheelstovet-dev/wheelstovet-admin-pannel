@@ -32,7 +32,9 @@ import {
   Briefcase,        // Icon for Case Management
   Users,            // Icon for User Management
   Server,           // Icon for Service Management
-  LogOut            // Icon for Log Out
+  LogOut,           // Icon for Log Out
+  Tag,              // Icon for Coupon Management (newly added)
+  MessageSquare     // Icon for Complaint Management (newly added)
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -86,5 +88,7 @@ export const Icons = {
   case_management: Briefcase,
   user_management: Users,
   service_management: Server,
-  logout: LogOut
+  logout: LogOut,
+  coupon_management: Tag,           // Icon for Coupon Management (newly added)
+  complaint_management: MessageSquare // Icon for Complaint Management (newly added)
 };

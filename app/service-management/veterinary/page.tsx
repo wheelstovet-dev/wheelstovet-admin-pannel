@@ -30,27 +30,51 @@ export default function VeterinaryVisitPage() {
     // Add your cancel logic here
   };
 
-  const [clinic, setClinic] = useState({
+  const [clinics, setClinics] = useState([
+    { serialNo: 1, name: 'Clinic A', contactNo: '+91 9876543210', address: '456 Elm St', price: 700 },
+  ]);
+
+  const [newClinic, setNewClinic] = useState({
     name: '',
-    location: '',
+    contactNo: '',
+    address: '',
+    price: 0,
   });
+
+  const [isFormVisible, setFormVisible] = useState(false);
 
   const handleClinicInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
     const value = event.target.value;
-    setClinic(prevClinic => ({
+    setNewClinic(prevClinic => ({
       ...prevClinic,
       [field]: value,
     }));
   };
 
-  const handleClinicSubmit = () => {
-    console.log('Clinic saved:', clinic);
-    // Add your save logic here
+  const handleAddNewClinic = () => {
+    setFormVisible(true);
   };
 
-  const handleClinicCancel = () => {
-    console.log('Clinic addition cancelled');
-    // Add your cancel logic here
+  const handleCreateClinic = () => {
+    const newSerialNo = clinics.length + 1;
+    setClinics([...clinics, { serialNo: newSerialNo, ...newClinic }]);
+    setNewClinic({ name: '', contactNo: '', address: '', price: 0 });
+    setFormVisible(false);
+  };
+
+  const handleCancelAddClinic = () => {
+    setFormVisible(false);
+    setNewClinic({ name: '', contactNo: '', address: '', price: 0 });
+  };
+
+  const isFormValid = () => {
+    return (
+      newClinic.name.trim() !== '' &&
+      newClinic.contactNo.trim() !== '' &&
+      newClinic.contactNo.length === 13 && // Assuming the format is '+91 XXXXXXXXXX'
+      newClinic.address.trim() !== '' &&
+      newClinic.price > 0
+    );
   };
 
   return (
@@ -131,43 +155,100 @@ export default function VeterinaryVisitPage() {
           </div>
 
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-3xl font-bold mb-8">Add Clinic</h2>
-            <div className="space-y-8">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                <div className="flex flex-col">
-                  <label className="block font-bold text-gray-700">Clinic Name</label>
-                  <input
-                    type="text"
-                    value={clinic.name}
-                    onChange={(e) => handleClinicInputChange(e, 'name')}
-                    className="mt-1 block w-full border rounded p-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="block font-bold text-gray-700">Location</label>
-                  <input
-                    type="text"
-                    value={clinic.location}
-                    onChange={(e) => handleClinicInputChange(e, 'location')}
-                    className="mt-1 block w-full border rounded p-2"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-start mt-8">
-              <button
-                className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                onClick={handleClinicCancel}
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">Associated Clinic</h2>
               <button
                 className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={handleClinicSubmit}
+                onClick={handleAddNewClinic}
               >
-                Save Changes
+                + Add New
               </button>
             </div>
+            <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-left text-gray-600">
+                  <th className="px-4 py-5 border-b">Serial No</th>
+                  <th className="px-4 py-5 border-b">Clinic Name</th>
+                  <th className="px-4 py-5 border-b">Contact No</th>
+                  <th className="px-4 py-5 border-b">Address</th>
+                  <th className="px-4 py-5 border-b">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clinics.map((clinic, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-4 py-6 border-b">{clinic.serialNo}</td>
+                    <td className="px-4 py-6 border-b">{clinic.name}</td>
+                    <td className="px-4 py-6 border-b">{clinic.contactNo}</td>
+                    <td className="px-4 py-6 border-b">{clinic.address}</td>
+                    <td className="px-4 py-6 border-b">{clinic.price} INR</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {isFormVisible && (
+              <div className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Clinic Name <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newClinic.name}
+                      onChange={(e) => handleClinicInputChange(e, 'name')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newClinic.contactNo}
+                      onChange={(e) => handleClinicInputChange(e, 'contactNo')}
+                      className="mt-1 block w-full border rounded p-2"
+                      maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newClinic.address}
+                      onChange={(e) => handleClinicInputChange(e, 'address')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Price <span className="text-red-500">*</span></label>
+                    <input
+                      type="number"
+                      value={newClinic.price}
+                      onChange={(e) => handleClinicInputChange(e, 'price')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-start mt-4">
+                  <button
+                    className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
+                    onClick={handleCancelAddClinic}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-yellow-500 text-white py-2 px-4 rounded"
+                    onClick={handleCreateClinic}
+                    disabled={!isFormValid()}
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </ScrollArea>

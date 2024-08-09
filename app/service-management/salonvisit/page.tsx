@@ -28,27 +28,51 @@ export default function SalonVisitPage() {
     // Add your cancel logic here
   };
 
-  const [salon, setSalon] = useState({
+  const [salons, setSalons] = useState([
+    { serialNo: 1, name: 'Salon A', contactNo: '+91 1234567890', address: '123 Main St', price: 500 },
+  ]);
+
+  const [newSalon, setNewSalon] = useState({
     name: '',
-    location: '',
+    contactNo: '',
+    address: '',
+    price: 0,
   });
+
+  const [isFormVisible, setFormVisible] = useState(false);
 
   const handleSalonInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
     const value = event.target.value;
-    setSalon(prevSalon => ({
+    setNewSalon(prevSalon => ({
       ...prevSalon,
       [field]: value,
     }));
   };
 
-  const handleSalonSubmit = () => {
-    console.log('Salon saved:', salon);
-    // Add your save logic here
+  const handleAddNewSalon = () => {
+    setFormVisible(true);
   };
 
-  const handleSalonCancel = () => {
-    console.log('Salon addition cancelled');
-    // Add your cancel logic here
+  const handleCreateSalon = () => {
+    const newSerialNo = salons.length + 1;
+    setSalons([...salons, { serialNo: newSerialNo, ...newSalon }]);
+    setNewSalon({ name: '', contactNo: '', address: '', price: 0 });
+    setFormVisible(false);
+  };
+
+  const handleCancelAddSalon = () => {
+    setFormVisible(false);
+    setNewSalon({ name: '', contactNo: '', address: '', price: 0 });
+  };
+
+  const isFormValid = () => {
+    return (
+      newSalon.name.trim() !== '' &&
+      newSalon.contactNo.trim() !== '' &&
+      newSalon.contactNo.length === 13 && // Assuming the format is '+91 XXXXXXXXXX'
+      newSalon.address.trim() !== '' &&
+      newSalon.price > 0
+    );
   };
 
   return (
@@ -109,43 +133,100 @@ export default function SalonVisitPage() {
           </div>
 
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-3xl font-bold mb-8">Add Salon</h2>
-            <div className="space-y-8">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                <div className="flex flex-col">
-                  <label className="block font-bold text-gray-700">Salon Name</label>
-                  <input
-                    type="text"
-                    value={salon.name}
-                    onChange={(e) => handleSalonInputChange(e, 'name')}
-                    className="mt-1 block w-full border rounded p-2"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="block font-bold text-gray-700">Location</label>
-                  <input
-                    type="text"
-                    value={salon.location}
-                    onChange={(e) => handleSalonInputChange(e, 'location')}
-                    className="mt-1 block w-full border rounded p-2"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-start mt-8">
-              <button
-                className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                onClick={handleSalonCancel}
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">Associated Salon</h2>
               <button
                 className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={handleSalonSubmit}
+                onClick={handleAddNewSalon}
               >
-                Save Changes
+                + Add New
               </button>
             </div>
+            <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+              <thead>
+                <tr className="bg-gray-100 text-left text-gray-600">
+                  <th className="px-4 py-5 border-b">Serial No</th>
+                  <th className="px-4 py-5 border-b">Salon Name</th>
+                  <th className="px-4 py-5 border-b">Contact No</th>
+                  <th className="px-4 py-5 border-b">Address</th>
+                  <th className="px-4 py-5 border-b">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {salons.map((salon, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-4 py-6 border-b">{salon.serialNo}</td>
+                    <td className="px-4 py-6 border-b">{salon.name}</td>
+                    <td className="px-4 py-6 border-b">{salon.contactNo}</td>
+                    <td className="px-4 py-6 border-b">{salon.address}</td>
+                    <td className="px-4 py-6 border-b">{salon.price} INR</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {isFormVisible && (
+              <div className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Salon Name <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newSalon.name}
+                      onChange={(e) => handleSalonInputChange(e, 'name')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newSalon.contactNo}
+                      onChange={(e) => handleSalonInputChange(e, 'contactNo')}
+                      className="mt-1 block w-full border rounded p-2"
+                      maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={newSalon.address}
+                      onChange={(e) => handleSalonInputChange(e, 'address')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Price <span className="text-red-500">*</span></label>
+                    <input
+                      type="number"
+                      value={newSalon.price}
+                      onChange={(e) => handleSalonInputChange(e, 'price')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-start mt-4">
+                  <button
+                    className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
+                    onClick={handleCancelAddSalon}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-yellow-500 text-white py-2 px-4 rounded"
+                    onClick={handleCreateSalon}
+                    disabled={!isFormValid()}
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </ScrollArea>

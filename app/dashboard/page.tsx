@@ -307,7 +307,7 @@ export default function Page() {
                 <CardComponent
                   title="CASE"
                   subtitle="PET HANDLING"
-                  image="/images/Frame (2).png"
+                  image="/images/handle.png"
                   color="text-purple-500"
                   defaultDropdown="Weekly"
                   initialPercentage={30}
@@ -315,15 +315,15 @@ export default function Page() {
                 <CardComponent
                   title="CASE"
                   subtitle="PET TAXI"
-                  image="/images/Frame (3).png"
+                  image="/images/taxi.png"
                   color="text-red-500"
                   defaultDropdown="Monthly"
                   initialPercentage={40}
                 />
                  <CardComponent
                   title="CASE"
-                  subtitle="PET TAXI"
-                  image="/images/Frame (3).png"
+                  subtitle="ASSOCIATED SALON"
+                  image="/images/salon.png"
                   color="text-red-500"
                   defaultDropdown="Monthly"
                   initialPercentage={40}
