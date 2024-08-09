@@ -34,7 +34,18 @@ import {
   Server,           // Icon for Service Management
   LogOut,           // Icon for Log Out
   Tag,              // Icon for Coupon Management (newly added)
-  MessageSquare     // Icon for Complaint Management (newly added)
+  MessageSquare,    // Icon for Complaint Management (newly added)
+  BookOpen,
+  FileCheck,
+  ClipboardList,
+  ClipboardCheck,
+  PackageSearch,
+  DollarSign,
+  Activity,
+  Calendar,
+  BarChart2,
+  TrendingDown,
+  TrendingUp,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -90,5 +101,16 @@ export const Icons = {
   service_management: Server,
   logout: LogOut,
   coupon_management: Tag,           // Icon for Coupon Management (newly added)
-  complaint_management: MessageSquare // Icon for Complaint Management (newly added)
+  complaint_management: MessageSquare, // Icon for Complaint Management (newly added)
+  report: BookOpen, //this line is added
+  accountStatement: FileCheck, // new line
+  invoiceSummary: ClipboardList, // new line
+  salesReport: ClipboardCheck, // new line
+  billSummary: FileCheck, // new line
+  productStock: PackageSearch, // new line
+  cashFlow: DollarSign, // new line
+  transaction: Activity, // new line
+  incomeSummary: Calendar, // new line
+  expenseSummary: BarChart2, // new line
+  incomeVsExpense: BarChart2, // new line
 };
