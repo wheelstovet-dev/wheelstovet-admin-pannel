@@ -3,25 +3,48 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
 
 const employeeData = [
-  { serialNo: '#001', employeeName: 'John Doe', mobileNo: '+91 9898098980', emailId: 'john.doe@example.com' },
-  { serialNo: '#002', employeeName: 'Jane Smith', mobileNo: '+91 9898098981', emailId: 'jane.smith@example.com' },
-  { serialNo: '#003', employeeName: 'Alice Johnson', mobileNo: '+91 9898098982', emailId: 'alice.johnson@example.com' },
-  { serialNo: '#004', employeeName: 'Bob Brown', mobileNo: '+91 9898098983', emailId: 'bob.brown@example.com' },
-  { serialNo: '#005', employeeName: 'Charlie Davis', mobileNo: '+91 9898098984', emailId: 'charlie.davis@example.com' },
-  { serialNo: '#006', employeeName: 'Eve White', mobileNo: '+91 9898098985', emailId: 'eve.white@example.com' },
+  { serialNo: '001', firstName: 'John', lastName: 'Doe', gender: 'Male', roleType: 'Dog Walking', address: '123 Main St, City, Country', mobileNo: '+91 9898098980', emailId: 'john.doe@example.com', status: 'Available' },
+  { serialNo: '002', firstName: 'Jane', lastName: 'Smith', gender: 'Female', roleType: 'Salon Visit', address: '456 Elm St, City, Country', mobileNo: '+91 9898098981', emailId: 'jane.smith@example.com', status: 'Unavailable' },
+  { serialNo: '003', firstName: 'Alice', lastName: 'Johnson', gender: 'Female', roleType: 'Veterinary Visit', address: '789 Pine St, City, Country', mobileNo: '+91 9898098982', emailId: 'alice.johnson@example.com', status: 'Available' },
+  { serialNo: '004', firstName: 'Bob', lastName: 'Brown', gender: 'Male', roleType: 'Pet Taxi', address: '101 Maple St, City, Country', mobileNo: '+91 9898098983', emailId: 'bob.brown@example.com', status: 'Unavailable' },
+  { serialNo: '005', firstName: 'Charlie', lastName: 'Davis', gender: 'Male', roleType: 'Pet Handling', address: '202 Oak St, City, Country', mobileNo: '+91 9898098984', emailId: 'charlie.davis@example.com', status: 'Available' },
+  { serialNo: '006', firstName: 'Eve', lastName: 'White', gender: 'Female', roleType: 'Pet Rescue', address: '303 Birch St, City, Country', mobileNo: '+91 9898098985', emailId: 'eve.white@example.com', status: 'Unavailable' },
 ];
 
 export default function EmployeeManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
+  const [employees, setEmployees] = useState(employeeData);
   const router = useRouter();
 
   const handleAddAdminClick = () => {
     router.push('/employee-form');
+  };
+
+  const handleToggleStatus = (index: number) => {
+    const newEmployees = [...employees];
+    newEmployees[index].status = newEmployees[index].status === 'Available' ? 'Unavailable' : 'Available';
+    setEmployees(newEmployees);
+  };
+
+  const handleView = (index: number) => {
+   router.push("/employee-management/view")
+    console.log(`Viewing employee: ${employees[index].firstName} ${employees[index].lastName}`);
+  };
+
+  const handleEdit = (index: number) => {
+    router.push("/employee-management/update")
+    console.log(`Editing employee: ${employees[index].firstName} ${employees[index].lastName}`);
+  };
+
+  const handleDelete = (index: number) => {
+    const newEmployees = [...employees];
+    newEmployees.splice(index, 1);
+    setEmployees(newEmployees);
   };
 
   return (
@@ -33,15 +56,15 @@ export default function EmployeeManagementPage() {
               className="ml-auto bg-yellow-500 text-white px-4 py-2 rounded-lg justify-end"
               onClick={handleAddAdminClick}
             >
-              + Add Admin
+              + Add New
             </button>
           </div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Cases</h2>
+            <h2 className="text-2xl font-bold">Employee</h2>
             <div className="flex space-x-2 w-full max-w-3xl">
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="Search by name or phone number"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
@@ -63,40 +86,67 @@ export default function EmployeeManagementPage() {
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-left text-gray-600">
-                  <th className="px-4 py-5 border-b">Serial No</th>
-                  <th className="px-4 py-5 border-b">Employee Name</th>
-                  <th className="px-4 py-5 border-b">Mobile No</th>
-                  <th className="px-4 py-5 border-b">Email ID</th>
-                  <th className="px-4 py-5 border-b">Action</th>
+                <tr className="bg-gray-100 text-gray-600">
+                  <th className="px-4 py-5 border-b text-center">Serial No</th>
+                  <th className="px-4 py-5 border-b text-center">Employee Name</th>
+                  <th className="px-4 py-5 border-b text-center">Gender</th>
+                  <th className="px-4 py-5 border-b text-center">Role Type</th>
+                  <th className="px-4 py-5 border-b text-center">Address</th>
+                  <th className="px-4 py-5 border-b text-center">Contact</th>
+                  <th className="px-4 py-5 border-b text-center">Status</th>
+                  <th className="px-4 py-5 border-b text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {employeeData
+                {employees
                   .filter((employee) =>
-                    employee.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
+                    `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    employee.mobileNo.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((employee, index) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-6 border-b">{employee.serialNo}</td>
-                      <td className="px-4 py-6 border-b">{employee.employeeName}</td>
-                      <td className="px-4 py-6 border-b">{employee.mobileNo}</td>
-                      <td className="px-4 py-6 border-b">{employee.emailId}</td>
-                      <td className="px-4 py-6 border-b">
-                        <button className="text-blue-500 hover:text-blue-700">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM12.828 7H11v1.828l4.586-4.586 1.828 1.828L12.828 7z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
+                      <td className="px-4 py-6 border-b text-center">{employee.serialNo}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.firstName} {employee.lastName}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.gender}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.roleType}</td>
+                      <td className="px-4 py-6 border-b text-center">{employee.address}</td>
+                      <td className="px-4 py-6 border-b text-center">
+                        <div className="flex flex-col items-center">
+                          <span>{employee.mobileNo}</span>
+                          <span className="text-gray-500 text-sm">{employee.emailId}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 border-b text-center">
+                        <span className={`px-2 py-1 rounded-lg ${employee.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {employee.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-6 border-b text-center">
+                        <div className="flex justify-center space-x-1">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className="flex items-center text-gray-600 p-1">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem onClick={() => handleView(index)}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                View
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEdit(index)}>
+                                <Edit3 className="h-4 w-4 mr-2" />
+                                Update
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDelete(index)}>
+                                <Trash className="h-4 w-4 mr-2 text-red-500" />
+                                Delete
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleToggleStatus(index)}>
+                                <ToggleLeft className="h-4 w-4 mr-2" />
+                                Status
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </td>
                     </tr>
                   ))}

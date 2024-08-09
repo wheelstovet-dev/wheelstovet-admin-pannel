@@ -84,7 +84,7 @@ export default function DogWalkingPage() {
                     onChange={(e) => handleInputChange(e, 'dailyPlan2')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
-                  <span className="ml-2">INR</span>
+                  <span className="ml-2 font-bold">INR</span>
                 </div>
                 <div className="flex items-center">
                   <label className="block font-bold text-gray-700 w-full">Weekly plan charges</label>

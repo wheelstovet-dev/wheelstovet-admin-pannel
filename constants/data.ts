@@ -118,18 +118,6 @@ export const navItems: NavItem[] = [
     label: 'Dashboard'
   },
   {
-    title: 'Case Management',
-    href: '/case-management',
-    icon: 'case_management',
-    label: 'Case Management'
-  },
-  {
-    title: 'User Management',
-    href: '/user-management',
-    icon: 'user_management',
-    label: 'User Management'
-  },
-  {
     title: 'Employee Management',
     href: '/employee-management',
     icon: 'user_management',
@@ -140,6 +128,104 @@ export const navItems: NavItem[] = [
     href: '/service-management',
     icon: 'service_management',
     label: 'Service Management'
+  },
+  {
+    title: 'User Management',
+    href: '/user-management',
+    icon: 'user_management',
+    label: 'User Management'
+  },
+  {
+    title: 'Case Management',
+    href: '/case-management',
+    icon: 'case_management',
+    label: 'Case Management'
+  },
+  {
+    title: 'Coupon/Offers Management',
+    href: '/coupons',
+    icon: 'coupon_management',
+    label: 'Coupon Management'
+  },
+  {
+    title: 'Complaint Management',
+    href: '/complaint-management',
+    icon: 'complaint_management',
+    label: 'Complaint Management'
+  },
+  {
+    title: 'Report And Analytics',
+    href: '/report-management',
+    icon: 'report',
+    label: 'create-report',
+    subItems: [
+      {
+        title: 'Account Statement',
+        href: '/report-management/account-statement',
+        icon: 'accountStatement',
+        label: 'account-statement'
+      },
+      {
+        title: 'Invoice Summary',
+        href: '/report-management/invoice-summary',
+        icon: 'invoiceSummary',
+        label: 'invoice-summary'
+      },
+      {
+        title: 'Sales Report',
+        href: '/report-management/sales-report',
+        icon: 'salesReport',
+        label: 'sales-report'
+      },
+      {
+        title: 'Bill Summary',
+        href: '/report-management/bill-summary',
+        icon: 'billSummary',
+        label: 'bill-summary'
+      },
+      // {
+      //   title: 'Product Stock',
+      //   href: '/report-management/product-stock',
+      //   icon: 'productStock',
+      //   label: 'product-stock'
+      // },
+      // {
+      //   title: 'Cash Flow',
+      //   href: '/report-management/cash-flow',
+      //   icon: 'cashFlow',
+      //   label: 'cash-flow'
+      // },
+      {
+        title: 'Transaction',
+        href: '/report-management/transaction',
+        icon: 'transaction',
+        label: 'transaction'
+      },
+      {
+        title: 'Income Summary',
+        href: '/report-management/income-summary',
+        icon: 'incomeSummary',
+        label: 'income-summary'
+      },
+      // {
+      //   title: 'Expense Summary',
+      //   href: '/report-management/expense-summary',
+      //   icon: 'expenseSummary',
+      //   label: 'expense-summary'
+      // },
+      // {
+      //   title: 'Income vs Expense',
+      //   href: '/report-management/income-vs-expense',
+      //   icon: 'incomeVsExpense',
+      //   label: 'income-vs-expense'
+      // },
+      {
+        title: 'Tax Summary',
+        href: '/report-management/tax-summary',
+        icon: 'transaction',
+        label: 'tax-summary'
+      }
+    ]
   },
   {
     title: 'Settings',
