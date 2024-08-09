@@ -2,7 +2,7 @@
 export interface ComplaintManagementUser {
   sno: number;
   name: string;
-  complaintType: string;
+  complaintBy: string;
   description: string;
   status: 'Open' | 'Closed';
   resolution?: string;
@@ -13,7 +13,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
   {
     sno: 1,
     name: "Deepak Singh",
-    complaintType: 'Delay',
+    complaintBy: 'User',
     description: 'Delivery was delayed by 2 days.',
     status: 'Open',
     resolution: 'Coupon'
@@ -21,7 +21,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
   {
     sno: 2,
     name: "Arya Singh",
-    complaintType: 'Bad quality',
+    complaintBy: 'Employee',
     description: 'Vegetables were not fresh.',
     status: 'Closed',
     resolution: 'Store credits'
@@ -29,7 +29,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
   {
     sno: 3,
     name: "Kartik Singh",
-    complaintType: 'Wrong item',
+    complaintBy: 'User',
     description: 'Received a fruit basket instead of a veggie bag.',
     status: 'Open',
     resolution: 'Add-on bag'
@@ -37,7 +37,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
   {
     sno: 4,
     name: "Shivam Kumar",
-    complaintType: 'Not reached',
+    complaintBy: 'Employee',
     description: 'Order was not delivered.',
     status: 'Closed'
   }

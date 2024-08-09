@@ -39,8 +39,8 @@ const ComplaintManagementUserPage: React.FC = () => {
       subOptions: ['Open', 'Closed'],
     },
     {
-      label: 'Complain Type',
-      subOptions: ['Delay', 'Bad Quality', 'Wrong Item', 'Not Reached'],
+      label: 'Complaint By',
+      subOptions: ['User', 'Employee', 'User', 'Employee'],
     },
   ];
 
