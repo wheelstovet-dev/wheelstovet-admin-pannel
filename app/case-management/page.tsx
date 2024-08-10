@@ -102,14 +102,14 @@ export default function CaseManagementPage() {
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-gray-600 text-center">
-                  <th className="px-4 py-5 border-b">Case ID</th>
-                  <th className="px-4 py-5 border-b">Pet Name</th>
-                  <th className="px-4 py-5 border-b">Start Date</th>
-                  <th className="px-4 py-5 border-b">End Date</th>
-                  <th className="px-4 py-5 border-b">Assign Employee</th>
-                  <th className="px-4 py-5 border-b">Current Status</th>
-                  <th className="px-4 py-5 border-b">Action</th>
+                <tr className="bg-yellow-500 text-gray-600 text-center">
+                  <th className="px-4 py-2 border-r-2 border-b">Case ID</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Pet Name</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Start Date</th>
+                  <th className="px-4 py-2 border-r-2 border-b">End Date</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Assign Employee</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Current Status</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Action</th>
                 </tr>
               </thead>
               <tbody className="text-center">

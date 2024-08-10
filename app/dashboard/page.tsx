@@ -4,7 +4,6 @@ import { useState } from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
@@ -13,7 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -126,7 +125,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
 };
 
 const initialData = {
-  labels: ['September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
+  labels: ['September', 'October', 'November', 'December', 'January', 'February', 'March', 'April'],
   datasets: [
     {
       label: 'Dog Walking',
@@ -178,7 +177,7 @@ export default function Page() {
           {
             ...initialData.datasets[0],
             data: [1, 2, 3, 4, 5, 6, 7],
-          }, 
+          },
         ],
       });
     } else if (value === 'Weekly') {
@@ -368,20 +367,11 @@ export default function Page() {
                       >
                         Client Escalated
                       </button>
-                      {/* <button
-                        className={`px-4 py-2 rounded ${selectedCase === 'Pet Handling' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleCaseChange('Pet Handling')}
-                      >
-                        Pet Handling
-                      </button> */}
-                      {/* <button
-                        className={`px-4 py-2 rounded ${selectedCase === 'Pet Taxi' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleCaseChange('Pet Taxi')}
-                      >
-                        Pet Taxi
-                      </button> */}
+                     
                     </div>
-                    <Line data={graphData} options={options} />
+                    <div className="w-full" style={{ height: '50%' }}> {/* Set height of the graph container */}
+                      <Line data={graphData} options={options} />
+                    </div>
                   </CardContent>
                 </Card>
               </div>

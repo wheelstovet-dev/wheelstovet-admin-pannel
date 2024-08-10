@@ -107,11 +107,11 @@ export function DataTable<TData, TValue>({
 
       <ScrollArea className="rounded-md border min-h-[70vh] bg-white">
         <UiTable className="relative min-w-full">
-          <TableHeader className="bg-gray-100 text-gray-700">
+          <TableHeader className="bg-yellow-500 text-gray-400">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="py-4  ">
+                  <TableHead key={header.id} className="py-2 border-r-2 ">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
