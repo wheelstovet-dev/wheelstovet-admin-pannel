@@ -207,7 +207,7 @@ export const AccountStatement: React.FC = () => {
               <div className="mt-4">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-green-600 dark:bg-gray-700 text-white dark:text-gray-300">
+                    <tr className="bg-yellow-600 dark:bg-gray-700 text-white dark:text-gray-300">
                       <th className="border-b p-2 text-center flex justify-center items-center"> <span className='ms-2' >Date</span></th>
                       <th className="border-b p-2 text-center">Amount</th>
                       <th className="border-b p-2 text-center">Description</th>
@@ -216,7 +216,7 @@ export const AccountStatement: React.FC = () => {
                   <tbody>
                     {filteredTableData.length > 0 ? (
                       filteredTableData.map((data, index) => (
-                        <tr key={index} className={`${index % 2 === 0 ? 'bg-red-100 dark:bg-gray-800' : 'bg-green-100 dark:bg-gray-900'} text-gray-900 dark:text-gray-300`}>
+                        <tr key={index} className={`${index % 2 === 0 ? 'bg-red-100 dark:bg-gray-800' : 'bg-yellow-100 dark:bg-gray-900'} text-gray-900 dark:text-gray-300`}>
                           <td className="border-b p-2 text-center flex items-center justify-center"><Calendar width={16} className='text-blue-600'  /><span className='ms-2' >{data.date}</span></td>
                           <td className="border-b p-2 text-center">₹ {data.amount}</td>
                           <td className="border-b p-2 text-center">{data.description}</td>
