@@ -7,7 +7,6 @@ type BreadCrumbType = {
   title: string;
   link: string;
 };
-
 type BreadCrumbPropsType = {
   items: BreadCrumbType[];
 };
