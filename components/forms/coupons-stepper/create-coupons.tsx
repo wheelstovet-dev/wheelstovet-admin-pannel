@@ -337,7 +337,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="visibility"
               render={({ field }) => (
@@ -357,7 +357,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                   <FormMessage>{errors.visibility?.message}</FormMessage>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormField
               control={form.control}

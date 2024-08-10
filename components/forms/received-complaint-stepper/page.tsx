@@ -248,7 +248,7 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name="resolution"
               render={({ field }) => (
@@ -265,7 +265,7 @@ export const ReceivedComplaintForm: React.FC<{ initialData?: ComplaintManagement
                   <FormMessage>{errors.resolution?.message}</FormMessage>
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
           <FormField
             control={control}

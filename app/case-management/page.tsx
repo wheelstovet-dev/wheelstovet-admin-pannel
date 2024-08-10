@@ -30,11 +30,9 @@ export default function CaseManagementPage() {
       caseItem.petName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       caseItem.assignEmployee.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => {
-      if (filterType === 'Sort by status' && sortStatus) {
-        return a.currentStatus.localeCompare(b.currentStatus);
-      }
-      return 0;
+    .filter((caseItem) => {
+      if (sortStatus === '') return true;
+      return caseItem.currentStatus === sortStatus;
     });
 
   const handleView = (index: number) => {
@@ -71,27 +69,32 @@ export default function CaseManagementPage() {
                   {filterType} <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
-                    Sort by status
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="flex items-center">
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        {['Dog Walking', 'Salon', 'Veterinary', 'Pet Taxi'].map((status) => (
-                          <DropdownMenuItem key={status} onClick={() => setSortStatus(status)}>
-                            {status}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterType('Type 2')}>
-                    Type 2
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterType('Type 3')}>
-                    Type 3
-                  </DropdownMenuItem>
+                  {filterType === 'By type' ? (
+                    <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
+                      Sort by status
+                    </DropdownMenuItem>
+                  ) : (
+                    <>
+                      <DropdownMenuItem onClick={() => setSortStatus('Dog Walking')}>
+                        Dog Walking
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortStatus('Salon')}>
+                        Salon
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortStatus('Veterinary')}>
+                        Veterinary
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortStatus('Pet Taxi')}>
+                        Pet Taxi
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortStatus('Pet Rescue')}>
+                        Pet Rescue
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setSortStatus(''); }}>
+                        Reset
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

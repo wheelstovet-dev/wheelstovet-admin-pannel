@@ -27,11 +27,11 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
   },
   {
     accessorKey: 'sno',
-    header: 'Sno'
+    header: 'S.no'
   },
   {
     accessorKey: 'name',
-    header: 'name'
+    header: 'Name'
   },
   {
     accessorKey: 'complaintBy',
@@ -57,12 +57,13 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
       </div>
     )
   },
-  {
-    accessorKey: 'resolution',
-    header: 'Resolution'
-  },
+  // {
+  //   accessorKey: 'resolution',
+  //   header: 'Resolution'
+  // },
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

@@ -28,13 +28,16 @@ export const columns: ColumnDef<CouponManagement>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'Sno',
-    header: 'Sno',
+    accessorKey: 'S.no',
+    header: 'S.no',
     cell: ({ row }) => row.index + 1,
+    size: 100, // Increased column width
   },
   {
     accessorKey: 'Code',
-    header: 'Coupon Code'
+    header: 'Coupon Code',
+    cell: ({ row }) => row.original.code,
+    size: 250, // Increased column width
   },
   {
     accessorKey: 'Image',
@@ -43,31 +46,15 @@ export const columns: ColumnDef<CouponManagement>[] = [
       <div className="flex items-center">
         <Image src={row.original.image} alt={row.original.code} width={50} height={50} />
       </div>
-    )
+    ),
+    size: 300, // Increased column width
   },
   {
     accessorKey: 'discountPrice',
     header: 'Discount Price',
-    cell: ({ row }) => `₹${row.original.discountPrice}`
+    cell: ({ row }) => `₹${row.original.discountPrice}`,
+    size: 300, // Increased column width
   },
-  // {
-  //   accessorKey: 'visibility',
-  //   header: 'Visibility',
-  //   cell: ({ row }) => (
-  //     <div
-  //       style={{ borderRadius: "20px" }}
-  //       className={`flex items-center px-2 py-1 ${
-  //         row.original.visibility === 'global' ? 'bg-green-400' :
-  //         row.original.visibility === 'subscription' ? 'bg-blue-400' :
-  //         'bg-red-400'
-  //       }`}
-  //     >
-  //       <span className='text-black bold'>
-  //         {row.original.visibility === 'global' ? "Global" : "Subscription"}
-  //       </span>
-  //     </div>
-  //   )
-  // },
   {
     accessorKey: 'subscriptionType',
     header: 'Subscription Type',
@@ -75,40 +62,37 @@ export const columns: ColumnDef<CouponManagement>[] = [
       <div className="text-center">
         {row.original.subscriptionType ? row.original.subscriptionType.name : 'N/A'}
       </div>
-    )
+    ),
+    size: 250, // Increased column width
   },
   {
     accessorKey: 'subscriptionPrice',
     header: 'Subscription Price',
-    cell: ({ row }) => row.original.subscriptionPrice ? `₹${row.original.subscriptionPrice}` : 'N/A'
+    cell: ({ row }) => row.original.subscriptionPrice ? `₹${row.original.subscriptionPrice}` : 'N/A',
+    size: 200, // Increased column width
   },
   {
     accessorKey: 'netPrice',
     header: 'Net Price',
-    cell: ({ row }) => row.original.netPrice ? `₹${row.original.netPrice}` : 'N/A'
+    cell: ({ row }) => row.original.netPrice ? `₹${row.original.netPrice}` : 'N/A',
+    size: 200, // Increased column width
   },
   {
     accessorKey: 'startDate',
     header: 'Start Date',
-    cell: ({ row }) => row.original.startDate ? format(row.original.startDate, 'dd MMM yyyy') : 'N/A'
+    cell: ({ row }) => row.original.startDate ? format(row.original.startDate, 'dd MMM yyyy') : 'N/A',
+    size: 200, // Increased column width
   },
   {
     accessorKey: 'endDate',
     header: 'End Date',
-    cell: ({ row }) => row.original.endDate ? format(row.original.endDate, 'dd MMM yyyy') : 'N/A'
+    cell: ({ row }) => row.original.endDate ? format(row.original.endDate, 'dd MMM yyyy') : 'N/A',
+    size: 200, 
   },
-  // {
-  //   accessorKey: 'description',
-  //   header: 'Description',
-  //   cell: ({ row }) => (
-  //     <div className="text-start">
-  //       {row.original.description.split(' ').slice(0, 10).join(' ')}...
-  //     </div>
-  //   )
-  // },
-
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    header: 'Actions',
+    cell: ({ row }) => <CellAction data={row.original} />,
+    size: 200, // Increased column width
   }
 ];

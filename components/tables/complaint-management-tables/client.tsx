@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
-import { SubscriptionManagement, SubscriptionManagementData } from '@/constants/subscription-management-data';
+// import { SubscriptionManagement, SubscriptionManagementData } from '@/constants/subscription-management-data';
 import { ComplaintManagement, ComplaintManagementData } from '@/constants/complaint-management-data';
 
 export const ComplaintManagementClient: React.FC = () => {
