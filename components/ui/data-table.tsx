@@ -106,12 +106,12 @@ export function DataTable<TData, TValue>({
       </div>
 
       <ScrollArea className="rounded-md border min-h-[70vh] bg-white">
-        <UiTable className="relative">
+        <UiTable className="relative min-w-full">
           <TableHeader className="bg-gray-100 text-gray-700">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="py-4 px-6">
+                  <TableHead key={header.id} className="py-4  ">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -125,7 +125,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="py-2 px-6 border-b border-gray-200">
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-4 px-6">
+                    <TableCell key={cell.id} className="py-4  ">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}

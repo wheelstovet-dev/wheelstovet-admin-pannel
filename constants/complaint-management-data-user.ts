@@ -14,7 +14,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
     sno: 1,
     name: "Deepak Singh",
     complaintBy: 'User',
-    description: 'Delivery was delayed by 2 days.',
+    description: 'Missing.',
     status: 'Open',
     resolution: 'Coupon'
   },
@@ -22,7 +22,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
     sno: 2,
     name: "Arya Singh",
     complaintBy: 'Employee',
-    description: 'Vegetables were not fresh.',
+    description: 'High salon charge.',
     status: 'Closed',
     resolution: 'Store credits'
   },
@@ -30,7 +30,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
     sno: 3,
     name: "Kartik Singh",
     complaintBy: 'User',
-    description: 'Received a fruit basket instead of a veggie bag.',
+    description: 'Late Pickup.',
     status: 'Open',
     resolution: 'Add-on bag'
   },
@@ -38,7 +38,7 @@ export const ComplaintManagementUserData: ComplaintManagementUser[] = [
     sno: 4,
     name: "Shivam Kumar",
     complaintBy: 'Employee',
-    description: 'Order was not delivered.',
+    description: 'Wrong pickup address.',
     status: 'Closed'
   }
 ];

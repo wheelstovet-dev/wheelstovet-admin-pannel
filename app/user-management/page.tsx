@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, Phone, Mail } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 
 interface UserData {
@@ -52,8 +52,6 @@ export default function UserManagementPage() {
     router.push(`/edit-user/${selectedUser.serialNo}`);
   };
 
-  
-
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -96,12 +94,11 @@ export default function UserManagementPage() {
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
                 <tr className="bg-gray-100 text-center text-gray-600">
-                  <th className="px-4 py-5 border-b">Serial No</th>
+                  <th className="px-4 py-5 border-b">S.No</th>
                   <th className="px-4 py-5 border-b">Parent Name</th>
                   <th className="px-4 py-5 border-b">Pet Name</th>
                   <th className="px-14 py-5 border-b">Contact</th>
                   <th className="px-4 py-5 border-b">Address</th>
-                  
                   <th className="px-4 py-5 border-b">Action</th>
                 </tr>
               </thead>
@@ -112,13 +109,18 @@ export default function UserManagementPage() {
                     <td className="px-4 py-6 border-b">{`${userItem.parentFirstName} ${userItem.parentLastName}`}</td>
                     <td className="px-4 py-6 border-b">{userItem.petName}</td>
                     <td className="px-4 py-6 border-b">
-                      <div className="flex flex-col">
-                        <span>{userItem.mobileNo}</span>
-                        <span className="text-gray-500 text-sm">{userItem.email}</span>
+                      <div className="flex flex-col items-center">
+                        <span className="flex items-center">
+                          <Phone className="h-3 w-3 mr-1" />
+                          {userItem.mobileNo}
+                        </span>
+                        <span className="text-gray-500 text-sm flex items-center">
+                          <Mail className="h-3 w-3 mr-1" />
+                          {userItem.email}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-6 border-b">{userItem.address}</td>
-                    
                     <td className="px-4 py-6 border-b">
                       <div className="flex justify-center space-x-1">
                         <DropdownMenu>
@@ -138,7 +140,6 @@ export default function UserManagementPage() {
                               <Trash className="h-4 w-4 mr-2 text-red-500" />
                               Delete
                             </DropdownMenuItem>
-                           
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>

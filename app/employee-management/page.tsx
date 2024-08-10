@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft } from 'lucide-react';
+import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft, Phone, Mail } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const employeeData = [
@@ -110,14 +110,14 @@ export default function EmployeeManagementPage() {
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
                 <tr className="bg-gray-100 text-gray-600">
-                  <th className="px-4 py-5 border-b text-center">Serial No</th>
-                  <th className="px-4 py-5 border-b text-center">Employee Name</th>
-                  <th className="px-4 py-5 border-b text-center">Gender</th>
-                  <th className="px-4 py-5 border-b text-center">Role Type</th>
-                  <th className="px-4 py-5 border-b text-center">Address</th>
-                  <th className="px-4 py-5 border-b text-center">Contact</th>
-                  <th className="px-4 py-5 border-b text-center">Status</th>
-                  <th className="px-4 py-5 border-b text-center">Action</th>
+                  <th className="px-4 py-5 border-b text-center w-20">S.No</th>
+                  <th className="px-4 py-5 border-b text-center w-32"> Name</th>
+                  <th className="px-4 py-5 border-b text-center w-24">Gender</th>
+                  <th className="px-4 py-5 border-b text-center w-32">Role Type</th>
+                  <th className="px-4 py-5 border-b text-center w-48">Address</th>
+                  <th className="px-4 py-5 border-b text-center w-48">Contact</th>
+                  <th className="px-4 py-5 border-b text-center w-24">Status</th>
+                  <th className="px-4 py-5 border-b text-center w-24">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -130,8 +130,14 @@ export default function EmployeeManagementPage() {
                     <td className="px-4 py-6 border-b text-center">{employee.address}</td>
                     <td className="px-4 py-6 border-b text-center">
                       <div className="flex flex-col items-center">
-                        <span>{employee.mobileNo}</span>
-                        <span className="text-gray-500 text-sm">{employee.emailId}</span>
+                        <span className="flex items-center">
+                          <Phone className="h-3 w-3 mr-1" />
+                          {employee.mobileNo}
+                        </span>
+                        <span className="text-gray-500 text-sm flex items-center">
+                          <Mail className="h-3 w-3 mr-1" />
+                          {employee.emailId}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-6 border-b text-center">
