@@ -65,7 +65,7 @@ const ComplaintManagementUserPage: React.FC = () => {
             <div className="flex space-x-2 w-full max-w-3xl">
               <input
                 type="text"
-                placeholder="Search by name or phone number"
+                placeholder="Search by name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
@@ -94,5 +94,4 @@ const ComplaintManagementUserPage: React.FC = () => {
     </>
   );
 };
-
 export default ComplaintManagementUserPage;

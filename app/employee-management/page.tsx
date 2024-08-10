@@ -109,33 +109,33 @@ export default function EmployeeManagementPage() {
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-gray-600">
-                  <th className="px-4 py-5 border-b text-center w-20">S.No</th>
-                  <th className="px-4 py-5 border-b text-center w-32"> Name</th>
-                  <th className="px-4 py-5 border-b text-center w-24">Gender</th>
-                  <th className="px-4 py-5 border-b text-center w-32">Role Type</th>
-                  <th className="px-4 py-5 border-b text-center w-48">Address</th>
-                  <th className="px-4 py-5 border-b text-center w-48">Contact</th>
-                  <th className="px-4 py-5 border-b text-center w-24">Status</th>
-                  <th className="px-4 py-5 border-b text-center w-24">Action</th>
+                <tr className="bg-yellow-500 text-gray-600">
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-20">S.No</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-32"> Name</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-24">Gender</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-32">Role Type</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-48">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-48">Contact</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-24">Status</th>
+                  <th className="px-4 py-2 border-b border-r-2 text-center w-24">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEmployees.map((employee, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-6 border-b text-center">{employee.serialNo}</td>
-                    <td className="px-4 py-6 border-b text-center">{employee.firstName} {employee.lastName}</td>
+                    <td className="px-1 py-6 border-b text-center">{employee.firstName} {employee.lastName}</td>
                     <td className="px-4 py-6 border-b text-center">{employee.gender}</td>
                     <td className="px-4 py-6 border-b text-center">{employee.roleType}</td>
                     <td className="px-4 py-6 border-b text-center">{employee.address}</td>
                     <td className="px-4 py-6 border-b text-center">
                       <div className="flex flex-col items-center">
                         <span className="flex items-center">
-                          <Phone className="h-3 w-3 mr-1" />
+                          <Phone className="h-3 w-3 mr-1 text-green-600 " />
                           {employee.mobileNo}
                         </span>
                         <span className="text-gray-500 text-sm flex items-center">
-                          <Mail className="h-3 w-3 mr-1" />
+                          <Mail className="h-3 w-3 mr-1 text-blue-600" />
                           {employee.emailId}
                         </span>
                       </div>

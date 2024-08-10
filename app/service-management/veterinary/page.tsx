@@ -2,6 +2,7 @@
 import { useState, ChangeEvent } from 'react';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Phone, MapPin } from 'lucide-react';
 
 export default function VeterinaryVisitPage() {
   const [charges, setCharges] = useState({
@@ -166,12 +167,12 @@ export default function VeterinaryVisitPage() {
             </div>
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-left text-gray-600">
-                  <th className="px-4 py-5 border-b">Serial No</th>
-                  <th className="px-4 py-5 border-b">Clinic Name</th>
-                  <th className="px-4 py-5 border-b">Contact No</th>
-                  <th className="px-4 py-5 border-b">Address</th>
-                  <th className="px-4 py-5 border-b">Price</th>
+                <tr className="bg-yellow-500 text-left text-gray-600">
+                  <th className="px-4 py-2 border-b border-r-2">Serial No</th>
+                  <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
+                  <th className="px-4 py-2 border-b border-r-2">Contact No</th>
+                  <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b">Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -179,8 +180,18 @@ export default function VeterinaryVisitPage() {
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-6 border-b">{clinic.serialNo}</td>
                     <td className="px-4 py-6 border-b">{clinic.name}</td>
-                    <td className="px-4 py-6 border-b">{clinic.contactNo}</td>
-                    <td className="px-4 py-6 border-b">{clinic.address}</td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2 text-green-600" />
+                        {clinic.contactNo}
+                      </div>
+                    </td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                        {clinic.address}
+                      </div>
+                    </td>
                     <td className="px-4 py-6 border-b">{clinic.price} INR</td>
                   </tr>
                 ))}
@@ -202,24 +213,30 @@ export default function VeterinaryVisitPage() {
                   </div>
                   <div className="flex flex-col">
                     <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      value={newClinic.contactNo}
-                      onChange={(e) => handleClinicInputChange(e, 'contactNo')}
-                      className="mt-1 block w-full border rounded p-2"
-                      maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
-                      required
-                    />
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 mr-2 text-green-600" />
+                      <input
+                        type="text"
+                        value={newClinic.contactNo}
+                        onChange={(e) => handleClinicInputChange(e, 'contactNo')}
+                        className="mt-1 block w-full border rounded p-2"
+                        maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="flex flex-col">
                     <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      value={newClinic.address}
-                      onChange={(e) => handleClinicInputChange(e, 'address')}
-                      className="mt-1 block w-full border rounded p-2"
-                      required
-                    />
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                      <input
+                        type="text"
+                        value={newClinic.address}
+                        onChange={(e) => handleClinicInputChange(e, 'address')}
+                        className="mt-1 block w-full border rounded p-2"
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="flex flex-col">
                     <label className="block font-bold text-gray-700">Price <span className="text-red-500">*</span></label>

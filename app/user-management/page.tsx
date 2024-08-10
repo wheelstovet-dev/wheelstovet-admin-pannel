@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, Phone, Mail } from 'lucide-react';
+import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, Phone, Mail, MapPin } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 
 interface UserData {
@@ -93,13 +93,13 @@ export default function UserManagementPage() {
           <div className="overflow-x-auto rounded-xl">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
-                <tr className="bg-gray-100 text-center text-gray-600">
-                  <th className="px-4 py-5 border-b">S.No</th>
-                  <th className="px-4 py-5 border-b">Parent Name</th>
-                  <th className="px-4 py-5 border-b">Pet Name</th>
-                  <th className="px-14 py-5 border-b">Contact</th>
-                  <th className="px-4 py-5 border-b">Address</th>
-                  <th className="px-4 py-5 border-b">Action</th>
+                <tr className="bg-yellow-500 text-center text-gray-600">
+                  <th className="px-4 py-2 border-b border-r-2">S.No</th>
+                  <th className="px-4 py-2 border-b border-r-2">Parent Name</th>
+                  <th className="px-4 py-2 border-b border-r-2">Pet Name</th>
+                  <th className="px-14 py-2 border-b border-r-2">Contact</th>
+                  <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,16 +111,21 @@ export default function UserManagementPage() {
                     <td className="px-4 py-6 border-b">
                       <div className="flex flex-col items-center">
                         <span className="flex items-center">
-                          <Phone className="h-3 w-3 mr-1" />
+                          <Phone className="h-3 w-3 mr-1 text-green-600" />
                           {userItem.mobileNo}
                         </span>
                         <span className="text-gray-500 text-sm flex items-center">
-                          <Mail className="h-3 w-3 mr-1" />
+                          <Mail className="h-3 w-3 mr-1 text-blue-600" />
                           {userItem.email}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-6 border-b">{userItem.address}</td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center justify-center">
+                        <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                        {userItem.address}
+                      </div>
+                    </td>
                     <td className="px-4 py-6 border-b">
                       <div className="flex justify-center space-x-1">
                         <DropdownMenu>

@@ -16,7 +16,7 @@ export interface CouponManagement {
   startDate: Date | null;
   endDate: Date | null;
   description: string;
-  image: StaticImageData; // Added image field
+  image: StaticImageData; 
 }
 
 export const CouponManagementData: CouponManagement[] = [
@@ -31,7 +31,7 @@ export const CouponManagementData: CouponManagement[] = [
     startDate: new Date('2024-01-01'),
     endDate: new Date('2024-12-31'),
     description: 'Get a discount of $150 on your first purchase with the WELCOME2024 coupon. Valid for the entire year of 2024.',
-    image: offer1 // Added image
+    image: offer1 
   },
   {
     sno: 2,
@@ -47,6 +47,6 @@ export const CouponManagementData: CouponManagement[] = [
     startDate: new Date('2024-06-01'),
     endDate: new Date('2024-06-30'),
     description: 'Save $200 on the Staples subscription with the SUBSAVER coupon. Valid for the month of June 2024.',
-    image: offer2 // Added image
+    image: offer2 
   }
 ];
