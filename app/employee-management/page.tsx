@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft, Phone, Mail } from 'lucide-react';
+import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft, Phone, Mail, MapPin } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const employeeData = [
@@ -19,6 +19,7 @@ export default function EmployeeManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
   const [filterStatus, setFilterStatus] = useState('');
+  const [filterRole, setFilterRole] = useState('');
   const [employees, setEmployees] = useState(employeeData);
   const router = useRouter();
 
@@ -54,8 +55,10 @@ export default function EmployeeManagementPage() {
       employee.mobileNo.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((employee) => {
-      if (filterStatus === '') return true;
-      return employee.status === filterStatus;
+      if (filterStatus && filterRole) return employee.status === filterStatus && employee.roleType === filterRole;
+      if (filterStatus) return employee.status === filterStatus;
+      if (filterRole) return employee.roleType === filterRole;
+      return true;
     });
 
   return (
@@ -86,10 +89,15 @@ export default function EmployeeManagementPage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {filterType === 'By type' ? (
-                    <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
-                      Sort by status
-                    </DropdownMenuItem>
-                  ) : (
+                    <>
+                      <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
+                        Sort by status
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterType('Sort by role')}>
+                        Sort by role
+                      </DropdownMenuItem>
+                    </>
+                  ) : filterType === 'Sort by status' ? (
                     <>
                       <DropdownMenuItem onClick={() => setFilterStatus('Available')}>
                         Available
@@ -98,6 +106,30 @@ export default function EmployeeManagementPage() {
                         Unavailable
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterStatus(''); }}>
+                        Reset
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem onClick={() => setFilterRole('Dog Walking')}>
+                        Dog Walking
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Taxi')}>
+                        Pet Taxi
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Rescue')}>
+                        Pet Rescue
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Salon Visit')}>
+                        Salon Visit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Veterinary Visit')}>
+                        Veterinary Visit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Handling')}>
+                      Pet Handling
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterRole(''); }}>
                         Reset
                       </DropdownMenuItem>
                     </>
@@ -127,7 +159,12 @@ export default function EmployeeManagementPage() {
                     <td className="px-1 py-6 border-b text-center">{employee.firstName} {employee.lastName}</td>
                     <td className="px-4 py-6 border-b text-center">{employee.gender}</td>
                     <td className="px-4 py-6 border-b text-center">{employee.roleType}</td>
-                    <td className="px-4 py-6 border-b text-center">{employee.address}</td>
+                    <td className="px-4 py-6 border-b text-center">
+                      <div className="flex items-center justify-center">
+                        <MapPin className="h-7 w-7 mr-1 text-red-600" />
+                        {employee.address}
+                      </div>
+                    </td>
                     <td className="px-4 py-6 border-b text-center">
                       <div className="flex flex-col items-center">
                         <span className="flex items-center">

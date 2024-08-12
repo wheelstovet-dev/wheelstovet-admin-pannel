@@ -12,7 +12,7 @@ export default function SalonVisitPage() {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = Number(event.target.value);
+    const value = event.target.value ? Number(event.target.value) : '';
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -37,13 +37,13 @@ export default function SalonVisitPage() {
     name: '',
     contactNo: '',
     address: '',
-    price: 0,
+    price: '',
   });
 
   const [isFormVisible, setFormVisible] = useState(false);
 
   const handleSalonInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = event.target.value;
+    const value = event.target.value ? event.target.value : '';
     setNewSalon(prevSalon => ({
       ...prevSalon,
       [field]: value,
@@ -56,14 +56,14 @@ export default function SalonVisitPage() {
 
   const handleCreateSalon = () => {
     const newSerialNo = salons.length + 1;
-    setSalons([...salons, { serialNo: newSerialNo, ...newSalon }]);
-    setNewSalon({ name: '', contactNo: '', address: '', price: 0 });
+    setSalons([...salons, { serialNo: newSerialNo, ...newSalon, price: Number(newSalon.price) }]);
+    setNewSalon({ name: '', contactNo: '', address: '', price: '' });
     setFormVisible(false);
   };
 
   const handleCancelAddSalon = () => {
     setFormVisible(false);
-    setNewSalon({ name: '', contactNo: '', address: '', price: 0 });
+    setNewSalon({ name: '', contactNo: '', address: '', price: '' });
   };
 
   const isFormValid = () => {
@@ -72,7 +72,8 @@ export default function SalonVisitPage() {
       newSalon.contactNo.trim() !== '' &&
       newSalon.contactNo.length === 13 && // Assuming the format is '+91 XXXXXXXXXX'
       newSalon.address.trim() !== '' &&
-      newSalon.price > 0
+      newSalon.price !== '' &&
+      Number(newSalon.price) > 0
     );
   };
 

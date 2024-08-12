@@ -18,21 +18,21 @@ interface UserData {
   address: string;
   associatedEmployee: string;
   status: 'Available' | 'Unavailable';
+  reference: string; // Added this line
 }
 
 const initialUserData: UserData[] = [
-  { serialNo: '123457', parentFirstName: 'Distemper', parentLastName: 'Smith', petName: 'Petname2', city: 'Baroda', mobileNo: '+91 9898098981', email: 'xyz@gmail.com', address: '123 Main St', associatedEmployee: 'Employee1', status: 'Available' },
-  { serialNo: '123458', parentFirstName: 'Calicivirus', parentLastName: 'Johnson', petName: 'Petname3', city: 'Surat', mobileNo: '+91 9898098982', email: 'bac@gmail.com', address: '456 Elm St', associatedEmployee: 'Employee2', status: 'Unavailable' },
-  { serialNo: '123456', parentFirstName: 'Rabies', parentLastName: 'Brown', petName: 'Petname1', city: 'Ahmedabad', mobileNo: '+91 9898098980', email: 'abc@gmail.com', address: '789 Pine St', associatedEmployee: 'Employee3', status: 'Available' },
-  { serialNo: '123459', parentFirstName: 'Bordetella', parentLastName: 'Davis', petName: 'Petname4', city: 'Mumbai', mobileNo: '+91 9898098983', email: 'yzx@gmail.com', address: '101 Maple St', associatedEmployee: 'Employee4', status: 'Unavailable' },
-  { serialNo: '123460', parentFirstName: 'Rabies', parentLastName: 'White', petName: 'Petname5', city: 'Noida', mobileNo: '+91 9898098984', email: 'opa@gmail.com', address: '202 Oak St', associatedEmployee: 'Employee5', status: 'Available' },
-  { serialNo: '123461', parentFirstName: 'Distemper', parentLastName: 'Williams', petName: 'Petname6', city: 'Ludhiana', mobileNo: '+91 9898098985', email: 'abc@gmail.com', address: '303 Birch St', associatedEmployee: 'Employee6', status: 'Unavailable' },
-  { serialNo: '123462', parentFirstName: 'Calicivirus', parentLastName: 'Taylor', petName: 'Petname7', city: 'Ahmedabad', mobileNo: '+91 9898098986', email: 'xuz@gmail.com', address: '404 Cedar St', associatedEmployee: 'Employee7', status: 'Available' },
+  { serialNo: '12', parentFirstName: 'Distemper', parentLastName: 'Smith', petName: 'Petname2', city: 'Baroda', mobileNo: '+91 9898098981', email: 'xyz@gmail.com', address: '123 Main St', associatedEmployee: 'Employee1', status: 'Available', reference: 'Facebook' },
+  { serialNo: '13', parentFirstName: 'Calicivirus', parentLastName: 'Johnson', petName: 'Petname3', city: 'Surat', mobileNo: '+91 9898098982', email: 'bac@gmail.com', address: '456 Elm St', associatedEmployee: 'Employee2', status: 'Unavailable', reference: 'Instagram' },
+  { serialNo: '14', parentFirstName: 'Rabies', parentLastName: 'Brown', petName: 'Petname1', city: 'Ahmedabad', mobileNo: '+91 9898098980', email: 'abc@gmail.com', address: '789 Pine St', associatedEmployee: 'Employee3', status: 'Available', reference: 'Referred by friend' },
+  { serialNo: '15', parentFirstName: 'Bordetella', parentLastName: 'Davis', petName: 'Petname4', city: 'Mumbai', mobileNo: '+91 9898098983', email: 'yzx@gmail.com', address: '101 Maple St', associatedEmployee: 'Employee4', status: 'Unavailable', reference: 'Facebook' },
+  { serialNo: '16', parentFirstName: 'Rabies', parentLastName: 'White', petName: 'Petname5', city: 'Noida', mobileNo: '+91 9898098984', email: 'opa@gmail.com', address: '202 Oak St', associatedEmployee: 'Employee5', status: 'Available', reference: 'Instagram' },
+  { serialNo: '17', parentFirstName: 'Distemper', parentLastName: 'Williams', petName: 'Petname6', city: 'Ludhiana', mobileNo: '+91 9898098985', email: 'abc@gmail.com', address: '303 Birch St', associatedEmployee: 'Employee6', status: 'Unavailable', reference: 'Referred by friend' },
+  { serialNo: '18', parentFirstName: 'Calicivirus', parentLastName: 'Taylor', petName: 'Petname7', city: 'Ahmedabad', mobileNo: '+91 9898098986', email: 'xuz@gmail.com', address: '404 Cedar St', associatedEmployee: 'Employee7', status: 'Available', reference: 'Facebook' },
 ];
 
 export default function UserManagementPage() {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filterType, setFilterType] = useState<string>('By type');
   const [userData, setUserData] = useState<UserData[]>(initialUserData);
   const router = useRouter();
 
@@ -59,7 +59,8 @@ export default function UserManagementPage() {
   const filteredUserData = userData.filter((userItem) =>
     userItem.parentFirstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     userItem.parentLastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    userItem.mobileNo.toLowerCase().includes(searchTerm.toLowerCase())
+    userItem.mobileNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    userItem.reference.toLowerCase().includes(searchTerm.toLowerCase()) // Added this line
   );
 
   return (
@@ -71,23 +72,11 @@ export default function UserManagementPage() {
             <div className="flex space-x-2 w-full max-w-3xl">
               <input
                 type="text"
-                placeholder="Search by parent name or phone number"
-                value={searchTerm}
+                placeholder="Search by parent name, phone number, or reference"
+                value={searchTerm} // Updated this line
                 onChange={handleSearchChange}
                 className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
               />
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
-                  {filterType} <ChevronDown className="ml-1 h-4 w-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {['Type 1', 'Type 2', 'Type 3'].map((type) => (
-                    <DropdownMenuItem key={type} onClick={() => setFilterType(type)}>
-                      {type}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
           <div className="overflow-x-auto rounded-xl">
@@ -99,6 +88,7 @@ export default function UserManagementPage() {
                   <th className="px-4 py-2 border-b border-r-2">Pet Name</th>
                   <th className="px-14 py-2 border-b border-r-2">Contact</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2">Reference</th> {/* Added this line */}
                   <th className="px-4 py-2 border-b">Action</th>
                 </tr>
               </thead>
@@ -126,6 +116,7 @@ export default function UserManagementPage() {
                         {userItem.address}
                       </div>
                     </td>
+                    <td className="px-4 py-6 border-b">{userItem.reference}</td> {/* Added this line */}
                     <td className="px-4 py-6 border-b">
                       <div className="flex justify-center space-x-1">
                         <DropdownMenu>

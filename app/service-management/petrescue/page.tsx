@@ -12,7 +12,7 @@ export default function PetRescuePage() {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = Number(event.target.value);
+    const value = event.target.value === '' ? NaN : Number(event.target.value); // Changed this line
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -42,7 +42,7 @@ export default function PetRescuePage() {
                   <label className="block font-bold text-gray-700 w-full">Fixed one time charges</label>
                   <input
                     type="number"
-                    value={charges.rescueCharges}
+                    value={isNaN(charges.rescueCharges) ? '' : charges.rescueCharges}
                     onChange={(e) => handleInputChange(e, 'rescueCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -52,7 +52,7 @@ export default function PetRescuePage() {
                   <label className="block font-bold text-gray-700 w-full">Transportation distance included</label>
                   <input
                     type="number"
-                    value={charges.emergencyCharges}
+                    value={isNaN(charges.emergencyCharges) ? '' : charges.emergencyCharges}
                     onChange={(e) => handleInputChange(e, 'emergencyCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -62,7 +62,7 @@ export default function PetRescuePage() {
                   <label className="block font-bold text-gray-700 w-full">Additional transportation distance charges per 4 KM</label>
                   <input
                     type="number"
-                    value={charges.transportationCharges}
+                    value={isNaN(charges.transportationCharges) ? '' : charges.transportationCharges}
                     onChange={(e) => handleInputChange(e, 'transportationCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -72,7 +72,7 @@ export default function PetRescuePage() {
                   <label className="block font-bold text-gray-700 w-full">Pet handling charges included</label>
                   <input
                     type="number"
-                    value={charges.additionalCharges}
+                    value={isNaN(charges.additionalCharges) ? '' : charges.additionalCharges}
                     onChange={(e) => handleInputChange(e, 'additionalCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />

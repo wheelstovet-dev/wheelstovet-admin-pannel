@@ -9,10 +9,13 @@ export default function PetHandlingPage() {
     petHandlerIncludedCharges: 300,
     petIncludedCharges: 300,
     additionalPetHandlerCharges: 300,
+    petHandling24HoursCharges: 300,  // Added this line
+    petHandling12HoursCharges: 300,  // Added this line
+    petHandling8HoursCharges: 300,   // Added this line
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = Number(event.target.value);
+    const value = event.target.value === '' ? NaN : Number(event.target.value); 
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -42,7 +45,7 @@ export default function PetHandlingPage() {
                   <label className="block font-bold text-gray-700 w-full">One time charge</label>
                   <input
                     type="number"
-                    value={charges.oneTimeCharges}
+                    value={isNaN(charges.oneTimeCharges) ? '' : charges.oneTimeCharges}
                     onChange={(e) => handleInputChange(e, 'oneTimeCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -52,7 +55,7 @@ export default function PetHandlingPage() {
                   <label className="block font-bold text-gray-700 w-full">Pet included within initial payment</label>
                   <input
                     type="number"
-                    value={charges.petHandlerIncludedCharges}
+                    value={isNaN(charges.petHandlerIncludedCharges) ? '' : charges.petHandlerIncludedCharges}
                     onChange={(e) => handleInputChange(e, 'petHandlerIncludedCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -62,28 +65,48 @@ export default function PetHandlingPage() {
                   <label className="block font-bold text-gray-700 w-full">Distance included in one time charge</label>
                   <input
                     type="number"
-                    value={charges.petIncludedCharges}
+                    value={isNaN(charges.petIncludedCharges) ? '' : charges.petIncludedCharges}
                     onChange={(e) => handleInputChange(e, 'petIncludedCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
                   <span className="ml-2 font-bold">KM</span>
                 </div>
                 <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Additional cost per pet </label>
+                  <label className="block font-bold text-gray-700 w-full">Additional cost per pet</label>
                   <input
                     type="number"
-                    value={charges.additionalPetHandlerCharges}
+                    value={isNaN(charges.additionalPetHandlerCharges) ? '' : charges.additionalPetHandlerCharges}
                     onChange={(e) => handleInputChange(e, 'additionalPetHandlerCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
                   <span className="ml-2 font-bold">INR</span>
                 </div>
                 <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Additional distance charges per kilometre</label>
+                  <label className="block font-bold text-gray-700 w-full">24 hours pet handling cost</label>
                   <input
                     type="number"
-                    value={charges.additionalPetHandlerCharges}
-                    onChange={(e) => handleInputChange(e, 'additionalPetHandlerCharges')}
+                    value={isNaN(charges.petHandling24HoursCharges) ? '' : charges.petHandling24HoursCharges}
+                    onChange={(e) => handleInputChange(e, 'petHandling24HoursCharges')}
+                    className="mt-1 block w-20 border rounded p-2"
+                  />
+                  <span className="ml-2 font-bold">INR</span>
+                </div>
+                <div className="flex items-center">
+                  <label className="block font-bold text-gray-700 w-full">12 hours pet handling cost</label>
+                  <input
+                    type="number"
+                    value={isNaN(charges.petHandling12HoursCharges) ? '' : charges.petHandling12HoursCharges}
+                    onChange={(e) => handleInputChange(e, 'petHandling12HoursCharges')}
+                    className="mt-1 block w-20 border rounded p-2"
+                  />
+                  <span className="ml-2 font-bold">INR</span>
+                </div>
+                <div className="flex items-center">
+                  <label className="block font-bold text-gray-700 w-full">8 hours pet handling cost</label>
+                  <input
+                    type="number"
+                    value={isNaN(charges.petHandling8HoursCharges) ? '' : charges.petHandling8HoursCharges}
+                    onChange={(e) => handleInputChange(e, 'petHandling8HoursCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
                   <span className="ml-2 font-bold">INR</span>
