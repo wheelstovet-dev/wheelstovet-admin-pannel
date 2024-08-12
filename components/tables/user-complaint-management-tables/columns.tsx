@@ -47,9 +47,9 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
     cell: ({ row }) => (
       <div 
         style={{ borderRadius: "20px" }}
-        className={`flex items-center px-2 py-1 ${
-          row.original.status === 'Open' ? 'bg-green-200' :
-          row.original.status === 'Closed' ? 'bg-yellow-200' :
+        className={`flex items-center justify-center px-2 py-1 ${
+          row.original.status === 'Open' ? 'bg-yellow-400' :
+          row.original.status === 'Closed' ? 'bg-green-300' :
           'bg-red-200'
         }`}
       >
@@ -57,6 +57,7 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
       </div>
     )
   },
+
   // {
   //   accessorKey: 'resolution',
   //   header: 'Resolution'

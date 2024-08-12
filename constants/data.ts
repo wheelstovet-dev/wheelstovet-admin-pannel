@@ -172,8 +172,8 @@ export const navItems: NavItem[] = [
         label: 'invoice-summary'
       },
       {
-        title: 'Sales Report',
-        href: '/report-management/sales-report',
+        title: 'Service Report',
+        href: '/report-management/service-report',
         icon: 'salesReport',
         label: 'sales-report'
       },

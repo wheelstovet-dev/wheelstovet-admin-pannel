@@ -59,7 +59,7 @@ export const columns: ColumnDef<CouponManagement>[] = [
     accessorKey: 'subscriptionType',
     header: 'Subscription Type',
     cell: ({ row }) => (
-      <div className="text-center">
+      <div className="text-start">
         {row.original.subscriptionType ? row.original.subscriptionType.name : 'N/A'}
       </div>
     ),
@@ -92,7 +92,12 @@ export const columns: ColumnDef<CouponManagement>[] = [
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
-    size: 200, // Increased column width
+    cell: ({ row }) => (
+      <div className="text-center">
+        <CellAction data={row.original} />
+      </div>
+    ),
+    size: 200, // Set the width for the column
   }
+  
 ];

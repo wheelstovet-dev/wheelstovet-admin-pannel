@@ -41,7 +41,7 @@ export const columns: ColumnDef<ComplaintManagement>[] = [
         style={{ borderRadius: "20px" }}
         className={`flex items-center px-2 py-1 ${
           row.original.status === 'Active' ? 'bg-green-400' :
-          row.original.status === 'Inactive' ? 'bg-red-400' :
+          row.original.status === 'Inactive' ? 'bg-yellow-400' :
           'bg-red-400'
         }`}
       >

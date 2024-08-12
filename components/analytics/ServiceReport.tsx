@@ -6,13 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Filter, FileText, Printer } from 'lucide-react';
 
-export const SalesReport: React.FC = () => {
+export const ServiceReport: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'item' | 'customer'>('item');
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title="Sales Report" description="Detailed sales report" />
+        <Heading title="Service Report" description="Detailed service report" />
         <div className="flex space-x-2">
           <Button>
             <Filter className="mr-2" />

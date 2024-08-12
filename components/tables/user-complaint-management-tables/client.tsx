@@ -33,8 +33,10 @@ const ComplaintManagementUserPage: React.FC = () => {
     });
     setData(sortedData);
   };
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const filters = [
     {
       label: 'Status',
@@ -42,9 +44,15 @@ const ComplaintManagementUserPage: React.FC = () => {
     },
     {
       label: 'Complaint By',
-      subOptions: ['User', 'Employee', 'User', 'Employee'],
+      subOptions: ['User', 'Employee'],
     },
   ];
+
+  const handleStatusFilterChange = (status: string) => {
+    setStatusFilter(status);
+    const filteredData = initialData.filter(item => item.status === status);
+    setData(filteredData);
+  };
 
   return (
     <>
@@ -61,37 +69,46 @@ const ComplaintManagementUserPage: React.FC = () => {
         </Button> */}
       </div>
       <div className="flex justify-between items-center mb-1">
-            <h1 className="text-2xl font-bold">Complaints</h1>
-            <div className="flex space-x-2 w-full max-w-3xl">
-              <input
-                type="text"
-                placeholder="Search by name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
-              />
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
-                  {filterType} <ChevronDown className="ml-1 h-4 w-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {['Type 1', 'Type 2', 'Type 3'].map((type) => (
-                    <DropdownMenuItem key={type} onClick={() => setFilterType(type)}>
-                      {type}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+        <h1 className="text-2xl font-bold">Complaints</h1>
+        <div className="flex space-x-2 w-full max-w-3xl">
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
+              {filterType} <ChevronDown className="ml-1 h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {filters.map((filter) => (
+                <div key={filter.label}>
+                  <DropdownMenuItem onClick={() => setFilterType(filter.label)}>
+                    {filter.label}
+                  </DropdownMenuItem>
+                  {filterType === 'Status' &&
+                    filter.subOptions.map((subOption) => (
+                      <DropdownMenuItem key={subOption} onClick={() => handleStatusFilterChange(subOption)}>
+                        {subOption}
+                      </DropdownMenuItem>
+                    ))}
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <DataTable
         searchKeys={["name"]}
         columns={columns}
         data={data}
-        onSearch={handleSearch} 
+        onSearch={handleSearch}
         filters={filters}
       />
     </>
   );
 };
+
 export default ComplaintManagementUserPage;

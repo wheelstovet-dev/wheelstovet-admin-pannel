@@ -9,10 +9,11 @@ export default function PetTaxiPage() {
     petHandlerIncludedCharges: 300,
     petIncludedCharges: 300,
     additionalPetHandlerCharges: 300,
+    additionalChargePerOtherPet: 300, // Added this line
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = Number(event.target.value);
+    const value = event.target.value === '' ? NaN : Number(event.target.value);
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -42,7 +43,7 @@ export default function PetTaxiPage() {
                   <label className="block font-bold text-gray-700 w-full">One time charges</label>
                   <input
                     type="number"
-                    value={charges.oneTimeCharges}
+                    value={isNaN(charges.oneTimeCharges) ? '' : charges.oneTimeCharges}
                     onChange={(e) => handleInputChange(e, 'oneTimeCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -52,7 +53,7 @@ export default function PetTaxiPage() {
                   <label className="block font-bold text-gray-700 w-full">Pet handler included within one time charges</label>
                   <input
                     type="number"
-                    value={charges.petHandlerIncludedCharges}
+                    value={isNaN(charges.petHandlerIncludedCharges) ? '' : charges.petHandlerIncludedCharges}
                     onChange={(e) => handleInputChange(e, 'petHandlerIncludedCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -62,7 +63,7 @@ export default function PetTaxiPage() {
                   <label className="block font-bold text-gray-700 w-full">Pet included within one time charges</label>
                   <input
                     type="number"
-                    value={charges.petIncludedCharges}
+                    value={isNaN(charges.petIncludedCharges) ? '' : charges.petIncludedCharges}
                     onChange={(e) => handleInputChange(e, 'petIncludedCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -72,8 +73,18 @@ export default function PetTaxiPage() {
                   <label className="block font-bold text-gray-700 w-full">Additional charges per pet handler</label>
                   <input
                     type="number"
-                    value={charges.additionalPetHandlerCharges}
+                    value={isNaN(charges.additionalPetHandlerCharges) ? '' : charges.additionalPetHandlerCharges}
                     onChange={(e) => handleInputChange(e, 'additionalPetHandlerCharges')}
+                    className="mt-1 block w-20 border rounded p-2"
+                  />
+                  <span className="ml-2 font-bold">INR</span>
+                </div>
+                <div className="flex items-center">
+                  <label className="block font-bold text-gray-700 w-full">Additional charge per other pet</label>
+                  <input
+                    type="number"
+                    value={isNaN(charges.additionalChargePerOtherPet) ? '' : charges.additionalChargePerOtherPet}
+                    onChange={(e) => handleInputChange(e, 'additionalChargePerOtherPet')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
                   <span className="ml-2 font-bold">INR</span>

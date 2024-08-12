@@ -14,7 +14,7 @@ export default function VeterinaryVisitPage() {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = Number(event.target.value);
+    const value = event.target.value === '' ? NaN : Number(event.target.value);
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -32,14 +32,13 @@ export default function VeterinaryVisitPage() {
   };
 
   const [clinics, setClinics] = useState([
-    { serialNo: 1, name: 'Clinic A', contactNo: '+91 9876543210', address: '456 Elm St', price: 700 },
+    { serialNo: 1, name: 'Clinic A', contactNo: '+91 9876543210', address: '456 Elm St'},
   ]);
 
   const [newClinic, setNewClinic] = useState({
     name: '',
     contactNo: '',
     address: '',
-    price: 0,
   });
 
   const [isFormVisible, setFormVisible] = useState(false);
@@ -59,13 +58,13 @@ export default function VeterinaryVisitPage() {
   const handleCreateClinic = () => {
     const newSerialNo = clinics.length + 1;
     setClinics([...clinics, { serialNo: newSerialNo, ...newClinic }]);
-    setNewClinic({ name: '', contactNo: '', address: '', price: 0 });
+    setNewClinic({ name: '', contactNo: '', address: '' });
     setFormVisible(false);
   };
 
   const handleCancelAddClinic = () => {
     setFormVisible(false);
-    setNewClinic({ name: '', contactNo: '', address: '', price: 0 });
+    setNewClinic({ name: '', contactNo: '', address: '' });
   };
 
   const isFormValid = () => {
@@ -73,8 +72,7 @@ export default function VeterinaryVisitPage() {
       newClinic.name.trim() !== '' &&
       newClinic.contactNo.trim() !== '' &&
       newClinic.contactNo.length === 13 && // Assuming the format is '+91 XXXXXXXXXX'
-      newClinic.address.trim() !== '' &&
-      newClinic.price > 0
+      newClinic.address.trim() !== ''
     );
   };
 
@@ -91,7 +89,7 @@ export default function VeterinaryVisitPage() {
                   <label className="block font-bold text-gray-700 w-full">Fixed charges</label>
                   <input
                     type="number"
-                    value={charges.fixedCharges}
+                    value={isNaN(charges.fixedCharges) ? '' : charges.fixedCharges}
                     onChange={(e) => handleInputChange(e, 'fixedCharges')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -101,7 +99,7 @@ export default function VeterinaryVisitPage() {
                   <label className="block font-bold text-gray-700 w-full">Pet handler cost</label>
                   <input
                     type="number"
-                    value={charges.petHandlerCost}
+                    value={isNaN(charges.petHandlerCost) ? '' : charges.petHandlerCost}
                     onChange={(e) => handleInputChange(e, 'petHandlerCost')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -111,7 +109,7 @@ export default function VeterinaryVisitPage() {
                   <label className="block font-bold text-gray-700 w-full">Additional time cost during vet visit per hour</label>
                   <input
                     type="number"
-                    value={charges.additionalTimeCost}
+                    value={isNaN(charges.additionalTimeCost) ? '' : charges.additionalTimeCost}
                     onChange={(e) => handleInputChange(e, 'additionalTimeCost')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -121,7 +119,7 @@ export default function VeterinaryVisitPage() {
                   <label className="block font-bold text-gray-700 w-full">Pet handler included</label>
                   <input
                     type="number"
-                    value={charges.petHandlerIncluded}
+                    value={isNaN(charges.petHandlerIncluded) ? '' : charges.petHandlerIncluded}
                     onChange={(e) => handleInputChange(e, 'petHandlerIncluded')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -131,7 +129,7 @@ export default function VeterinaryVisitPage() {
                   <label className="block font-bold text-gray-700 w-full">Default vet time included</label>
                   <input
                     type="number"
-                    value={charges.defaultTimeIncluded}
+                    value={isNaN(charges.defaultTimeIncluded) ? '' : charges.defaultTimeIncluded}
                     onChange={(e) => handleInputChange(e, 'defaultTimeIncluded')}
                     className="mt-1 block w-20 border rounded p-2"
                   />
@@ -172,7 +170,6 @@ export default function VeterinaryVisitPage() {
                   <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
-                  <th className="px-4 py-2 border-b">Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -192,7 +189,6 @@ export default function VeterinaryVisitPage() {
                         {clinic.address}
                       </div>
                     </td>
-                    <td className="px-4 py-6 border-b">{clinic.price} INR</td>
                   </tr>
                 ))}
               </tbody>
@@ -237,16 +233,6 @@ export default function VeterinaryVisitPage() {
                         required
                       />
                     </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Price <span className="text-red-500">*</span></label>
-                    <input
-                      type="number"
-                      value={newClinic.price}
-                      onChange={(e) => handleClinicInputChange(e, 'price')}
-                      className="mt-1 block w-full border rounded p-2"
-                      required
-                    />
                   </div>
                 </div>
                 <div className="flex justify-start mt-4">
