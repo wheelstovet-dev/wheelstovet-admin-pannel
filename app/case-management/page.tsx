@@ -1,22 +1,28 @@
 'use client';
 import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, MoreHorizontal, Eye, Trash, Edit3 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown, MoreHorizontal, Eye, Trash, Edit3, ChevronRight } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import { useRouter } from 'next/navigation';
 
-const breadcrumbItems = [{ title: 'Cases', link: '/dashboard/cases' }];
-
 const casesData = [
-  { caseId: '12', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking' },
-  { caseId: '13', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Salon' },
-  { caseId: '14', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon' },
-  { caseId: '15', petName: 'Bordetella', startDate: '11 Dec 2024', endDate: '11 Dec 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Veterinary' },
-  { caseId: '16', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking' },
-  { caseId: '17', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Pet Taxi' },
-  { caseId: '18', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon' },
+  { caseId: '12', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', time: '10:00 AM' },
+  { caseId: '13', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Salon', time: '11:00 AM' },
+  { caseId: '14', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', time: '02:00 PM' },
+  { caseId: '15', petName: 'Bordetella', startDate: '11 Dec 2024', endDate: '11 Dec 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Veterinary', time: '03:00 PM' },
+  { caseId: '16', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', time: '10:00 AM' },
+  { caseId: '17', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Pet Taxi', time: '11:00 AM' },
+  { caseId: '18', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', time: '02:00 PM' },
 ];
 
 export default function CaseManagementPage() {
@@ -69,12 +75,11 @@ export default function CaseManagementPage() {
                   {filterType} <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {filterType === 'By type' ? (
-                    <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
-                      Sort by status
-                    </DropdownMenuItem>
-                  ) : (
-                    <>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="flex items-center text-gray-600 px-4 py-2">
+                      Sort by status 
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
                       <DropdownMenuItem onClick={() => setSortStatus('Dog Walking')}>
                         Dog Walking
                       </DropdownMenuItem>
@@ -93,8 +98,8 @@ export default function CaseManagementPage() {
                       <DropdownMenuItem onClick={() => { setFilterType('By type'); setSortStatus(''); }}>
                         Reset
                       </DropdownMenuItem>
-                    </>
-                  )}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -109,6 +114,7 @@ export default function CaseManagementPage() {
                   <th className="px-4 py-2 border-r-2 border-b">End Date</th>
                   <th className="px-4 py-2 border-r-2 border-b">Assign Employee</th>
                   <th className="px-4 py-2 border-r-2 border-b">Current Status</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Time</th>
                   <th className="px-4 py-2 border-r-2 border-b">Action</th>
                 </tr>
               </thead>
@@ -137,6 +143,7 @@ export default function CaseManagementPage() {
                         {caseItem.currentStatus}
                       </span>
                     </td>
+                    <td className="px-4 py-6 border-b">{caseItem.time}</td>
                     <td className="px-4 py-6 border-b">
                       <DropdownMenu>
                         <DropdownMenuTrigger className="text-gray-600 hover:text-gray-800">
@@ -149,7 +156,7 @@ export default function CaseManagementPage() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleEdit(index)}>
                             <Edit3 className="h-4 w-4 mr-2" />
-                            Update
+                            Assign Employee
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleDelete(index)}>
                             <Trash className="h-4 w-4 mr-2 text-red-500" />
@@ -164,7 +171,6 @@ export default function CaseManagementPage() {
             </table>
           </div>
         </div>
-        
       </ScrollArea>
     </MainLayout>
   );

@@ -175,7 +175,7 @@ export default function VeterinaryVisitPage() {
               <tbody>
                 {clinics.map((clinic, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 border-b">{clinic.serialNo}</td>
+                    <td className="px-4 py-6 border-b text-center">{clinic.serialNo}</td>
                     <td className="px-4 py-6 border-b">{clinic.name}</td>
                     <td className="px-4 py-6 border-b">
                       <div className="flex items-center">

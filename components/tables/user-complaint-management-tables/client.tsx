@@ -9,7 +9,15 @@ import { ChevronDown, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { ComplaintManagementUser, ComplaintManagementUserData } from '@/constants/complaint-management-data-user';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu';
 
 const ComplaintManagementUserPage: React.FC = () => {
   const router = useRouter();
@@ -37,6 +45,8 @@ const ComplaintManagementUserPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [complaintByFilter, setComplaintByFilter] = useState<string | null>(null);
+
   const filters = [
     {
       label: 'Status',
@@ -51,6 +61,12 @@ const ComplaintManagementUserPage: React.FC = () => {
   const handleStatusFilterChange = (status: string) => {
     setStatusFilter(status);
     const filteredData = initialData.filter(item => item.status === status);
+    setData(filteredData);
+  };
+
+  const handleComplaintByFilterChange = (complaintBy: string) => {
+    setComplaintByFilter(complaintBy);
+    const filteredData = initialData.filter(item => item.complaintBy === complaintBy);
     setData(filteredData);
   };
 
@@ -84,17 +100,27 @@ const ComplaintManagementUserPage: React.FC = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {filters.map((filter) => (
-                <div key={filter.label}>
-                  <DropdownMenuItem onClick={() => setFilterType(filter.label)}>
+                <DropdownMenuSub key={filter.label}>
+                  <DropdownMenuSubTrigger className="flex items-center justify-between">
                     {filter.label}
-                  </DropdownMenuItem>
-                  {filterType === 'Status' &&
-                    filter.subOptions.map((subOption) => (
-                      <DropdownMenuItem key={subOption} onClick={() => handleStatusFilterChange(subOption)}>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {filter.subOptions.map((subOption) => (
+                      <DropdownMenuItem
+                        key={subOption}
+                        onClick={() => {
+                          if (filter.label === 'Status') {
+                            handleStatusFilterChange(subOption);
+                          } else if (filter.label === 'Complaint By') {
+                            handleComplaintByFilterChange(subOption);
+                          }
+                        }}
+                      >
                         {subOption}
                       </DropdownMenuItem>
                     ))}
-                </div>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>

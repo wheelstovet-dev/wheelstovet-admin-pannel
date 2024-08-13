@@ -12,7 +12,7 @@ export default function SalonVisitPage() {
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = event.target.value ? Number(event.target.value) : '';
+    const value = event.target.value ? Number(event.target.value) : 0;
     setCharges(prevCharges => ({
       ...prevCharges,
       [field]: value,
@@ -29,24 +29,33 @@ export default function SalonVisitPage() {
     // Add your cancel logic here
   };
 
+  const categoryPrices: { [key: string]: number } = {
+    'Dog Grooming': 200,
+    'Cat Grooming': 250,
+    'Dog Walking': 150,
+    'Dog Cleaning': 300,
+  };
+
   const [salons, setSalons] = useState([
-    { serialNo: 1, name: 'Salon A', contactNo: '+91 1234567890', address: '123 Main St', price: 500 },
+    { serialNo: 1, name: 'Salon A', contactNo: '+91 1234567890', address: '123 Main St', category: 'Dog Grooming', price: 200 },
   ]);
 
   const [newSalon, setNewSalon] = useState({
     name: '',
     contactNo: '',
     address: '',
-    price: '',
+    category: '',
+    price: 0,
   });
 
   const [isFormVisible, setFormVisible] = useState(false);
 
-  const handleSalonInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = event.target.value ? event.target.value : '';
+  const handleSalonInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: string) => {
+    const value = event.target.value;
     setNewSalon(prevSalon => ({
       ...prevSalon,
       [field]: value,
+      price: field === 'category' ? categoryPrices[value] || 0 : prevSalon.price,
     }));
   };
 
@@ -56,14 +65,14 @@ export default function SalonVisitPage() {
 
   const handleCreateSalon = () => {
     const newSerialNo = salons.length + 1;
-    setSalons([...salons, { serialNo: newSerialNo, ...newSalon, price: Number(newSalon.price) }]);
-    setNewSalon({ name: '', contactNo: '', address: '', price: '' });
+    setSalons([...salons, { serialNo: newSerialNo, ...newSalon }]);
+    setNewSalon({ name: '', contactNo: '', address: '', category: '', price: 0 });
     setFormVisible(false);
   };
 
   const handleCancelAddSalon = () => {
     setFormVisible(false);
-    setNewSalon({ name: '', contactNo: '', address: '', price: '' });
+    setNewSalon({ name: '', contactNo: '', address: '', category: '', price: 0 });
   };
 
   const isFormValid = () => {
@@ -72,8 +81,7 @@ export default function SalonVisitPage() {
       newSalon.contactNo.trim() !== '' &&
       newSalon.contactNo.length === 13 && // Assuming the format is '+91 XXXXXXXXXX'
       newSalon.address.trim() !== '' &&
-      newSalon.price !== '' &&
-      Number(newSalon.price) > 0
+      newSalon.category !== ''
     );
   };
 
@@ -151,13 +159,14 @@ export default function SalonVisitPage() {
                   <th className="px-4 py-2 border-b border-r-2">Salon Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2">Category</th>
                   <th className="px-4 py-2 border-b">Price</th>
                 </tr>
               </thead>
               <tbody>
                 {salons.map((salon, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 border-b">{salon.serialNo}</td>
+                    <td className="px-4 py-6 border-b text-center">{salon.serialNo}</td>
                     <td className="px-4 py-6 border-b">{salon.name}</td>
                     <td className="px-4 py-6 border-b">
                       <div className="flex items-center">
@@ -171,6 +180,7 @@ export default function SalonVisitPage() {
                         {salon.address}
                       </div>
                     </td>
+                    <td className="px-4 py-6 border-b">{salon.category}</td>
                     <td className="px-4 py-6 border-b">{salon.price} INR</td>
                   </tr>
                 ))}
@@ -218,13 +228,28 @@ export default function SalonVisitPage() {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Price <span className="text-red-500">*</span></label>
+                    <label className="block font-bold text-gray-700">Category <span className="text-red-500">*</span></label>
+                    <select
+                      value={newSalon.category}
+                      onChange={(e) => handleSalonInputChange(e, 'category')}
+                      className="mt-1 block w-full border rounded p-2"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {Object.keys(categoryPrices).map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block font-bold text-gray-700">Price</label>
                     <input
                       type="number"
                       value={newSalon.price}
-                      onChange={(e) => handleSalonInputChange(e, 'price')}
+                      readOnly
                       className="mt-1 block w-full border rounded p-2"
-                      required
                     />
                   </div>
                 </div>
