@@ -27,8 +27,10 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
   },
   {
     accessorKey: 'sno',
-    header: 'S.no'
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
   },
+
   {
     accessorKey: 'name',
     header: 'Name'

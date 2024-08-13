@@ -1,7 +1,8 @@
 'use client';
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { Pencil, Trash, Plus } from 'lucide-react';
 
-const roles = [
+const initialRoles = [
   'Dog Walking',
   'Salon Visit',
   'Veterinary Visit',
@@ -27,6 +28,10 @@ export default function EmployeeForm() {
     state: '',
   });
 
+  const [roles, setRoles] = useState(initialRoles);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [newRole, setNewRole] = useState('');
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -39,6 +44,27 @@ export default function EmployeeForm() {
     e.preventDefault();
     // Add your form submission logic here
     console.log('Form submitted:', formData);
+  };
+
+  const handleAddRole = () => {
+    if (newRole && !roles.includes(newRole)) {
+      setRoles((prevRoles) => [...prevRoles, newRole]);
+      setNewRole('');
+    }
+  };
+
+  const handleEditRole = (index: number) => {
+    const editedRole = prompt('Edit role:', roles[index]);
+    if (editedRole) {
+      const updatedRoles = [...roles];
+      updatedRoles[index] = editedRole;
+      setRoles(updatedRoles);
+    }
+  };
+
+  const handleDeleteRole = (index: number) => {
+    const updatedRoles = roles.filter((_, i) => i !== index);
+    setRoles(updatedRoles);
   };
 
   return (
@@ -111,18 +137,6 @@ export default function EmployeeForm() {
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
           </div>
-          {/* <div className="flex flex-col space-y-2">
-            <label htmlFor="dateOfBirth" className="font-medium">Date of Birth</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              id="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div> */}
           <div className="flex flex-col space-y-2">
             <label htmlFor="aadharNo" className="font-medium">Aadhar Card No</label>
             <input
@@ -192,14 +206,25 @@ export default function EmployeeForm() {
             />
           </div>
           <div className="flex flex-col space-y-2">
-            <label htmlFor="role" className="font-medium">Role</label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="role" className="font-medium flex items-center">
+                Role
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(true)}
+                  className="ml-2 p-1 bg-transparent border-none cursor-pointer"
+                >
+                  <Pencil className="w-4 h-4 text-red-500" />
+                </button>
+              </label>
+            </div>
             <select
               name="role"
               id="role"
               value={formData.role}
               onChange={handleChange}
               required
-              className="border border-gray-300 rounded-lg px-4 py-2"
+              className="border border-gray-300 rounded-lg px-4 py-2 w-full"
             >
               <option value="">Select Role</option>
               {roles.map((role, index) => (
@@ -217,6 +242,53 @@ export default function EmployeeForm() {
           </button>
         </div>
       </form>
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Manage Roles</h2>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="text-gray-500 hover:text-gray-800"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-gray-500 mb-4">Add or remove roles.</p>
+            <div className="flex mb-4">
+              <input
+                type="text"
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+                placeholder="New Role"
+                className="border border-gray-300 rounded-l-lg px-4 py-2 flex-grow"
+              />
+              <button
+                type="button"
+                onClick={handleAddRole}
+                className="bg-green-500 text-white px-4 py-2 rounded-r-lg"
+              >
+                Add
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {roles.map((role, index) => (
+                <li key={index} className="flex justify-between items-center">
+                  <span>{role}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteRole(index)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

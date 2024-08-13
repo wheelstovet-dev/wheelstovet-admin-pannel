@@ -60,7 +60,7 @@ export const CouponsManagementClient: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
           />
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
               {filterType} <ChevronDown className="ml-1 h-4 w-4" />
             </DropdownMenuTrigger>
@@ -71,7 +71,7 @@ export const CouponsManagementClient: React.FC = () => {
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
       <DataTable

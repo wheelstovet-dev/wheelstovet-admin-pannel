@@ -4,7 +4,15 @@ import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, Eye, Trash, Edit3, MoreHorizontal, ToggleLeft, Phone, Mail, MapPin } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
+} from '@/components/ui/dropdown-menu';
 
 const employeeData = [
   { serialNo: '001', firstName: 'John', lastName: 'Doe', gender: 'Male', roleType: 'Dog Walking', address: '123 Main St, City, Country', mobileNo: '+91 9898098980', emailId: 'john.doe@example.com', status: 'Available' },
@@ -88,52 +96,26 @@ export default function EmployeeManagementPage() {
                   {filterType} <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {filterType === 'By type' ? (
-                    <>
-                      <DropdownMenuItem onClick={() => setFilterType('Sort by status')}>
-                        Sort by status
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterType('Sort by role')}>
-                        Sort by role
-                      </DropdownMenuItem>
-                    </>
-                  ) : filterType === 'Sort by status' ? (
-                    <>
-                      <DropdownMenuItem onClick={() => setFilterStatus('Available')}>
-                        Available
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterStatus('Unavailable')}>
-                        Unavailable
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterStatus(''); }}>
-                        Reset
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <>
-                      <DropdownMenuItem onClick={() => setFilterRole('Dog Walking')}>
-                        Dog Walking
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRole('Pet Taxi')}>
-                        Pet Taxi
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRole('Pet Rescue')}>
-                        Pet Rescue
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRole('Salon Visit')}>
-                        Salon Visit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRole('Veterinary Visit')}>
-                        Veterinary Visit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRole('Pet Handling')}>
-                      Pet Handling
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterRole(''); }}>
-                        Reset
-                      </DropdownMenuItem>
-                    </>
-                  )}
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Sort by status</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="w-48">
+                      <DropdownMenuItem onClick={() => setFilterStatus('Available')}>Available</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterStatus('Unavailable')}>Unavailable</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterStatus(''); }}>Reset</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Sort by role</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="w-48">
+                      <DropdownMenuItem onClick={() => setFilterRole('Dog Walking')}>Dog Walking</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Taxi')}>Pet Taxi</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Rescue')}>Pet Rescue</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Salon Visit')}>Salon Visit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Veterinary Visit')}>Veterinary Visit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setFilterRole('Pet Handling')}>Pet Handling</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setFilterType('By type'); setFilterRole(''); }}>Reset</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
