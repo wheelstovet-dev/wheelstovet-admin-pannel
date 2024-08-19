@@ -25,25 +25,26 @@ interface CouponFormProps {
 const couponFormSchema = z.object({
   code: z.string().min(1, 'Coupon Code is required'),
   discountPrice: z.number().positive('Discount Price must be greater than zero'),
-  couponType: z.enum(['global', 'subscription']),
-  visibility: z.enum(['Admin', 'Public']),
-  subscriptionType: z.object({
+  couponType: z.enum(['global', 'subscription','freeDelivery']),
+  discountType: z.enum(['price', 'percentage']),
+  visibility: z.enum(['Public','Private']),
+  subscriptionType: z.array(z.object({
     id: z.string(),
     name: z.string()
-  }).optional(),
-  subscriptionPrice: z.number().optional(),
-  netPrice: z.number().optional(),
+  })).optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().optional(),
   image: z.any(),
+  times: z.string(),
 });
 
 type CouponFormSchema = z.infer<typeof couponFormSchema>;
 
 const subscriptionTypes = [
-  { id: '1', name: 'Staples', subscriptionPrice: 1000 },
-  { id: '2', name: 'Monthly Mini Veggies', subscriptionPrice: 1200 }
+  { id: '1', name: 'Staples' },
+  { id: '2', name: 'Monthly Mini Veggies' },
+{ id: '8', name: 'Annual Mini Veggies' },
 ];
 
 export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
@@ -62,14 +63,14 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
     defaultValues: {
       code: initialData?.code || '',
       discountPrice: initialData?.discountPrice || 0,
-      visibility: initialData?.visibility || 'Admin',
+      visibility: initialData?.visibility || 'Public',
       couponType: initialData?.couponType || 'global',
-      subscriptionType: initialData?.subscriptionType || undefined,
-      subscriptionPrice: initialData?.subscriptionPrice || 0,
-      netPrice: initialData?.netPrice || 0,
+      discountType: initialData?.discountType || 'price',
+      subscriptionType: initialData?.subscriptionType || [],
       startDate: initialData?.startDate ? new Date(initialData.startDate) : undefined,
       endDate: initialData?.endDate ? new Date(initialData.endDate) : undefined,
       description: initialData?.description || '',
+      times: initialData?.times || '',
       image: undefined
     }
   });
@@ -77,22 +78,15 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
   const { control, handleSubmit, setValue, watch, formState: { errors } } = form;
 
   const selectedCouponType = watch('couponType');
+  const selectedDiscountType = watch('discountType');
   const selectedSubscriptionType = watch('subscriptionType');
   const discountPrice = watch('discountPrice');
 
   useEffect(() => {
-    if (selectedSubscriptionType) {
-      const subscription = subscriptionTypes.find(sub => sub.id === selectedSubscriptionType.id);
-      if (subscription) {
-        setValue('subscriptionPrice', subscription.subscriptionPrice);
-        const netPrice = subscription.subscriptionPrice - discountPrice;
-        setValue('netPrice', netPrice > 0 ? netPrice : 0);
-      }
-    } else {
-      setValue('subscriptionPrice', 0);
-      setValue('netPrice', 0);
+    if (selectedCouponType === 'global') {
+      setValue('subscriptionType', []);
     }
-  }, [selectedSubscriptionType, discountPrice, setValue]);
+  }, [selectedCouponType, setValue]);
 
   const onSubmit: SubmitHandler<CouponFormSchema> = async (data) => {
     try {
@@ -161,6 +155,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       <SelectContent>
                         <SelectItem value="global">Global</SelectItem>
                         <SelectItem value="subscription">Subscription</SelectItem>
+                        <SelectItem value="freeDelivery">Free Delivery</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -169,73 +164,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
               )}
             />
 
-            {selectedCouponType === 'subscription' && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="subscriptionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Subscription Type</FormLabel>
-                      <FormControl>
-                        <Controller
-                          control={form.control}
-                          name="subscriptionType"
-                          render={({ field: { onChange, value } }) => (
-                            <ReactSelect
-                              isClearable
-                              isSearchable
-                              options={subscriptionTypes}
-                              getOptionLabel={(option) => option.name}
-                              getOptionValue={(option) => option.id}
-                              onChange={(selected) => onChange(selected ? { id: selected.id, name: selected.name } : undefined)}
-                              value={subscriptionTypes.find(option => option.id === value?.id)}
-                            />
-                          )}
-                        />
-                      </FormControl>
-                      <FormMessage>{errors.subscriptionType?.message}</FormMessage>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="subscriptionPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Subscription Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          value={watch('subscriptionPrice')}
-                          readOnly
-                          disabled
-                          placeholder="Subscription Price"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="netPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Net Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          value={watch('netPrice')}
-                          readOnly
-                          disabled
-                          placeholder="Net Price"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
+            
 
             <FormField
               control={form.control}
@@ -254,7 +183,31 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
               )}
             />
 
-            <FormField
+{selectedCouponType !== 'freeDelivery' && <FormField
+              control={form.control}
+              name="discountType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Discount Type</FormLabel>
+                  <FormControl>
+                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Discount Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="price">Flat Price</SelectItem>
+                        <SelectItem value="percentage">Flat Percentage</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage>{errors.discountType?.message}</FormMessage>
+                </FormItem>
+              )}
+            />}
+
+      {selectedCouponType !== 'freeDelivery' &&    
+      <>
+       {selectedDiscountType ==='price' && <FormField
               control={form.control}
               name="discountPrice"
               render={({ field }) => (
@@ -271,7 +224,28 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                   <FormMessage>{errors.discountPrice?.message}</FormMessage>
                 </FormItem>
               )}
-            />
+            />}
+
+     {selectedDiscountType==="percentage" &&   <FormField
+              control={form.control}
+              name="discountPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Discount Percentage</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Discount Percentage"
+                      onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                      value={field.value || ''}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.discountPrice?.message}</FormMessage>
+                </FormItem>
+              )}
+            />}
+            </>
+            }
 
             <FormField
               control={form.control}
@@ -284,7 +258,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       <FormControl>
                         <Button
                           variant="outline"
-                          className={`w-[240px] pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
+                          className={`w-full pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
                         >
                           {field.value ? format(field.value, 'dd MMM yyyy') : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -296,6 +270,9 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0)) || date < new Date("1900-01-01")
+                        }
                         initialFocus
                       />
                     </PopoverContent>
@@ -316,7 +293,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       <FormControl>
                         <Button
                           variant="outline"
-                          className={`w-[240px] pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
+                          className={`w-full pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
                         >
                           {field.value ? format(field.value, 'dd MMM yyyy') : <span>Pick a date</span>}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -329,6 +306,9 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                         selected={field.value}
                         onSelect={field.onChange}
                         initialFocus
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0)) || date < new Date("1900-01-01")
+                        }
                       />
                     </PopoverContent>
                   </Popover>
@@ -337,7 +317,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
               )}
             />
 
-            {/* <FormField
+            <FormField
               control={form.control}
               name="visibility"
               render={({ field }) => (
@@ -349,15 +329,35 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                         <SelectValue placeholder="Select Visibility" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Admin">Admin Only</SelectItem>
+                      {/* <SelectItem value="">Public</SelectItem> */}
                         <SelectItem value="Public">Public</SelectItem>
+                        <SelectItem value="Private">Private</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
                   <FormMessage>{errors.visibility?.message}</FormMessage>
                 </FormItem>
               )}
-            /> */}
+            />
+             <FormField
+              control={form.control}
+              name="times"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>No of times can be applied</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      disabled={loading}
+                      placeholder="Enter No of times can be applied"
+                      onChange={(e) => field.onChange(e.target.value)}
+                      value={field.value || ''}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -396,8 +396,38 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
+            
           </div>
-
+          {selectedCouponType === 'subscription' && (
+              <FormField
+                control={form.control}
+                name="subscriptionType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subscription Type</FormLabel>
+                    <FormControl>
+                      <Controller
+                        control={form.control}
+                        name="subscriptionType"
+                        render={({ field: { onChange, value } }) => (
+                          <ReactSelect
+                            isClearable
+                            isSearchable
+                            isMulti
+                            options={subscriptionTypes}
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.id}
+                            onChange={(selected) => onChange(selected ? selected.map(s => ({ id: s.id, name: s.name })) : [])}
+                            value={subscriptionTypes.filter(option => value?.some((v: any) => v.id === option.id))}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.subscriptionType?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+            )}
           <div className="mt-8 flex justify-between">
             <Button
               type="submit"
