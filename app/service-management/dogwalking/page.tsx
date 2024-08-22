@@ -75,7 +75,7 @@ export default function DogWalkingPage() {
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold">2 time dog walking per day</h3>
+                <h3 className="text-2xl font-semibold">2 times dog walking per day</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center">
                     <label className="block font-bold text-gray-700 w-full">Daily plan charges</label>
