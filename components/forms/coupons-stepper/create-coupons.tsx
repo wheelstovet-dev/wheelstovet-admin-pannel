@@ -155,7 +155,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       <SelectContent>
                         <SelectItem value="global">Global</SelectItem>
                         <SelectItem value="subscription">Subscription</SelectItem>
-                        <SelectItem value="freeDelivery">Free Delivery</SelectItem>
+                       
                       </SelectContent>
                     </Select>
                   </FormControl>

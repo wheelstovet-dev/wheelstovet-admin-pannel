@@ -84,7 +84,7 @@ export function DashboardNav({
                     <div
                       onClick={() => handleExpand(item.href || '')}
                       className={cn(
-                        'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                        'flex items-center gap-2 overflow-hidden rounded-md py-2 mb-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
                         isActive ? 'bg-accent text-black' : '',
                         item.disabled && 'cursor-not-allowed'
                       )}
