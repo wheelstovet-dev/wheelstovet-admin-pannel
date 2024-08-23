@@ -29,12 +29,12 @@ import {
   User2Icon,
   UserX2Icon,
   X,
-  Briefcase,        // Icon for Case Management
-  Users,            // Icon for User Management
-  Server,           // Icon for Service Management
-  LogOut,           // Icon for Log Out
-  Tag,              // Icon for Coupon Management (newly added)
-  MessageSquare,    // Icon for Complaint Management (newly added)
+  Briefcase,       
+  Users,            
+  Server,           
+  LogOut,
+  Tag,             
+  MessageSquare,
   BookOpen,
   FileCheck,
   ClipboardList,
@@ -46,6 +46,11 @@ import {
   BarChart2,
   TrendingDown,
   TrendingUp,
+  Cog,
+  BadgeDollarSign,
+  BellPlus,
+  ArrowBigUpDash,
+  Package
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -113,4 +118,9 @@ export const Icons = {
   incomeSummary: Calendar, // new line
   expenseSummary: BarChart2, // new line
   incomeVsExpense: BarChart2, // new line
+  general: Cog, //this line is added
+  paymentSetting: BadgeDollarSign, //this line is added
+  notificationSetting: BellPlus, //this line is added
+  api: ArrowBigUpDash, //this line is added
+  order: Package, //this line is added
 };

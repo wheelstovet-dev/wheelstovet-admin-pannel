@@ -147,6 +147,13 @@ export const navItems: NavItem[] = [
     icon: 'coupon_management',
     label: 'Coupon Management'
   },
+  
+  {
+    title: 'Referral Management',
+    href: '/referral',
+    icon: 'order',
+    label: 'create-Referral'
+  },
   {
     title: 'Complaint Management',
     href: '/complaint-management',
@@ -229,9 +236,41 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Settings',
-    href: '/settings',
+    href: '/settings-management',
     icon: 'settings',
-    label: 'Settings'
+    label: 'settings',
+    subItems: [
+        {
+    title: 'Admin',
+    href: '/admin',
+    icon: 'user',
+    label: 'Admin'
+  },
+      {
+        title: 'General Settings',
+        href: '/settings-management/general',
+        icon: 'general',
+        label: 'general-settings'
+      },
+      {
+        title: 'Payment Settings',
+        href: '/settings-management/payment',
+        icon: 'paymentSetting',
+        label: 'payment-settings'
+      },
+      {
+        title: 'Notification Settings',
+        href: '/settings-management/notifications',
+        icon: 'notificationSetting',
+        label: 'notification-settings'
+      },
+      {
+        title: 'API Settings',
+        href: '/settings-management/API',
+        icon: 'api',
+        label: 'api-settings'
+      }
+    ]
   },
   {
     title: 'Log Out',
