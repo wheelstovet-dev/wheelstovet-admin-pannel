@@ -133,7 +133,7 @@ export const CreateAdminForm: React.FC<{initialData:any}> = ({ initialData }) =>
            
           </div>
           <Button type="submit" disabled={loading}>
-            {initialData ? 'Save Changes' : 'Create Employee'}
+            {initialData ? 'Save Changes' : 'Create Admin'}
           </Button>
         </form>
       </Form>
