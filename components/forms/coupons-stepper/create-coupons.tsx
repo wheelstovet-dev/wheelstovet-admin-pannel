@@ -42,9 +42,12 @@ const couponFormSchema = z.object({
 type CouponFormSchema = z.infer<typeof couponFormSchema>;
 
 const subscriptionTypes = [
-  { id: '1', name: 'Staples' },
-  { id: '2', name: 'Monthly Mini Veggies' },
-{ id: '8', name: 'Annual Mini Veggies' },
+  { id: '1', name: '1 time dog walking daily' },
+  { id: '2', name: '1 time dog walking weekly' },
+  { id: '3', name: '1 time dog walking monthly' },
+  { id: '4', name: '2 times dog walking daily' },
+  { id: '5', name: '2 times dog walking weekly' },
+  { id: '6', name: '2 times dog walking monthly' },
 ];
 
 export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
@@ -154,8 +157,7 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="global">Global</SelectItem>
-                        <SelectItem value="subscription">Subscription</SelectItem>
-                       
+                        <SelectItem value="subscription">Subscription</SelectItem>                  
                       </SelectContent>
                     </Select>
                   </FormControl>
