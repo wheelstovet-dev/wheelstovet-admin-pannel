@@ -167,6 +167,12 @@ export const navItems: NavItem[] = [
     label: 'create-report',
     subItems: [
       {
+        title: 'Account',
+        href: '/report-management/account',
+        icon: 'case_management',
+        label: 'account'
+      },
+      {
         title: 'Account Statement',
         href: '/report-management/account-statement',
         icon: 'accountStatement',
@@ -246,12 +252,12 @@ export const navItems: NavItem[] = [
     icon: 'user',
     label: 'Admin'
   },
-      {
-        title: 'General Settings',
-        href: '/settings-management/general',
-        icon: 'general',
-        label: 'general-settings'
-      },
+      // {
+      //   title: 'General Settings',
+      //   href: '/settings-management/general',
+      //   icon: 'general',
+      //   label: 'general-settings'
+      // },
       {
         title: 'Payment Settings',
         href: '/settings-management/payment',

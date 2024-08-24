@@ -40,7 +40,7 @@ export const CouponManagementData: CouponManagement[] = [
     visibility: 'subscription',
     subscriptionType: {
       id: '1',
-      name: 'Staples'
+      name: '2 times dog walking'
     },
     subscriptionPrice: 1000,
     netPrice: 800,
