@@ -50,14 +50,14 @@ export const columns: ColumnDef<CouponManagement>[] = [
     size: 300, // Increased column width
   },
   {
-    accessorKey: 'discountPrice',
-    header: 'Discount Price',
+    accessorKey: 'discountType',
+    header: 'Discount Type',
     cell: ({ row }) => `₹${row.original.discountPrice}`,
     size: 300, // Increased column width
   },
   {
-    accessorKey: 'subscriptionType',
-    header: 'Subscription Type',
+    accessorKey: 'couponType',
+    header: 'Coupon Type',
     cell: ({ row }) => (
       <div className="text-start">
         {row.original.subscriptionType ? row.original.subscriptionType.name : 'N/A'}
@@ -65,18 +65,13 @@ export const columns: ColumnDef<CouponManagement>[] = [
     ),
     size: 250, // Increased column width
   },
-  {
-    accessorKey: 'subscriptionPrice',
-    header: 'Subscription Price',
-    cell: ({ row }) => row.original.subscriptionPrice ? `₹${row.original.subscriptionPrice}` : 'N/A',
-    size: 200, // Increased column width
-  },
-  {
-    accessorKey: 'netPrice',
-    header: 'Net Price',
-    cell: ({ row }) => row.original.netPrice ? `₹${row.original.netPrice}` : 'N/A',
-    size: 200, // Increased column width
-  },
+  // {
+  //   accessorKey: 'subscriptionPrice',
+  //   header: 'Subscription Price',
+  //   cell: ({ row }) => row.original.subscriptionPrice ? `₹${row.original.subscriptionPrice}` : 'N/A',
+  //   size: 200, // Increased column width
+  // },
+ 
   {
     accessorKey: 'startDate',
     header: 'Start Date',
