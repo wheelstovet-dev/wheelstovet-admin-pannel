@@ -50,7 +50,8 @@ import {
   BadgeDollarSign,
   BellPlus,
   ArrowBigUpDash,
-  Package
+  Package,
+ 
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -123,4 +124,5 @@ export const Icons = {
   notificationSetting: BellPlus, //this line is added
   api: ArrowBigUpDash, //this line is added
   order: Package, //this line is added
+ 
 };

@@ -28,8 +28,8 @@ export const columns: ColumnDef<CouponManagement>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'S.no',
-    header: 'S.no',
+    accessorKey: 'id',
+    header: 'ID',
     cell: ({ row }) => row.index + 1,
     size: 100, // Increased column width
   },
