@@ -28,7 +28,7 @@ export function DashboardNav({
 }: DashboardNavProps) {
   const path = usePathname();
   const { isMinimized } = useSidebar();
-  const defaultActiveItem = '/dashboard'; // Set your default active item path here
+  const defaultActiveItem = '/dashboard';
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [activeItem, setActiveItem] = useState<string>(defaultActiveItem);
 

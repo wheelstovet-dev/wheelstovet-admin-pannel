@@ -8,7 +8,7 @@ export interface ComplaintManagementUser {
   resolution?: string;
 }
 
-// Sample data for the complaint management system
+
 export const ComplaintManagementUserData: ComplaintManagementUser[] = [
   {
     sno: 1,

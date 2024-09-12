@@ -7,13 +7,13 @@ export interface ComplaintInfo {
   }
   
   export interface DeliveryInfo {
-    deliveryDate: string; // ISO format date string
-    deliveryTimeSlot: string; // Example: '9am - 11am'
+    deliveryDate: string; 
+    deliveryTimeSlot: string; 
     assignedEmployee?: string;
     assignedRoutes?: string;
-    deliveryStatus: 'Pending' | 'Delivered' | 'Cancelled'; // Delivery status options
+    deliveryStatus: 'Pending' | 'Delivered' | 'Cancelled'; 
     deliveryCharges?: number;
-    complaints?: ComplaintInfo[]; // Corrected the type for complaints
+    complaints?: ComplaintInfo[]; 
   }
   
   export interface ComplaintsViewManagement {
@@ -23,7 +23,7 @@ export interface ComplaintInfo {
     employeeName?: string;
     paymentType: string;
     deliveries: DeliveryInfo[];
-    bagOrdered?: string[]; // Array of product names or IDs
+    bagOrdered?: string[]; 
     subscriptionType?: string; // Array of product names or IDs
     totalWeight: number; // Total weight in kg
     addons?: string[]; // Array of add-ons

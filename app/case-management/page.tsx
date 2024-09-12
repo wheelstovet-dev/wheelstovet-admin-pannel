@@ -16,13 +16,13 @@ import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import { useRouter } from 'next/navigation';
 
 const casesData = [
-  { caseId: '12', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', time: '10:00 AM' },
-  { caseId: '13', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Salon', time: '11:00 AM' },
-  { caseId: '14', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', time: '02:00 PM' },
-  { caseId: '15', petName: 'Bordetella', startDate: '11 Dec 2024', endDate: '11 Dec 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Veterinary', time: '03:00 PM' },
-  { caseId: '16', petName: 'Rabies', startDate: '01 Dec 2023', endDate: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', time: '10:00 AM' },
-  { caseId: '17', petName: 'Distemper', startDate: '27 Jun 2024', endDate: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Pet Taxi', time: '11:00 AM' },
-  { caseId: '18', petName: 'Calicivirus', startDate: '16 Sep 2024', endDate: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', time: '02:00 PM' },
+  { caseId: '12', petName: 'Rabies', Date: '01 Dec 2023',  assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', timeSlot: '10:00 AM' },
+  { caseId: '13', petName: 'Distemper', Date: '27 Jun 2024',  assignEmployee: 'Jim Brown', currentStatus: 'Salon', timeSlot: '11:00 AM' },
+  { caseId: '14', petName: 'Calicivirus', Date: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', timeSlot: '02:00 PM' },
+  { caseId: '15', petName: 'Bordetella', Date: '11 Dec 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Veterinary', timeSlot: '03:00 PM' },
+  { caseId: '16', petName: 'Rabies', Date: '01 Dec 2023', assignEmployee: 'Jim Carloss', currentStatus: 'Dog Walking', timeSlot: '10:00 AM' },
+  { caseId: '17', petName: 'Distemper', Date: '27 Jun 2024', assignEmployee: 'Jim Brown', currentStatus: 'Pet Taxi', timeSlot: '11:00 AM' },
+  { caseId: '18', petName: 'Calicivirus', Date: '16 Sep 2024', assignEmployee: 'Helen Brooks', currentStatus: 'Salon', timeSlot: '02:00 PM' },
 ];
 
 export default function CaseManagementPage() {
@@ -110,11 +110,11 @@ export default function CaseManagementPage() {
                 <tr className="bg-yellow-500 text-gray-600 text-center">
                   <th className="px-4 py-2 border-r-2 border-b">Case ID</th>
                   <th className="px-4 py-2 border-r-2 border-b">Pet Name</th>
-                  <th className="px-4 py-2 border-r-2 border-b">Start Date</th>
-                  <th className="px-4 py-2 border-r-2 border-b">End Date</th>
+                  <th className="px-4 py-2 border-r-2 border-b"> Date</th>
+                  {/* <th className="px-4 py-2 border-r-2 border-b">End Date</th> */}
                   <th className="px-4 py-2 border-r-2 border-b">Assign Employee</th>
                   <th className="px-4 py-2 border-r-2 border-b">Current Status</th>
-                  <th className="px-4 py-2 border-r-2 border-b">Time</th>
+                  <th className="px-4 py-2 border-r-2 border-b">Time Slot</th>
                   <th className="px-4 py-2 border-r-2 border-b">Action</th>
                 </tr>
               </thead>
@@ -123,8 +123,8 @@ export default function CaseManagementPage() {
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-6 border-b">{caseItem.caseId}</td>
                     <td className="px-4 py-6 border-b">{caseItem.petName}</td>
-                    <td className="px-4 py-6 border-b">{caseItem.startDate}</td>
-                    <td className="px-4 py-6 border-b">{caseItem.endDate}</td>
+                    <td className="px-4 py-6 border-b">{caseItem.Date}</td>
+                    {/* <td className="px-4 py-6 border-b">{caseItem.endDate}</td> */}
                     <td className="px-4 py-6 border-b">
                       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-md border border-yellow-300">
                         {caseItem.assignEmployee}
@@ -143,7 +143,7 @@ export default function CaseManagementPage() {
                         {caseItem.currentStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-6 border-b">{caseItem.time}</td>
+                    <td className="px-4 py-6 border-b">{caseItem.timeSlot}</td>
                     <td className="px-4 py-6 border-b">
                       <DropdownMenu>
                         <DropdownMenuTrigger className="text-gray-600 hover:text-gray-800">
