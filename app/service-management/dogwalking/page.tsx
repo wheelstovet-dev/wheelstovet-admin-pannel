@@ -40,10 +40,11 @@ export default function DogWalkingPage() {
             <h2 className="text-3xl font-bold mb-8">Dog Walking</h2>
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-semibold">1 time dog walking per day</h3>
+              <h3 className="text-2xl font-semibold">Daily</h3>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center">
-                    <label className="block font-bold text-gray-700 w-full">Daily plan charges</label>
+                    <label className="block font-bold text-gray-700 w-full">1 time dog walking per day</label>
                     <input
                       type="number"
                       value={charges.dailyPlan1}
@@ -53,7 +54,7 @@ export default function DogWalkingPage() {
                     <span className="ml-2 font-bold">INR</span>
                   </div>
                   <div className="flex items-center">
-                    <label className="block font-bold text-gray-700 w-full">Weekly plan charges</label>
+                    <label className="block font-bold text-gray-700 w-full">2 times dog walking per day</label>
                     <input
                       type="number"
                       value={charges.weeklyPlan1}
@@ -62,23 +63,14 @@ export default function DogWalkingPage() {
                     />
                     <span className="ml-2 font-bold">INR</span>
                   </div>
-                  <div className="flex items-center">
-                    <label className="block font-bold text-gray-700 w-full">Monthly plan charges</label>
-                    <input
-                      type="number"
-                      value={charges.monthlyPlan1}
-                      onChange={(e) => handleInputChange(e, 'monthlyPlan1')}
-                      className="mt-1 block w-20 border rounded p-2"
-                    />
-                    <span className="ml-2 font-bold">INR</span>
-                  </div>
+                 
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold">2 times dog walking per day</h3>
+                <h3 className="text-2xl font-semibold">Weekly</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center">
-                    <label className="block font-bold text-gray-700 w-full">Daily plan charges</label>
+                    <label className="block font-bold text-gray-700 w-full">1 time dog walking per day</label>
                     <input
                       type="number"
                       value={charges.dailyPlan2}
@@ -88,7 +80,7 @@ export default function DogWalkingPage() {
                     <span className="ml-2 font-bold">INR</span>
                   </div>
                   <div className="flex items-center">
-                    <label className="block font-bold text-gray-700 w-full">Weekly plan charges</label>
+                    <label className="block font-bold text-gray-700 w-full">2 times dog walking per day</label>
                     <input
                       type="number"
                       value={charges.weeklyPlan2}
@@ -97,7 +89,7 @@ export default function DogWalkingPage() {
                     />
                     <span className="ml-2 font-bold">INR</span>
                   </div>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <label className="block font-bold text-gray-700 w-full">Monthly plan charges</label>
                     <input
                       type="number"
@@ -106,7 +98,34 @@ export default function DogWalkingPage() {
                       className="mt-1 block w-20 border rounded p-2"
                     />
                     <span className="ml-2 font-bold">INR</span>
+                  </div> */}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-semibold">Monthly</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="flex items-center">
+                    <label className="block font-bold text-gray-700 w-full">1 time dog walking per day</label>
+                    <input
+                      type="number"
+                      value={charges.dailyPlan2}
+                      onChange={(e) => handleInputChange(e, 'dailyPlan2')}
+                      className="mt-1 block w-20 border rounded p-2"
+                    />
+                    <span className="ml-2 font-bold">INR</span>
                   </div>
+                  <div className="flex items-center">
+                    <label className="block font-bold text-gray-700 w-full">2 times dog walking per day</label>
+                    <input
+                      type="number"
+                      value={charges.weeklyPlan2}
+                      onChange={(e) => handleInputChange(e, 'weeklyPlan2')}
+                      className="mt-1 block w-20 border rounded p-2"
+                    />
+                    <span className="ml-2 font-bold">INR</span>
+                  </div>
+                 
                 </div>
               </div>
             </div>

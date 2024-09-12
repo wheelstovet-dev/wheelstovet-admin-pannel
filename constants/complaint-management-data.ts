@@ -6,7 +6,6 @@ export interface ComplaintManagement {
   resolution?: 'Coupon' | 'Store credits' | 'Add-on bag';
 }
 
-// Sample data for the complaint management system
 export const ComplaintManagementData: ComplaintManagement[] = [
   {
     sno: 1,
