@@ -10,11 +10,15 @@ const View = () => {
 
   // Simulated data, replace with actual data fetching logic
   const caseData = {
+    userId: 'U01',
     petName: 'Rabies',
+    bookingAt: '28 Nov 2023',
     startDate: '01 Dec 2023',
-    endDate: '01 Dec 2023',
-    assignEmployee: 'Jim Carloss',
+    timeSlot: '10 AM to 1PM',
+    assignedEmployee: 'Arya Singh',
     currentStatus: 'Dog Walking',
+    paymentMethod: 'GooglePay',
+    paymentStatus: 'Approved'
   };
 
   return (
@@ -30,24 +34,40 @@ const View = () => {
                 <input type="text" value={caseId} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div>
+                <label className="block mb-2">User ID</label>
+                <input type="text" value={caseData.userId} readOnly className="w-full border border-gray-300 p-2 rounded" />
+              </div>
+              <div>
                 <label className="block mb-2">Pet Name</label>
                 <input type="text" value={caseData.petName} readOnly className="w-full border border-gray-300 p-2 rounded" />
+              </div>
+              <div>
+                <label className="block mb-2">Booking At</label>
+                <input type="text" value={caseData.bookingAt} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div>
                 <label className="block mb-2">Start Date</label>
                 <input type="text" value={caseData.startDate} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div>
-                <label className="block mb-2">End Date</label>
-                <input type="text" value={caseData.endDate} readOnly className="w-full border border-gray-300 p-2 rounded" />
+                <label className="block mb-2">Time Slot</label>
+                <input type="text" value={caseData.timeSlot} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div>
-                <label className="block mb-2">Assign Employee</label>
-                <input type="text" value={caseData.assignEmployee} readOnly className="w-full border border-gray-300 p-2 rounded" />
+                <label className="block mb-2">Assigned Employee</label>
+                <input type="text" value={caseData.assignedEmployee} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div>
                 <label className="block mb-2">Current Status</label>
                 <input type="text" value={caseData.currentStatus} readOnly className="w-full border border-gray-300 p-2 rounded" />
+              </div>
+              <div>
+                <label className="block mb-2">Payment Method</label>
+                <input type="text" value={caseData.paymentMethod} readOnly className="w-full border border-gray-300 p-2 rounded" />
+              </div>
+              <div>
+                <label className="block mb-2">Payment Status</label>
+                <input type="text" value={caseData.paymentStatus} readOnly className="w-full border border-gray-300 p-2 rounded" />
               </div>
             </div>
           </div>
