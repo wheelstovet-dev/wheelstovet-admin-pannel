@@ -246,30 +246,20 @@ export const navItems: NavItem[] = [
     icon: 'user',
     label: 'Admin'
   },
+      
       // {
-      //   title: 'General Settings',
-      //   href: '/settings-management/general',
-      //   icon: 'general',
-      //   label: 'general-settings'
+      //   title: 'Payment Settings',
+      //   href: '/settings-management/payment',
+      //   icon: 'paymentSetting',
+      //   label: 'payment-settings'
       // },
-      {
-        title: 'Payment Settings',
-        href: '/settings-management/payment',
-        icon: 'paymentSetting',
-        label: 'payment-settings'
-      },
       {
         title: 'Notification Settings',
         href: '/settings-management/notifications',
         icon: 'notificationSetting',
         label: 'notification-settings'
       },
-      {
-        title: 'API Settings',
-        href: '/settings-management/API',
-        icon: 'api',
-        label: 'api-settings'
-      }
+      
     ]
   },
   {
