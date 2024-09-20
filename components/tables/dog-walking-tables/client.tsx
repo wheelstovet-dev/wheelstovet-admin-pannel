@@ -20,7 +20,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { CaseManagementUser , CaseManagementData} from '@/constants/case-management-data';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 
-const CaseManagementClient: React.FC = () => {
+const DogManagementClient: React.FC = () => {
   const router = useRouter();
   const initialData: CaseManagementUser[] = CaseManagementData;
   const [data, setData] = useState<CaseManagementUser[]>(initialData);
@@ -51,16 +51,10 @@ const CaseManagementClient: React.FC = () => {
 
   return (
     <>
-    {/* <div className="flex justify-end space-x-2">
-          <Button variant="outline" className="flex text-white bg-yellow-500   hover:bg-yellow-600 hover:text-white items-center transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ">
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-          </Button>
-          
-        </div> */}
+    
     <div className="flex items-start justify-between">
     <Heading
-          title={`All Cases (${data.length})`}
+          title={`Dog Walking (${data.length})`}
           description="Manage Cases"
         />
             <div className="flex space-x-2 w-full max-w-3xl">
@@ -123,4 +117,4 @@ const CaseManagementClient: React.FC = () => {
   );
 };
 
-export default CaseManagementClient;
+export default DogManagementClient;

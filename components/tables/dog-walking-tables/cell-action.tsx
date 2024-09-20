@@ -74,6 +74,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <FileText height={16}  className="mr-2" />
            View Invoice
            </DropdownMenuItem>
+          
+     
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
