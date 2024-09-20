@@ -48,7 +48,6 @@ const CaseManagementClient: React.FC = () => {
 //     const filteredData = initialData.filter(item => item.complaintBy === complaintBy);
 //     setData(filteredData);
 //   };
-
   return (
     <>
     {/* <div className="flex justify-end space-x-2">
