@@ -47,10 +47,10 @@ interface EmployeeFormType {
   const [loading, setLoading] = useState(false);
   // const [showPassword, setShowPassword] = useState(false);
 
-  const title = initialData && isEnabled ? "View Task" : initialData ? "Edit Task" : "Create New Task";
+  const title = initialData && isEnabled ? "View Detail" : initialData ? "Edit Detail" : "Create New Employee";
   const description = initialData && isEnabled 
-    ? "View the Task details." : initialData ? "Edit the Task details."
-    : "To create a new Task, fill in the required information.";
+    ? "View the Employee details." : initialData ? "Edit the Employee details."
+    : "To create a new Employee, fill in the required information.";
  
     const action = initialData ? 'Save changes' : 'Create';
 
