@@ -9,57 +9,71 @@ import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
-import ReactSelect from 'react-select';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Edit, Eye, EyeOff, KeyRound } from 'lucide-react';
+import { CalendarIcon, Eye, EyeOff, KeyRound, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface EmployeeFormType {
   initialData: any | null;
-  userOptions: { id: string; name: string; phoneNo: string }[]; // List of users to assign
+  isEnabled?: boolean;
 }
 
-const employeeFormSchema = z.object({
-  employeeId: z.number().nonnegative().optional(),
+ const employeeFormSchema = z.object({
+  aadharNo: z.string().min(12, 'Aadhar number must be 12 digits').max(12, 'Aadhar number must be 12 digits'),
   firstName: z.string().min(1, 'First Name is required'),
   lastName: z.string().min(1, 'Last Name is required'),
-  role: z.string().min(1, 'Role is required'),
   contactInformation: z.object({
-    email: z.string().email('Invalid email format').min(1, 'Email is required'),
+    emailId: z.string().email('Invalid email format').min(1, 'Email is required'),
     phone: z.string().min(1, 'Phone is required'),
   }),
+  totalExperience: z.number().nonnegative('Total Experience must be a positive number'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  address: z.string().min(1, 'Address is required'),
   gender: z.string().min(1, 'Gender is required'),
   dob: z.date({
     required_error: 'Date of Birth is required.',
   }),
-  assignedUsers: z.array(z.string()).optional(),
+  address: z.object({
+    street: z.string().min(1, 'Street is required'),
+    city: z.string().min(1, 'City is required'),
+    state: z.string().min(1, 'State is required'),
+  }),
+  role: z.string().min(1, 'Role is required'),
 });
 
-export const CreateEmployeeForm: React.FC<EmployeeFormType> = ({ initialData, userOptions }) => {
+ export const CreateEmployeeForm: React.FC<EmployeeFormType> = ({ initialData , isEnabled}) => {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
+
+  const title = initialData && isEnabled ? "View Task" : initialData ? "Edit Task" : "Create New Task";
+  const description = initialData && isEnabled 
+    ? "View the Task details." : initialData ? "Edit the Task details."
+    : "To create a new Task, fill in the required information.";
+ 
+    const action = initialData ? 'Save changes' : 'Create';
+
   const form = useForm({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: initialData || {
-      employeeId: undefined,
-      firstName: '',
-      lastName: '',
-      role: '',
+      aadharNo: '',
+      fullName: '',
+      
       contactInformation: {
-        email: '',
+        emailId: '',
         phone: '',
       },
+      totalExperience: 0,
       password: '',
       dob: new Date(),
-      assignedUsers: [],
+      gender: '',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+      },
+      role: '',
     },
   });
 
@@ -81,151 +95,133 @@ export const CreateEmployeeForm: React.FC<EmployeeFormType> = ({ initialData, us
     }
   };
 
-  const renderErrorMessage = (error: any) => {
-    if (!error) return null;
-    if (typeof error === 'string') return error;
-    if (error.message) return error.message;
-    return null;
-  };
-
-  const filterOption = (option: any, inputValue: string) => {
-    const user = userOptions.find((user) => user.id === option.value);
-    return (
-      option.label.toLowerCase().includes(inputValue.toLowerCase()) ||
-      (user && user.phoneNo.includes(inputValue))
-    );
-  };
-
-  const [newRole, setNewRole] = useState('');
-
-  const [role, setRole] = useState([
-    { value: 'Manager', label: 'Manager' },
-    { value: 'Executive', label: 'Executive' },
-    { value: 'External', label: 'External' },
-  ]);
-
-  const addRole = () => {
-    if (newRole.trim()) {
-      setRole([...role, { value: newRole, label: newRole }]);
-      setNewRole('');
-    }
-  };
-
-  const deleteRole = (roleToDelete: string) => {
-    setRole(role.filter(r => r.value !== roleToDelete));
-  };
-
-  const [roleModalOpen, setRoleModalOpen] = useState(false);
-
-  const generatePassword = () => {
-    const generatedPassword = Math.random().toString(36).slice(-8);
-    form.setValue('password', generatedPassword);
-  };
+  // const generatePassword = () => {
+  //   const generatedPassword = Math.random().toString(36).slice(-8);
+  //   form.setValue('password', generatedPassword);
+  // };
 
   return (
     <>
-      <Dialog open={roleModalOpen} onOpenChange={setRoleModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Manage Roles</DialogTitle>
-            <DialogDescription>Add or remove roles.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <Input
-                placeholder="New Role"
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-              />
-              <Button className='ms-3' onClick={addRole}>Add</Button>
-            </div>
-            <div className="space-y-2">
-              {role.map((roster) => (
-                <div key={roster.value} className="flex justify-between items-center">
-                  <span>{roster.label}</span>
-                  <Button variant="destructive" onClick={() => deleteRole(roster.value)}>
-                    Delete
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setRoleModalOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+    <div className="flex items-center justify-between">
+    <Heading title={title} description={description} />
+    {initialData && (
+      <Button
+        disabled={isEnabled || loading}
+        variant="destructive"
+        size="sm"
+      >
+        <Trash className="h-4 w-4" />
+      </Button>
+    )}
+  </div>
+      <Separator />
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
+            
+            {/* Aadhar Number */}
+            <FormField
+              control={control}
+              name="aadharNo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Aadhar Number</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Aadhar Number" {...field} />
+                  </FormControl>
+                 
+                </FormItem>
+              )}
+            />
 
-      <div className="container mx-auto p-4">
-        <Heading title={initialData ? 'Edit Employee' : 'Create Employee'} description="Fill in the details below" />
-        <Separator />
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
-              <FormField
-                control={control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter First Name" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.firstName)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter Last Name" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.lastName)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="contactInformation.phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter Phone" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.contactInformation)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="contactInformation.email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" disabled={loading} placeholder="Enter Email" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.contactInformation)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <div className="flex justify-between items-center">
+            {/* First Name */}
+            <FormField
+              control={control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel> Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter First Name" {...field} />
+                  </FormControl>
+                 
+                </FormItem>
+              )}
+            />
+
+            {/* Last Name
+            <FormField
+              control={control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Last Name" {...field} />
+                  </FormControl>
+                 
+                </FormItem>
+              )}
+            /> */}
+
+            {/* Email */}
+            <FormField
+              control={control}
+              name="contactInformation.emailId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="emailId" disabled={isEnabled ||loading} placeholder="Enter Email" {...field} />
+                  </FormControl>
+                
+                </FormItem>
+              )}
+            />
+
+            {/* Phone */}
+            <FormField
+              control={control}
+              name="contactInformation.phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Phone" {...field} />
+                  </FormControl>
+                 
+                </FormItem>
+              )}
+            />
+
+            {/* Total Experience */}
+            <FormField
+              control={control}
+              name="totalExperience"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Total Experience (in years)</FormLabel>
+                  <FormControl>
+                    <Input type="number" disabled={isEnabled ||loading} placeholder="Enter Total Experience" {...field} />
+                  </FormControl>
+                  
+                </FormItem>
+              )}
+            />
+
+            {/* Password
+            <FormField
+              control={control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <div className="flex justify-between items-center">
                     <FormControl>
                       <div className="relative w-full me-3">
                         <Input
                           type={showPassword ? 'text' : 'password'}
-                          disabled={loading}
+                          disabled={isEnabled ||loading}
                           placeholder="Enter Password"
                           {...field}
                         />
@@ -238,146 +234,139 @@ export const CreateEmployeeForm: React.FC<EmployeeFormType> = ({ initialData, us
                         </button>
                       </div>
                     </FormControl>
-                    <Button type="button" className="bg-green-500 hover:bg-green-600" onClick={generatePassword}>
-                     <KeyRound height={16} width={16} className='me-2 animate-bounce mt-1' />  Generate
+                    <Button type="button" onClick={generatePassword}>
+                      <KeyRound height={16} width={16} className="me-2 animate-bounce mt-1" /> Generate
                     </Button>
-                                          
-                    </div>
-                    <FormMessage>{renderErrorMessage(errors.password)}</FormMessage>
-                   
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Gender</FormLabel>
-                    <FormControl>
-                      <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.gender)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street Address</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter Street Address" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.address)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter City" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.city)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="state"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>State</FormLabel>
-                    <FormControl>
-                      <Input type="text" disabled={loading} placeholder="Enter State" {...field} />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.state)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel>Role</FormLabel>
-                      <Edit className="text-red-500 ms-1" height={15} width={15} onClick={() => setRoleModalOpen(true)} />
-                    </div>
-                    <FormControl>
-                      <ReactSelect
-                        isSearchable
-                        options={role}
-                        getOptionLabel={(option) => option.label}
-                        getOptionValue={(option) => option.value}
-                        isDisabled={loading}
-                        onChange={(selected) => field.onChange(selected ? selected.value : '')}
-                        value={role.find(option => option.value === field.value)}
-                      />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.role)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? format(field.value, "dd MMM yyyy") : <span>Pick a date</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-  mode="single"
-  selected={field.value}
-  onSelect={field.onChange}
-  disabled={(date) =>
-    date > new Date(new Date().setHours(0, 0, 0, 0)) || date < new Date("1900-01-01")
-  }
-  initialFocus
-/>
+                  </div>
+               
+                </FormItem>
+              )}
+            /> */}
 
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage>{renderErrorMessage(errors.dob)}</FormMessage>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <Button type="submit" disabled={loading}>
-              {initialData ? 'Save Changes' : 'Create Employee'}
+            {/* Gender */}
+            <FormField
+              control={control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <FormControl>
+                    <Select disabled={isEnabled ||loading} onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  
+                </FormItem>
+              )}
+            />
+
+            {/* Street Address */}
+            <FormField
+              control={control}
+              name="address.street"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Street Address</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Street Address" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* City */}
+            <FormField
+              control={control}
+              name="address.city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter City" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* State */}
+            <FormField
+              control={control}
+              name="address.state"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>State</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter State" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Role */}
+            <FormField
+              control={control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Role" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Date of Birth */}
+            <FormField
+              control={control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value ? format(field.value, 'PPP') : 'Pick a date'}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={isEnabled ||loading} />
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
+          </div>
+
+            {/* Form Actions */}
+            <div className="flex justify-end">
+          { (!isEnabled)  && <Button
+              type="submit"
+              disabled={isEnabled || loading}
+              className="ml-4 w-full"
+            >
+              {action}
             </Button>
-          </form>
-        </Form>
-      </div>
-    </>
+}
+          </div>
+        </form>
+      </Form>
+     </>
   );
 };

@@ -55,7 +55,7 @@ export const EmployeeManagementClient: React.FC = () => {
         />
         <Button
           className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-600"
-          onClick={() => router.push(`/subscription`)}
+          onClick={() => router.push(`/employee-form`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
