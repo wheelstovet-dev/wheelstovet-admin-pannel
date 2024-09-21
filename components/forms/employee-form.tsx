@@ -13,8 +13,8 @@ const initialRoles = [
 
 export default function EmployeeForm() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
+    caseId: '',
     aadharNo: '',
     totalExperience: '',
     phoneNumber: '',
@@ -70,23 +70,23 @@ export default function EmployeeForm() {
   return (
     <div className="flex-1 p-6 md:p-8 bg-white rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-4">Employee Profile</h2>
-      <p className="text-gray-500 mb-6">For business, band or celebrity.</p>
+      <p className="text-gray-500 mb-6">Add employee</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col space-y-2">
-            <label htmlFor="firstName" className="font-medium">First Name</label>
+            <label htmlFor="firstName" className="font-medium"> Name</label>
             <input
               type="text"
-              name="firstName"
-              id="firstName"
-              placeholder="Enter First Name"
-              value={formData.firstName}
+              name="fullName"
+              id="fullName"
+              placeholder="Enter Full Name"
+              value={formData.fullName}
               onChange={handleChange}
               required
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
           </div>
-          <div className="flex flex-col space-y-2">
+          {/* <div className="flex flex-col space-y-2">
             <label htmlFor="lastName" className="font-medium">Last Name</label>
             <input
               type="text"
@@ -98,7 +98,7 @@ export default function EmployeeForm() {
               required
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
-          </div>
+          </div> */}
           <div className="flex flex-col space-y-2">
             <label htmlFor="phoneNumber" className="font-medium">Phone Number</label>
             <input

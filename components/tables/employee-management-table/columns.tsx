@@ -101,7 +101,7 @@ export const columns: ColumnDef<EmployeeManagement>[] = [
  
   {
     accessorKey: 'fullName',
-    header: 'First Name',
+    header: 'Name',
     cell: ({ row }) => (
       <div className="flex items-center">
         <div

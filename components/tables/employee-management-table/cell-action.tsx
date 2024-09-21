@@ -32,11 +32,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   
 
   const viewEmp = () => {
-    router.push(`/case-management/view/${data.caseId}`); 
+    router.push(`/employee-form/view/${data.caseId}`); 
   };
 
   const updateEmp = () => {
-    // router.push(`/employee-management/table/${data.}`); 
+    router.push(`/employee-form/edit/${data.caseId}`); 
   };
   const status = () => {
     // router.push(`/employee-management/table/${data.}`); 
@@ -70,11 +70,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Eye className="mr-2 h-4 w-4" /> View  
           </DropdownMenuItem>
           <DropdownMenuItem onClick={updateEmp}>
-            <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
+            <UserCheck className="mr-2 h-4 w-4" /> Update Employee
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={status}>
-            <CheckCircle className="mr-2 h-4 w-4" /> Change Status
-          </DropdownMenuItem>
+          
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>

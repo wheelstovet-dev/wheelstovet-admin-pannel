@@ -36,7 +36,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const assignEmployee = () => {
-    // router.push(`/employee-management/table/${data.}`); 
+    router.push(`/employee-management/${data.caseId}`); 
   };
   
 
