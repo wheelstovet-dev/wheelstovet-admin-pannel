@@ -47,10 +47,10 @@ interface EmployeeFormType {
   const [loading, setLoading] = useState(false);
   // const [showPassword, setShowPassword] = useState(false);
 
-  const title = initialData && isEnabled ? "View Task" : initialData ? "Edit Task" : "Create New Task";
+  const title = initialData && isEnabled ? "View Detail" : initialData ? "Edit Detail" : "Create New Employee";
   const description = initialData && isEnabled 
-    ? "View the Task details." : initialData ? "Edit the Task details."
-    : "To create a new Task, fill in the required information.";
+    ? "View the Employee details." : initialData ? "Edit the Employee details."
+    : "To create a new Employee, fill in the required information.";
  
     const action = initialData ? 'Save changes' : 'Create';
 
@@ -119,20 +119,7 @@ interface EmployeeFormType {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
             
-            {/* Aadhar Number */}
-            <FormField
-              control={control}
-              name="aadharNo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Aadhar Number</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Aadhar Number" {...field} />
-                  </FormControl>
-                 
-                </FormItem>
-              )}
-            />
+          
 
             {/* First Name */}
             <FormField
@@ -148,7 +135,7 @@ interface EmployeeFormType {
                 </FormItem>
               )}
             />
-
+  
             {/* Last Name
             <FormField
               control={control}
@@ -193,7 +180,20 @@ interface EmployeeFormType {
                 </FormItem>
               )}
             />
-
+{/* Aadhar Number */}
+<FormField
+              control={control}
+              name="aadharNo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Aadhar Number</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Aadhar Number" {...field} />
+                  </FormControl>
+                 
+                </FormItem>
+              )}
+            />
             {/* Total Experience */}
             <FormField
               control={control}

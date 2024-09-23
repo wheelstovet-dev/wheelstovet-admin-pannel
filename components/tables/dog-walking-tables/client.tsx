@@ -55,7 +55,7 @@ const DogManagementClient: React.FC = () => {
     <div className="flex items-start justify-between">
     <Heading
           title={`Dog Walking (${data.length})`}
-          description="Manage Cases"
+          description="Manage Dog Cases"
         />
             <div className="flex space-x-2 w-full max-w-3xl">
               <input
