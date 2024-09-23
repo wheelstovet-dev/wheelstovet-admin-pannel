@@ -30,8 +30,10 @@ export default function Page() {
   const handleAssignedCases = () => {
     router.push(`/assignedCases/${initialData.caseId}`); 
 
-    
   };
+  const handleSubscription = () => {
+    router.push(`/assignedSubscription/${initialData.caseId}`); 
+};
   return (
     <MainLayout meta={{ title: 'View Employee Details' }}>
        <ScrollArea className="h-full">
@@ -40,23 +42,21 @@ export default function Page() {
         <CreateEmployeeForm initialData = {initialData} isEnabled = {isEnabled}/>
       </div>
       <div className="relative mb-4 gap-8 rounded-md border p-4 md:flex md:items-center md:justify-center">
-         
-
-        
 
             <button
               onClick={handleAssignedCases}
-              className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md"
+              className="px-4 py-2 mt-4 bg-yellow-500 text-white rounded-md"
             >
               View Assigned Cases
             </button>
-           
+            <button
+              onClick={handleSubscription}
+              className="px-4 py-2 mt-4 bg-orange-500 text-white rounded-md"
+            >
+              View Subscription
+            </button>
           </div>
       </ScrollArea>
     </MainLayout>
   );
 }
-
-
-  
-  
