@@ -3,6 +3,7 @@ import BreadCrumb from '@/components/breadcrumb';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CreateEmployeeForm } from '@/components/forms/employee-stepper/create-employee';
+import { useRouter } from 'next/navigation';
 
 const breadcrumbItems = [{ title: 'View Employee Detail', link: '/dashboard/employee' }];
 
@@ -23,7 +24,14 @@ export default function Page() {
     state: 'Maharashtra',
   };
 
+  const router = useRouter();
+
   const isEnabled = true
+  const handleAssignedCases = () => {
+    router.push(`/assignedCases/${initialData.caseId}`); 
+
+    
+  };
   return (
     <MainLayout meta={{ title: 'View Employee Details' }}>
        <ScrollArea className="h-full">
@@ -31,6 +39,19 @@ export default function Page() {
         <BreadCrumb items={breadcrumbItems} />
         <CreateEmployeeForm initialData = {initialData} isEnabled = {isEnabled}/>
       </div>
+      <div className="relative mb-4 gap-8 rounded-md border p-4 md:flex md:items-center md:justify-center">
+         
+
+        
+
+            <button
+              onClick={handleAssignedCases}
+              className="px-4 py-2 mt-4 bg-red-500 text-white rounded-md"
+            >
+              View Assigned Cases
+            </button>
+           
+          </div>
       </ScrollArea>
     </MainLayout>
   );
