@@ -58,8 +58,7 @@ interface EmployeeFormType {
     resolver: zodResolver(employeeFormSchema),
     defaultValues: initialData || {
       aadharNo: '',
-      fullName: '',
-      
+      fullName: '',      
       contactInformation: {
         emailId: '',
         phone: '',
