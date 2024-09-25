@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
@@ -25,6 +26,9 @@ import {
   Legend,
   Filler // Import Filler for area chart
 } from 'chart.js';
+import { RecentCases } from '@/components/recent-cases';
+import { caseData, petData } from '@/constants/casesData';
+import { EmployeeEsclatedClient } from '@/components/tables/employee-esclation-tables/client';
 
 ChartJS.register(
   CategoryScale,
@@ -375,6 +379,49 @@ export default function Page() {
                   </CardContent>
                 </Card>
               </div>
+              <div className="flex my-4 justify-between mx-3 lg:flex-nowrap flex-wrap ">
+<Card className="w-full me-3">
+                    <CardHeader>
+                      <CardTitle>Cases for Today</CardTitle>
+                      <CardDescription>
+                        You have 10 Cases for today.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <RecentCases cases = {petData} />
+                    </CardContent>
+                  </Card>
+                  <Card className="w-full me-3">
+                    <CardHeader>
+                      <CardTitle>Scheduled Cases</CardTitle>
+                      <CardDescription>
+                        You have 26 Scheduled Cases.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <RecentCases cases = {caseData} />
+                    </CardContent>
+                  </Card>
+                  <Card className="w-full me-3">
+                    <CardHeader>
+                      <CardTitle>Total Subscribed Cases</CardTitle>
+                      <CardDescription>
+                        You have 26 Dog Walking Cases.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <RecentCases cases = {caseData} />
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
+                <div className="">
+                <EmployeeEsclatedClient/>
+
+                </div>
+                 
+                  
+                </div>
             </TabsContent>
           </Tabs>
         </div>
