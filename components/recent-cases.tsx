@@ -46,7 +46,7 @@ export function RecentCases({ cases }: RecentCasesProps) {
                 </p>
               ))}
           </div>
-          <div className="ml-auto text-sm font-small">{caseData.time }</div>
+          <div className="ml-auto text-xs font-small">{caseData.time }</div>
         </div>
       ))}
     </div>

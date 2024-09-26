@@ -1,13 +1,14 @@
 import { NavItem } from '@/types';
 
 export interface SubscriptionManagement {
+  caseId: string;
+  status: string;
   subscriptionId: number;
   userId: number;
   subscriptionPlan: string;
-  numberOfDeliveries: number;
-  deliveryDays: string[];
-  customizationOptions?: string[]; // Array of customization options
-  addons?: string[]; // Array of add-ons
+  frequency: string;
+  
+ 
   subscriptionStartDate: string;
   subscriptionEndDate: string;
   paymentStatus?: string; // Example: paid, unpaid, etc.
@@ -17,28 +18,30 @@ export interface SubscriptionManagement {
 
 export const SubscriptionManagementData: SubscriptionManagement[] = [
   {
+    caseId: '101',
+    status: 'Approve',
     subscriptionId: 1,
     userId: 1,
     subscriptionPlan: 'Daily',
-    numberOfDeliveries: 4,
-    deliveryDays: ['Wed', 'Fri'], // Wednesday and Saturday
+    frequency: '1 Time',
     subscriptionStartDate: '2023-01-01',
     subscriptionEndDate: '2023-12-31',
     subscriptionStatus: 'Active',
-    customizationOptions: ['Extra tomatoes', 'No onions'],
-    addons: ['Fruit basket']
+    
   },
   {
+    caseId: '102',
+    status: 'Approve',
     subscriptionId: 2,
     userId: 2,
     subscriptionPlan: 'Weekly',
-    numberOfDeliveries: 6,
-    deliveryDays: ['Mon','Sat'], // Tuesday and Friday
+   
+    frequency: '2 Time',
+  
     subscriptionStartDate: '2023-02-15',
     subscriptionEndDate: '2023-06-15',
     subscriptionStatus: 'Inactive',
-    customizationOptions: ['Extra spinach'],
-    addons: ['Flower bouquet']
+  
   }
 ];
 
