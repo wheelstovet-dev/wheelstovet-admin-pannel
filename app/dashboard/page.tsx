@@ -379,7 +379,7 @@ export default function Page() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="flex my-4 justify-between mx-3 lg:flex-nowrap flex-wrap ">
+              <div className="flex my-2 justify-between mx-3 lg:flex-nowrap flex-wrap ">
 <Card className="w-full me-3">
                     <CardHeader>
                       <CardTitle>Cases for Today</CardTitle>
@@ -393,20 +393,20 @@ export default function Page() {
                   </Card>
                   <Card className="w-full me-3">
                     <CardHeader>
-                      <CardTitle>Scheduled Cases</CardTitle>
+                      <CardTitle>Unassigned Cases</CardTitle>
                       <CardDescription>
-                        You have 26 Scheduled Cases.
+                        You have 26 Unassigned Cases.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                    <RecentCases cases = {caseData} />
+                    <RecentCases cases = {petData} />
                     </CardContent>
                   </Card>
                   <Card className="w-full me-3">
                     <CardHeader>
-                      <CardTitle>Total Subscribed Cases</CardTitle>
+                      <CardTitle>Pending Subscription Cases </CardTitle>
                       <CardDescription>
-                        You have 26 Dog Walking Cases.
+                       26  Pending Subscription Cases for Approvals.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

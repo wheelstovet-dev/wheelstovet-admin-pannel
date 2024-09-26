@@ -1,12 +1,73 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SubscriptionManagement } from '@/constants/subscription-management-data';
-import { Calendar, Check, X } from 'lucide-react';
+import { Calendar, Check, ChevronDown, X } from 'lucide-react';
+import { useState } from 'react';
+// interface SubscriptionManagement {
+//   status: string;
+//   // Add other fields that exist in your table row, e.g., name, id, etc.
+//   [key: string]: any; // Optionally, add an index signature if you have dynamic fields
+// }
 
+const StatusCell = ({ row }: { row: Row<SubscriptionManagement> }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState(row.original.status);
+
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    setIsOpen(false);
+    // Optionally handle any additional logic such as API calls to save status change
+  };
+
+  return (
+    <div className="relative">
+      <div 
+        style={{ borderRadius: "20px", cursor: "pointer" }}
+        className={`flex justify-between items-center px-4 py-2 ${
+          status === 'Approve' ? 'bg-green-400' :
+          status === 'Reject' ? 'bg-red-400' :
+          status === 'Pending' ? 'bg-yellow-400' :
+          'bg-gray-400'
+        }`}
+      >
+        <span className='text-black font'>{status}</span>
+        <button 
+          className="focus:outline-none ml-auto"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <ChevronDown className="text-black" size={16} />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+          <div 
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => handleStatusChange('Approve')}
+          >
+            Approve
+          </div>
+          <div 
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => handleStatusChange('Reject')}
+          >
+           Reject
+          </div>
+          <div 
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => handleStatusChange('Pending')}
+          >
+           Pending
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 export const columns: ColumnDef<SubscriptionManagement>[] = [
   {
     id: 'select',
@@ -50,7 +111,7 @@ export const columns: ColumnDef<SubscriptionManagement>[] = [
     header: 'Plan'
   },
   {
-    accessorKey: 'Frequency',
+    accessorKey: 'frequency',
     header: 'Frequency'
   },
   {
@@ -73,10 +134,10 @@ export const columns: ColumnDef<SubscriptionManagement>[] = [
    
   )
   },
-  {
-    accessorKey: 'Timeslot',
-    header: 'Time Slot'
-  },
+  // {
+  //   accessorKey: 'Timeslot',
+  //   header: 'Time Slot'
+  // },
   // {
   //   accessorKey: 'subscriptionEndDate',
   //   header: 'Subscription End Date',
@@ -88,8 +149,13 @@ export const columns: ColumnDef<SubscriptionManagement>[] = [
   // )
   // },
   {
-    accessorKey: 'subscriptionStatus',
+    accessorKey: 'status',
     header: 'Status',
+    cell: (props) => <StatusCell row = {props.row} />, // Use the component here
+  },
+  {
+    accessorKey: 'activity',
+    header: 'Activity',
     cell: ({ row }) => (
       <div 
         style={{ borderRadius: "20px" }}

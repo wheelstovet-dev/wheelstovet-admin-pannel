@@ -36,18 +36,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleViewSubscriptionHistory = () => {
-    router.push(`/subscription-management/view/${data.subscriptionId}`); 
+    router.push(`/subscription-form/view/${data.subscriptionId}`); 
   };
 
-  const toggleDeliveryDays = () => {
-    router.push(`/subscription-management/toggleDeliveryDays/${data.subscriptionId}`); 
+ 
+  const assignEmployee = () => {
+    router.push(`/employee-management/${data.caseId}`); 
   };
-  const manageCustomizationOption = () => {
-    router.push(`/subscription-management/manageCustomizationOption/${data.subscriptionId}`); 
-  };
-  const handleUpgradeAndRenewals = () => {
-    router.push(`/subscription-management/handleUpgradeAndRenewal/${data.subscriptionId}`); 
-  };
+  
 
 
   return (
@@ -71,14 +67,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           {/* <DropdownMenuItem onClick={handleRegisterNewSubscription}>
             <UserPlus className="mr-2 h-4 w-4" /> Create New Subscription
           </DropdownMenuItem> */}
-          <DropdownMenuItem onClick={handleEditSubscription}>
+          {/* <DropdownMenuItem onClick={handleEditSubscription}>
             <Edit className="mr-2 h-4 w-4" /> Edit Subscription Details
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem onClick={handleViewSubscriptionHistory}>
             <Eye className="mr-2 h-4 w-4" /> View Subscription History
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleUpgradeAndRenewals}>
-            <UserCheck className="mr-2 h-4 w-4" /> Handle Upgrade and Renewal
+          <DropdownMenuItem onClick={assignEmployee}>
+            <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Deactivate Subscription

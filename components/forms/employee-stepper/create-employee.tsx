@@ -103,15 +103,7 @@ interface EmployeeFormType {
     <>
     <div className="flex items-center justify-between">
     <Heading title={title} description={description} />
-    {initialData && (
-      <Button
-        disabled={isEnabled || loading}
-        variant="destructive"
-        size="sm"
-      >
-        <Trash className="h-4 w-4" />
-      </Button>
-    )}
+   
   </div>
       <Separator />
       <Form {...form}>
