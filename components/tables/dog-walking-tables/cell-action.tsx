@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   
 
   const viewCase = () => {
-    router.push(`/case-management/view/${data.caseId}`); 
+    router.push(`/caseManagement-form/view/${data.caseId}`); 
   };
 
   const assignEmployee = () => {
@@ -65,15 +65,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem> */}
          
           <DropdownMenuItem onClick={viewCase}>
-            <Eye className="mr-2 h-4 w-4" /> View  
+            <Eye className="mr-2 h-4 w-4" /> View Dog Walking Details
           </DropdownMenuItem>
           <DropdownMenuItem onClick={assignEmployee}>
             <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-           </DropdownMenuItem>
+        
           
      
           <DropdownMenuItem onClick={() => setOpen(true)}>

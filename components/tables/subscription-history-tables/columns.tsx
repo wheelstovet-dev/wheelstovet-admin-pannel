@@ -4,21 +4,21 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import { SubscriptionManagement } from '@/constants/subscription-management-data';
 import { Calendar, Check, ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
+import { SubscriptionHistory } from '@/constants/subscriptionHistory';
 // interface SubscriptionManagement {
 //   status: string;
 //   // Add other fields that exist in your table row, e.g., name, id, etc.
 //   [key: string]: any; // Optionally, add an index signature if you have dynamic fields
 // }
 
-const StatusCell = ({ row }: { row: Row<SubscriptionManagement> }) => {
+const StatusCell = ({ row }: { row: Row<SubscriptionHistory> }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [status, setStatus] = useState(row.original.status);
+  
 
   const handleStatusChange = (newStatus: string) => {
-    setStatus(newStatus);
+
     setIsOpen(false);
     // Optionally handle any additional logic such as API calls to save status change
   };
@@ -68,7 +68,7 @@ const StatusCell = ({ row }: { row: Row<SubscriptionManagement> }) => {
     </div>
   );
 };
-export const columns: ColumnDef<SubscriptionManagement>[] = [
+export const columns: ColumnDef<SubscriptionHistory>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -89,92 +89,61 @@ export const columns: ColumnDef<SubscriptionManagement>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'subscriptionId',
-    header: 'Subscription ID',
+    accessorKey: 'date',
+    header: 'Date',
     cell: ({ row }) => (
-      <div className="flex justify-center">
-       <span className="text-green-600 font-bold  px-1" style={{borderRadius:"50%"}} > {row.original.subscriptionId}</span>
+      <div className="">
+        <span className="text-[12px]">{row.original.date}</span>
       </div>
-    )
+    ),
   },
   {
-    accessorKey: 'userId',
-    header: 'User ID',
+    accessorKey: 'timeIn',
+    header: 'Time In',
     cell: ({ row }) => (
-      <div className="flex justify-center">
-       <span className="  text-red-600 font-bold px-1" style={{borderRadius:"50%"}} > {row.original.userId}</span>
+      <div className="">
+        <span className="text-[12px]">{row.original.timeIn}</span>
       </div>
-    )
+    ),
   },
   {
-    accessorKey: 'subscriptionPlan',
-    header: 'Plan'
-  },
-  {
-    accessorKey: 'frequency',
-    header: 'Frequency'
-  },
-  {
-    accessorKey: 'employeeId',
-    header: 'Employee ID',
+    accessorKey: 'timeOut',
+    header: 'Time Out',
     cell: ({ row }) => (
-      <div className="flex justify-center">
-       <span className="  text-yellow-600 font-bold px-1" style={{borderRadius:"50%"}} > {row.original.userId}</span>
+      <div className="">
+        <span className="text-[12px]">{row.original.timeOut}</span>
       </div>
-    )
+    ),
   },
   {
-    accessorKey: 'subscriptionStartDate',
-    header: 'Start Date',
+    accessorKey: 'duration',
+    header: 'Duration',
     cell: ({ row }) => (
-      <div className="flex items-center mt-1">
-        <Calendar className="text-blue-500 mr-2" width={16} height={16} />
-        <span className="text-[12px]">{row.original.subscriptionStartDate}</span>
+      <div className="">
+        <span className="text-[12px]">{row.original.duration}</span>
       </div>
-   
-  )
+    ),
+  },
+  {
+    accessorKey: 'note',
+    header: 'Note',
+    cell: ({ row }) => (
+      <div className="">
+        <span className="text-[12px]">{row.original.note}</span>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'escalate',
+    header: 'Escalate',
+    cell: ({ row }) => (
+      <div className="">
+      <span className="text-[12px]">{row.original.escalate}</span>
+      </div>
+    ),
   },
   // {
-  //   accessorKey: 'Timeslot',
-  //   header: 'Time Slot'
-  // },
-  // {
-  //   accessorKey: 'subscriptionEndDate',
-  //   header: 'Subscription End Date',
-  //   cell: ({ row }) => (
-  //     <div className="flex items-center mt-1">
-  //       <Calendar className="text-blue-500 mr-2" width={16} height={16} />
-  //       <span className="text-[12px]">{row.original.subscriptionEndDate}</span>
-  //     </div>
-  // )
-  // },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: (props) => <StatusCell row = {props.row} />, // Use the component here
-  },
-  {
-    accessorKey: 'activity',
-    header: 'Activity',
-    cell: ({ row }) => (
-      <div 
-        style={{ borderRadius: "20px" }}
-        className={`flex items-center me-5 justify-between px-4 py-2 ${
-          row.original.subscriptionStatus === 'Active' ? 'bg-yellow-400' : 'bg-red-400'
-        }`}
-      >
-        {row.original.subscriptionStatus === 'Active' ? (
-          <Check width={16} height={16} className="text-yellow-500 mr-2" />
-        ) : (
-          <X width={16} height={16} className="text-red-900 mr-2" />
-        )}
-        <span className='text-black bold'>{row.original.subscriptionStatus}</span>
-      </div>
-    )
-  },
- 
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
+  //   id: 'actions',
+  //   cell: ({ row }) => <CellAction data={row.original} />
+  // }
 ];
