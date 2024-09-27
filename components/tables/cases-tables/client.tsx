@@ -32,7 +32,8 @@ const CaseManagementClient: React.FC = () => {
 
   const handleSearch = (searchValue: string) => {
     const filteredData = initialData.filter(item =>
-      item.serviceName.toLowerCase().includes(searchValue.toLowerCase())
+      item.serviceName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.assignedEmployee.toLowerCase().includes(searchValue.toLowerCase())
     );
     setData(filteredData);
   };
@@ -50,13 +51,7 @@ const CaseManagementClient: React.FC = () => {
 //   };
   return (
     <>
-    {/* <div className="flex justify-end space-x-2">
-          <Button variant="outline" className="flex text-white bg-yellow-500   hover:bg-yellow-600 hover:text-white items-center transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ">
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-          </Button>
-          
-        </div> */}
+   
     <div className="flex items-start justify-between">
     <Heading
           title={`All Cases (${data.length})`}
@@ -65,7 +60,7 @@ const CaseManagementClient: React.FC = () => {
             <div className="flex space-x-2 w-full max-w-3xl">
               <input
                 type="text"
-                placeholder="Search by pet name or assigned employee"
+                placeholder="Search by service name or assigned employee"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
@@ -83,9 +78,7 @@ const CaseManagementClient: React.FC = () => {
                       Sort by Service
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
-                      <DropdownMenuItem onClick={() => handleStatusFilterChange('Dog Walking')}>
-                        Dog Walking
-                      </DropdownMenuItem>
+                      
                       <DropdownMenuItem onClick={() => handleStatusFilterChange('Salon')}>
                         Salon
                       </DropdownMenuItem>
