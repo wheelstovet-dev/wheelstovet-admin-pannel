@@ -31,8 +31,8 @@ const CaseFinanceClient: React.FC = () => {
         </div> */}
     <div className="flex items-start justify-between">
     <Heading
-          title={`Finance Management(${data.length})`}
-          description="Manage Finanace"
+          title={`View Finance (${data.length})`}
+          description="View Finanace"
         />
             <div className="flex space-x-2 w-full max-w-3xl">
               {/* <input
