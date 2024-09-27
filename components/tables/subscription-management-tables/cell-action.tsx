@@ -27,15 +27,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     // Your confirm logic here
   };
 
-  const handleRegisterNewSubscription = () => {
-    router.push('/subscription-management/register'); 
+  const handleViewSubscriptionHistory = () => {
+    router.push(`/subscription-history/view/${data.subscriptionId}`); 
   };
 
   const handleEditSubscription = () => {
     router.push(`/subscription-management/edit/${data.subscriptionId}`); 
   };
 
-  const handleViewSubscriptionHistory = () => {
+  const handleViewSubscriptionDetail = () => {
     router.push(`/subscription-form/view/${data.subscriptionId}`); 
   };
 
@@ -64,14 +64,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          {/* <DropdownMenuItem onClick={handleRegisterNewSubscription}>
-            <UserPlus className="mr-2 h-4 w-4" /> Create New Subscription
-          </DropdownMenuItem> */}
+          <DropdownMenuItem onClick={handleViewSubscriptionHistory}>
+            <Eye className="mr-2 h-4 w-4" /> View Subscription History
+          </DropdownMenuItem>
           {/* <DropdownMenuItem onClick={handleEditSubscription}>
             <Edit className="mr-2 h-4 w-4" /> Edit Subscription Details
           </DropdownMenuItem> */}
-          <DropdownMenuItem onClick={handleViewSubscriptionHistory}>
-            <Eye className="mr-2 h-4 w-4" /> View Subscription History
+          <DropdownMenuItem onClick={handleViewSubscriptionDetail}>
+            <Eye className="mr-2 h-4 w-4" /> View Subscription Details
           </DropdownMenuItem>
           <DropdownMenuItem onClick={assignEmployee}>
             <UserCheck className="mr-2 h-4 w-4" /> Assign Employee

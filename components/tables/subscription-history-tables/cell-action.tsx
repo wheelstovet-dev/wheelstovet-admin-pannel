@@ -9,14 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import {CaseManagementUser } from '@/constants/case-management-data';
-
-import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck, FileText } from 'lucide-react';
+import { SubscriptionHistory } from '@/constants/subscriptionHistory';
+import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface CellActionProps {
-  data: CaseManagementUser;
+  data: SubscriptionHistory;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -28,18 +27,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     // Your confirm logic here
   };
 
-  
-  
-
-  const viewCase = () => {
-    router.push(`/caseManagement-form/view/${data.caseId}`); 
+  const handleViewSubscriptionHistory = () => {
+    router.push('/subscription-management/register'); 
   };
 
-  const assignEmployee = () => {
-    router.push(`/employee-management/${data.caseId}`); 
+  const handleEditSubscription = () => {
+    router.push(`/subscription-management/edit/${data.subscriptionId}`); 
   };
-  
 
+  const handleViewSubscriptionDetail = () => {
+    router.push(`/subscription-form/view/${data.subscriptionId}`); 
+  };
+
+ 
+//   const assignEmployee = () => {
+//     router.push(`/employee-management/${data.caseId}`); 
+//   };
+  
 
 
   return (
@@ -58,24 +62,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          {/* <DropdownMenuItem onClick={handleRegisterNewSubscription}>
-            <UserPlus className="mr-2 h-4 w-4" /> Create New Subscription
+          {/* <DropdownMenuItem onClick={handleViewSubscriptionHistory}>
+            <UserPlus className="mr-2 h-4 w-4" /> View Subscription History
           </DropdownMenuItem> */}
-         
-          <DropdownMenuItem onClick={viewCase}>
-            <Eye className="mr-2 h-4 w-4" /> View Case Details
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={assignEmployee}>
-            <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
-          </DropdownMenuItem>
-          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-           </DropdownMenuItem> */}
+          {/* <DropdownMenuItem onClick={handleEditSubscription}>
+            <Edit className="mr-2 h-4 w-4" /> Edit Subscription Details
+          </DropdownMenuItem> */}
+          {/* <DropdownMenuItem onClick={handleViewSubscriptionDetail}>
+            <Eye className="mr-2 h-4 w-4" /> View Subscription Details
+          </DropdownMenuItem> */}
+        
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
+            <Trash className="mr-2 h-4 w-4" /> Deactivate Subscription
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

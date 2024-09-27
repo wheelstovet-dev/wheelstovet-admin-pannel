@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { CaseFinance } from '@/constants/case-financial';
 import {CaseManagementUser } from '@/constants/case-management-data';
 
 import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck, FileText } from 'lucide-react';
@@ -16,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface CellActionProps {
-  data: CaseManagementUser;
+  data: CaseFinance;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -27,20 +28,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     // Your confirm logic here
   };
-
-  
-  
-
-  const viewCase = () => {
-    router.push(`/caseManagement-form/view/${data.caseId}`); 
-  };
-
-  const assignEmployee = () => {
-    router.push(`/employee-management/${data.caseId}`); 
-  };
-  
-
-
 
   return (
     <>
@@ -58,22 +45,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-
-          {/* <DropdownMenuItem onClick={handleRegisterNewSubscription}>
-            <UserPlus className="mr-2 h-4 w-4" /> Create New Subscription
-          </DropdownMenuItem> */}
          
-          <DropdownMenuItem onClick={viewCase}>
-            <Eye className="mr-2 h-4 w-4" /> View Case Details
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={assignEmployee}>
-            <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
-          </DropdownMenuItem>
-          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-           </DropdownMenuItem> */}
+       
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
