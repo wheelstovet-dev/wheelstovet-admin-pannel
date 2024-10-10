@@ -15,7 +15,7 @@ import user3 from '@/public/images/user3.jpg'
 export interface Case {
     avatar: StaticImageData;  
     name: string;
-    // data: string;
+    paymentStatus?: string;
     time: string;
   }
   
@@ -24,41 +24,45 @@ export interface Case {
     {
       avatar: user1, // Placeholder, replace with actual path or variable holding the avatar image
       name: 'John Doe',
-      // data: 'Last Purchase Today',
+      // paymentStatus: 'Paid',
       time: '10 AM - 12 PM'
     },
     {
       avatar: user2,
       name: 'Deepak Singh',
-      // data: 'Last Purchase Yesterday',
+      // paymentStatus: 'Paid',
       time: '2 PM - 4 PM '
     },
     {
       avatar: user3,
       name: 'Shivam Kumar',
-      // data: 'Last Purchase Today',
+      // paymentStatus: 'Paid',
       time: '10 AM - 12 PM'
     },
     {
       avatar: user2,
       name: 'Arya Singh',
-      // data: 'Last Purchase YesterDay',
+      // paymentStatus: 'Paid',
       time: '5 PM - 7 PM'
     },
     {
       avatar: user1,
       name: 'Kartik Singh',
-      // data: 'Last Purchase 7 Days Ago',
+      // paymentStatus: 'Paid',
       time: '10 AM - 12 PM'
     }
   ];
   
-
-
-   export const petData: Case[] = [
+  export const unassignedData: Case[] = [
     {avatar: petTaxi, name: 'Pet taxi',  time: '10 AM - 12 PM' },
     { avatar: salon, name: 'Salon Visit',  time: '2 PM - 4 PM ' },
     { avatar: vetiniary, name: 'Vetinary Visit',  time: '5 PM - 7 PM' },
-    { avatar: handle, name: 'Outing with pets', time: '10 AM - 12 PM' }
+    { avatar: handle,name: 'Outing with pets', time: '10 AM - 12 PM' }
   ];
-//    data:"₹36/kg",
+
+   export const petData: Case[] = [
+    {avatar: petTaxi,paymentStatus: 'Paid', name: 'Pet taxi',  time: '10 AM - 12 PM' },
+    { avatar: salon,paymentStatus: 'Paid', name: 'Salon Visit',  time: '2 PM - 4 PM ' },
+    { avatar: vetiniary, paymentStatus: 'Paid', name: 'Vetinary Visit',  time: '5 PM - 7 PM' },
+    { avatar: handle, paymentStatus: 'Paid',name: 'Outing with pets', time: '10 AM - 12 PM' }
+  ];

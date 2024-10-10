@@ -7,9 +7,10 @@ import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { EmployeeManagement, EmployeeManagementData } from '@/constants/employee-management-data';
 
-import { Plus } from 'lucide-react';
+import { Plus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
+import { FaUserCheck } from 'react-icons/fa';
 
 
 export const EmployeeManagementClient: React.FC = () => {
@@ -59,7 +60,16 @@ export const EmployeeManagementClient: React.FC = () => {
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
+        
       </div>
+      <div className="flex justify-end ">
+      <Button
+          className="text-xs md:text-sm  bg-yellow-500 hover:bg-yellow-600"
+          onClick={() => router.push(`/`)}
+        >
+          <FaUserCheck className="mr-2 h-4 w-4" /> Assign
+        </Button>
+        </div>
       <Separator />
       <DataTable
         searchKeys={["fullName"]}
