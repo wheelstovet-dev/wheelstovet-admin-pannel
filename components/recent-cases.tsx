@@ -6,9 +6,8 @@ import { StaticImageData } from 'next/image';
 interface Case {
   avatar?: StaticImageData;
   name?: string;
-  data?: string;
+  paymentStatus?: string; // Added payment status
   time?: string;
-  itemsIncluded?: { itemName: string; quantity: string }[];
 }
 
 interface RecentCasesProps {
@@ -23,6 +22,7 @@ export function RecentCases({ cases }: RecentCasesProps) {
           className="flex items-center p-3 transition-all duration-200 transform hover:scale-105 hover:bg-yellow-500"
           key={index}
         >
+          {/* Avatar */}
           <Avatar className="h-9 w-9">
             {caseData.avatar ? (
               <Image src={caseData.avatar} alt="Avatar" />
@@ -32,21 +32,22 @@ export function RecentCases({ cases }: RecentCasesProps) {
               </AvatarFallback>
             )}
           </Avatar>
+
+          {/* Name and Payment Status */}
           <div className="ml-4 space-y-1">
             <p className="text-sm font-small leading-none">{caseData.name || 'Unnamed'}</p>
-            {caseData?.data && (
+            {/* Payment Status */}
+            {caseData.paymentStatus && (
               <p className="text-sm text-muted-foreground">
-                {caseData.data || 'No data found'}
+                <span className="font-bold">Payment Status:</span> {caseData.paymentStatus}
               </p>
             )}
-            {caseData.itemsIncluded &&
-              caseData.itemsIncluded.map((item) => (
-                <p key={item.itemName} className="text-sm text-muted-foreground">
-                  {item.itemName}: {item.quantity}
-                </p>
-              ))}
           </div>
-          <div className="ml-auto text-xs font-small">{caseData.time }</div>
+
+          {/* Time */}
+          <div className="ml-auto text-xs font-small">
+            {caseData.time && <p>{caseData.time}</p>}
+          </div>
         </div>
       ))}
     </div>

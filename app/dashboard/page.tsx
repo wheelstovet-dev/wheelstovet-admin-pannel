@@ -27,8 +27,9 @@ import {
   Filler // Import Filler for area chart
 } from 'chart.js';
 import { RecentCases } from '@/components/recent-cases';
-import { caseData, petData } from '@/constants/casesData';
+import { caseData, petData, unassignedData } from '@/constants/casesData';
 import { EmployeeEsclatedClient } from '@/components/tables/employee-esclation-tables/client';
+import { EnquiryClient } from '@/components/tables/enquiry-management-table/client';
 
 ChartJS.register(
   CategoryScale,
@@ -379,43 +380,50 @@ export default function Page() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="flex my-2 justify-between mx-3 lg:flex-nowrap flex-wrap ">
-<Card className="w-full me-3">
-                    <CardHeader>
-                      <CardTitle>Cases for Today</CardTitle>
-                      <CardDescription>
-                        You have 10 Cases for today.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <RecentCases cases = {petData} />
-                    </CardContent>
-                  </Card>
-                  <Card className="w-full me-3">
-                    <CardHeader>
-                      <CardTitle>Unassigned Cases</CardTitle>
-                      <CardDescription>
-                        You have 26 Unassigned Cases.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <RecentCases cases = {petData} />
-                    </CardContent>
-                  </Card>
-                  <Card className="w-full me-3">
-                    <CardHeader>
-                      <CardTitle>Pending Subscription Cases </CardTitle>
-                      <CardDescription>
-                       26  Pending Subscription Cases for Approvals.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <RecentCases cases = {caseData} />
-                    </CardContent>
-                  </Card>
-                </div>
+              <div className="flex flex-wrap my-2 justify-between mx-3">
+  {/* Card 1: Cases for Today */}
+  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+    <CardHeader>
+      <CardTitle>Cases for Today</CardTitle>
+      <CardDescription>
+        You have 10 Cases for today.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <RecentCases cases={petData} />
+    </CardContent>
+  </Card>
+
+  {/* Card 2: Unassigned Cases */}
+  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+    <CardHeader>
+      <CardTitle>Unassigned Cases</CardTitle>
+      <CardDescription>
+        You have 26 Unassigned Cases.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <RecentCases cases={unassignedData} />
+    </CardContent>
+  </Card>
+
+  {/* Card 3: Pending Subscription Cases */}
+  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+    <CardHeader>
+      <CardTitle>Pending Subscription Cases</CardTitle>
+      <CardDescription>
+        26 Pending Subscription Cases for Approvals.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <RecentCases cases={caseData} />
+    </CardContent>
+  </Card>
+</div>
+
                 <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
                 <div className="">
+                  <EnquiryClient/>
                 <EmployeeEsclatedClient/>
 
                 </div>
