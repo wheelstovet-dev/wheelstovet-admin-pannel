@@ -25,16 +25,17 @@ export const columns: ColumnDef<CaseManagementUser>[] = [
     enableSorting: false,
     enableHiding: false
   },
-  {
-    accessorKey: 'caseId',
-    header: 'Case Id',
+  //------remove case id and user id to be viewed in ui----------
+  // {
+  //   accessorKey: 'caseId',
+  //   header: 'Case Id',
    
-  },
+  // },
 
-  {
-    accessorKey: 'userId',
-    header: 'User Id'
-  },
+  // {
+  //   accessorKey: 'userId',
+  //   header: 'User Id'
+  // },
   {
     accessorKey: 'serviceName',
     header: 'Service Name'

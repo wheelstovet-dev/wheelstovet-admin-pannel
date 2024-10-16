@@ -25,27 +25,28 @@ export const columns: ColumnDef<CaseManagementUser>[] = [
     enableSorting: false,
     enableHiding: false
   },
-  {
-    accessorKey: 'caseId',
-    header: 'Case Id',
+  // {
+  //   accessorKey: 'caseId',
+  //   header: 'Case Id',
    
-  },
+  // },
 
-  {
-    accessorKey: 'userId',
-    header: 'User Id'
-  },
+  // {
+  //   accessorKey: 'userId',
+  //   header: 'User Id'
+  // },
 //   {
 //     accessorKey: 'serviceName',
 //     header: 'Service Name'
 //   },
-  {
-    accessorKey: 'currentStatus',
-    header: 'Current Status'
-  },
+  
   {
     accessorKey: 'assignedEmployee',
     header: 'Assigned Employee'
+  },
+  {
+    accessorKey: 'currentStatus',
+    header: 'Current Status'
   },
   {
     accessorKey: 'date',
