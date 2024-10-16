@@ -17,6 +17,7 @@ const initialData = {
     currentStatus: 'active', // Options: 'active' | 'inactive'
     paymentMethod: 'credit', // Options: 'credit' | 'debit' | 'paypal'
     paymentStatus: 'paid', // Options: 'paid' | 'unpaid'
+    document:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?ixlib=rb-4.0.3'
 };
 export default function CaseForm() {
     const isEnabled = true
