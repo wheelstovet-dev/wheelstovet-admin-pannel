@@ -29,6 +29,7 @@ const enquiryFormSchema = z.object({
   status: z.enum(['pending', 'approve', 'reject'], {
     required_error: 'Status is required',
   }),
+  note: z.string().optional()
 });
 
 export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEnabled }) => {
@@ -51,6 +52,7 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
       phoneNo: '',
       pickupAddress: '',
       status: '',
+      note: '',
     },
   });
 
@@ -200,6 +202,20 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
                         <SelectItem value="reject">Reject</SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Note */}
+            <FormField
+              control={control}
+              name="note"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Note</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="No additional notes" {...field} />
                   </FormControl>
                 </FormItem>
               )}

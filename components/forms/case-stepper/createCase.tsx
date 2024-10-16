@@ -16,6 +16,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
+
 interface CaseFormType {
   initialData: any | null;
   isEnabled?: boolean;
@@ -32,15 +33,16 @@ const caseFormSchema = z.object({
   currentStatus: z.string().min(1, 'Current Status is required'),
   paymentMethod: z.string().min(1, 'Payment Method is required'),
   paymentStatus: z.string().min(1, 'Payment Status is required'),
+  document: z.any().optional()
 });
 
 export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled }) => {
   const [loading, setLoading] = useState(false);
 
   const title = initialData && isEnabled ? "View Case" : initialData ? "Edit Case" : "Create New Case";
-  const description = initialData && isEnabled 
+  const description = initialData && isEnabled
     ? "View the case details." : initialData ? "Edit the case details."
-    : "To create a new case, fill in the required information.";
+      : "To create a new case, fill in the required information.";
 
   const action = initialData ? 'Save changes' : 'Create';
 
@@ -57,10 +59,11 @@ export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled 
       currentStatus: '',
       paymentMethod: '',
       paymentStatus: '',
+      document: null
     },
   });
 
-  const { control, handleSubmit, formState: { errors } } = form;
+  const { control, handleSubmit, watch, formState: { errors } } = form;
 
   const onSubmit: SubmitHandler<typeof caseFormSchema._type> = async (data) => {
     try {
@@ -78,6 +81,9 @@ export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled 
     }
   };
 
+  // Watch uploaded document
+  const uploadedDocument = watch('document');
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -87,7 +93,7 @@ export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled 
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
-            
+
             {/* Case ID */}
             <FormField
               control={control}
@@ -269,16 +275,42 @@ export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled 
               )}
             />
 
+            {/* Document Upload */}
+            <FormField
+              control={control}
+              name="document" // Assuming document URL is stored in initialData.document
+              render={() => (
+                <FormItem>
+                  <FormLabel>Document</FormLabel>
+                  <FormControl>
+                    {initialData?.document ? (
+                      // Show the document link if the document URL is available
+                      <img
+                      src={initialData.document}
+                      alt="Document"
+                      className="w-auto h-20 object-cover"
+                    />
+                    ) : (
+                      // Show placeholder text if no document is available
+                      <p className="text-gray-500">No document available</p>
+                    )}
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+
+
           </div>
           <div className="flex justify-end">
-          { (!isEnabled)  && <Button
+            {(!isEnabled) && <Button
               type="submit"
               disabled={isEnabled || loading}
               className="ml-4 w-full"
             >
               {action}
             </Button>
-}
+            }
           </div>
         </form>
       </Form>
