@@ -1,10 +1,9 @@
-import Axios from 'axios';
-
-import storage from '../utils/storage';
+import Axios, { AxiosResponse, Method } from 'axios';
+import { getSessionStorageItem } from '@/utils/localStorage';
 
 function authRequestInterceptor(config: any) {
   config.headers = config.headers ?? {};
-  const token = storage.getToken();
+  const token = getSessionStorageItem('token');
   if (token) {
     config.headers.authorization = `Bearer ${token}`;
   }
@@ -12,7 +11,8 @@ function authRequestInterceptor(config: any) {
   return config;
 }
 export const axios = Axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
+  // baseURL: ${process.env.NEXT_PUBLIC_API_URL}
+  baseURL:"http://15.206.246.97:3001"
 });
 axios.interceptors.request.use(authRequestInterceptor);
 axios.interceptors.response.use(
@@ -42,3 +42,27 @@ axios.interceptors.response.use(
     });
   }
 );
+
+
+// Common method for api hitting 
+
+async function apiCall<T = any>(
+  method: Method,
+  url: string,
+  data?: any
+): Promise<AxiosResponse<T>> { // Return type is now AxiosResponse<T>
+  try {
+    const response: AxiosResponse<T> = await axios({
+      method,
+      url,
+      data,
+      // You can add headers or other configurations here if needed
+    });
+    return response; // Return the whole response object
+  } catch (error: any) {
+    console.error('API call error:', error); // Log the error for debugging
+    throw error; // Rethrow the error for handling in the caller
+  }
+}
+
+export default apiCall;

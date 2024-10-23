@@ -1,4 +1,4 @@
-const storagePrefix = 'speakai_';
+const storagePrefix = 'wheelstovet_Profile_';
 
 const storage = {
   getToken: () => {
@@ -10,6 +10,7 @@ const storage = {
   },
   clearToken: () => {
     window.localStorage.removeItem(`${storagePrefix}token`);
-  }
+  },
 };
+
 export default storage;
