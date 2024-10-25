@@ -1,363 +1,259 @@
 'use client';
-
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useDispatch } from 'react-redux';
+import { createEmployee } from '@/app/redux/actions/employeeAction';
+import { setLoading } from '@/app/redux/slices/authslice';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Eye, EyeOff, KeyRound, Trash } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { AppDispatch } from '@/app/redux/store';
 
-interface EmployeeFormType {
-  initialData: any | null;
-  isEnabled?: boolean;
-}
-
- const employeeFormSchema = z.object({
-  aadharNo: z.string().min(12, 'Aadhar number must be 12 digits').max(12, 'Aadhar number must be 12 digits'),
-  firstName: z.string().min(1, 'First Name is required'),
-  lastName: z.string().min(1, 'Last Name is required'),
-  contactInformation: z.object({
-    emailId: z.string().email('Invalid email format').min(1, 'Email is required'),
-    phone: z.string().min(1, 'Phone is required'),
-  }),
-  totalExperience: z.number().nonnegative('Total Experience must be a positive number'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-  gender: z.string().min(1, 'Gender is required'),
-  dob: z.date({
-    required_error: 'Date of Birth is required.',
-  }),
-  address: z.object({
-    street: z.string().min(1, 'Street is required'),
-    city: z.string().min(1, 'City is required'),
-    state: z.string().min(1, 'State is required'),
-  }),
-  role: z.string().min(1, 'Role is required'),
+// Employee form schema for validation
+const employeeFormSchema = z.object({
+  Name: z.string().min(1, 'Name is required'),
+  MobileNo: z.string().min(1, 'Mobile Number is required'),
+  Email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  AadharNo: z.string().length(12, 'Aadhar number must be 12 digits'),
+  Gender: z.string().min(1, 'Gender is required'),
+  DateOfBirth: z.string().min(1, 'Date of Birth is required'),
+  StreetAddress: z.string().min(1, 'Street is required'),
+  City: z.string().min(1, 'City is required'),
+  State: z.string().min(1, 'State is required'),
+  Role: z.string().min(1, 'Role is required'),
 });
 
- export const CreateEmployeeForm: React.FC<EmployeeFormType> = ({ initialData , isEnabled}) => {
-  const [loading, setLoading] = useState(false);
-  // const [showPassword, setShowPassword] = useState(false);
+// type EmployeeFormValue = z.infer<typeof employeeFormSchema>;
 
-  const title = initialData && isEnabled ? "View Detail" : initialData ? "Edit Detail" : "Create New Employee";
-  const description = initialData && isEnabled 
-    ? "View the Employee details." : initialData ? "Edit the Employee details."
-    : "To create a new Employee, fill in the required information.";
- 
-    const action = initialData ? 'Save changes' : 'Create';
+export default function CreateEmployeeForm() {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
-  const form = useForm({
+  const form = useForm<any>({
     resolver: zodResolver(employeeFormSchema),
-    defaultValues: initialData || {
-      aadharNo: '',
-      fullName: '',      
-      contactInformation: {
-        emailId: '',
-        phone: '',
-      },
-      totalExperience: 0,
-      password: '',
-      dob: new Date(),
-      gender: '',
-      address: {
-        street: '',
-        city: '',
-        state: '',
-      },
-      role: '',
+    defaultValues: {
+      Name: '',
+      MobileNo: '',
+      Email: '',
+      AadharNo: '',
+      Gender: '',
+      DateOfBirth:'',
+      StreetAddress: '',
+      City: '',
+      State: '',
+      Role: '',
     },
   });
 
   const { control, handleSubmit, formState: { errors } } = form;
 
-  const onSubmit: SubmitHandler<typeof employeeFormSchema._type> = async (data) => {
+  const onSubmit: SubmitHandler<any> = async (data:any) => {
+    dispatch(setLoading(true));
     try {
-      setLoading(true);
-      if (initialData) {
-        // Update existing employee
+      const resultAction:any = await dispatch(createEmployee(data));
+      //console.log("result action - " resultAction,);
+
+      if (resultAction.type==='employees/create/fulfilled') {
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Employee created successfully!',
+        });
+        router.push('/dashboard');
       } else {
-        // Create new employee
+        throw new Error(resultAction.payload.message);
       }
-      // Refresh or redirect after submission
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to create employee',
+      });
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
-  // const generatePassword = () => {
-  //   const generatedPassword = Math.random().toString(36).slice(-8);
-  //   form.setValue('password', generatedPassword);
-  // };
+  const renderErrorMessage = (error: any) => {
+    if (!error) return null;
+    if (typeof error === 'string') return error;
+    if (error.message) return error.message;
+    return null;
+  };
 
   return (
     <>
-    <div className="flex items-center justify-between">
-    <Heading title={title} description={description} />
-   
-  </div>
-      <Separator />
+      <h2 className="text-3xl font-bold mb-4">Create Employee</h2>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
-            
-          
-
-            {/* First Name */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Full Name */}
             <FormField
               control={control}
-              name="fullName"
+              name="Name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel> Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter First Name" {...field} />
+                    <Input type="text" placeholder="Enter Full Name" {...field} />
                   </FormControl>
-                 
+                  <FormMessage>{renderErrorMessage(errors.Name)}</FormMessage>
                 </FormItem>
               )}
             />
-  
-            {/* Last Name
+            {/* Mobile Number */}
             <FormField
               control={control}
-              name="lastName"
+              name="MobileNo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Mobile Number</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Last Name" {...field} />
+                    <Input type="text" placeholder="Enter Mobile Number" {...field} />
                   </FormControl>
-                 
+                  <FormMessage>{renderErrorMessage(errors.MobileNo)}</FormMessage>
                 </FormItem>
               )}
-            /> */}
-
+            />
             {/* Email */}
             <FormField
               control={control}
-              name="contactInformation.emailId"
+              name="Email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="emailId" disabled={isEnabled ||loading} placeholder="Enter Email" {...field} />
+                    <Input type="email" placeholder="Enter Email" {...field} />
                   </FormControl>
-                
+                  <FormMessage>{renderErrorMessage(errors.Email)}</FormMessage>
                 </FormItem>
               )}
             />
-
-            {/* Phone */}
+            {/* Aadhar Number */}
             <FormField
               control={control}
-              name="contactInformation.phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Phone" {...field} />
-                  </FormControl>
-                 
-                </FormItem>
-              )}
-            />
-{/* Aadhar Number */}
-<FormField
-              control={control}
-              name="aadharNo"
+              name="AadharNo"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Aadhar Number</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Aadhar Number" {...field} />
+                    <Input type="text" placeholder="Enter Aadhar Number" {...field} />
                   </FormControl>
-                 
+                  <FormMessage>{renderErrorMessage(errors.AadharNo)}</FormMessage>
                 </FormItem>
               )}
             />
-            {/* Total Experience */}
-            <FormField
-              control={control}
-              name="totalExperience"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Total Experience (in years)</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={isEnabled ||loading} placeholder="Enter Total Experience" {...field} />
-                  </FormControl>
-                  
-                </FormItem>
-              )}
-            />
-
-            {/* Password
-            <FormField
-              control={control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <div className="flex justify-between items-center">
-                    <FormControl>
-                      <div className="relative w-full me-3">
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
-                          disabled={isEnabled ||loading}
-                          placeholder="Enter Password"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                          onClick={() => setShowPassword((prev) => !prev)}
-                        >
-                          {showPassword ? <EyeOff /> : <Eye />}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <Button type="button" onClick={generatePassword}>
-                      <KeyRound height={16} width={16} className="me-2 animate-bounce mt-1" /> Generate
-                    </Button>
-                  </div>
-               
-                </FormItem>
-              )}
-            /> */}
-
             {/* Gender */}
             <FormField
               control={control}
-              name="gender"
+              name="Gender"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
                   <FormControl>
-                    <Select disabled={isEnabled ||loading} onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  
+                  <FormMessage>{renderErrorMessage(errors.Gender)}</FormMessage>
                 </FormItem>
               )}
             />
-
+            {/* Date of Birth */}
+            <FormField
+              control={control}
+              name="DateOfBirth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <Input type="date" placeholder="Enter Date of Birth" {...field} />
+                  </FormControl>
+                  <FormMessage>{renderErrorMessage(errors.DateOfBirth)}</FormMessage>
+                </FormItem>
+              )}
+            />
             {/* Street Address */}
             <FormField
               control={control}
-              name="address.street"
+              name="StreetAddress"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Street Address</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Street Address" {...field} />
+                    <Input type="text" placeholder="Enter Street Address" {...field} />
                   </FormControl>
+                  <FormMessage>{renderErrorMessage(errors.StreetAddress)}</FormMessage>
                 </FormItem>
               )}
             />
-
             {/* City */}
             <FormField
               control={control}
-              name="address.city"
+              name="City"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter City" {...field} />
+                    <Input type="text" placeholder="Enter City" {...field} />
                   </FormControl>
+                  <FormMessage>{renderErrorMessage(errors.City)}</FormMessage>
                 </FormItem>
               )}
             />
-
             {/* State */}
             <FormField
               control={control}
-              name="address.state"
+              name="State"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter State" {...field} />
+                    <Input type="text" placeholder="Enter State" {...field} />
                   </FormControl>
+                  <FormMessage>{renderErrorMessage(errors.State)}</FormMessage>
                 </FormItem>
               )}
             />
-
             {/* Role */}
             <FormField
               control={control}
-              name="role"
+              name="Role"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled ||loading} placeholder="Enter Role" {...field} />
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pet Walking">Pet Walking</SelectItem>
+                        <SelectItem value="Dog Walking">Dog Walking</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Date of Birth */}
-            <FormField
-              control={control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? format(field.value, 'PPP') : 'Pick a date'}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={isEnabled ||loading} />
-                    </PopoverContent>
-                  </Popover>
+                  <FormMessage>{renderErrorMessage(errors.Role)}</FormMessage>
                 </FormItem>
               )}
             />
           </div>
 
-            {/* Form Actions */}
-            <div className="flex justify-end">
-          { (!isEnabled)  && <Button
-              type="submit"
-              disabled={isEnabled || loading}
-              className="ml-4 w-full"
-            >
-              {action}
-            </Button>
-}
-          </div>
+          {/* Submit Button */}
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Creating...' : 'Create Employee'}
+          </Button>
         </form>
       </Form>
-     </>
+    </>
   );
-};
+}
