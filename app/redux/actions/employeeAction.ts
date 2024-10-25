@@ -3,32 +3,25 @@ import apiCall from '@/lib/axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
 
-
-
 // Action to create a new employee
 // Action to create a new employee
-export const createEmployee = createAsyncThunk<
-  AxiosResponse<any>, // Change this to AxiosResponse<Employee>
-  any,
-  { rejectValue: any }
->(
-  'employees/create',
-  async (employeeData, { rejectWithValue }) => {
-    try {
-      // Make API call to create an employee
-      const response = await apiCall<any>('POST', '/admin/createEmp', employeeData);
-      console.log('API Response:', response); // Log the full response for debugging
+export const createEmployee = createAsyncThunk<AxiosResponse<any>,any,{ rejectValue: any }>('employees/create', async (employeeData, { rejectWithValue }) => {
+  try {
+    // Make API call to create an employee
+    const response = await apiCall<any>(
+      'POST',
+      '/admin/createEmp',
+      employeeData
+    );
+    console.log('API Response:', response); // Log the full response for debugging
 
-      // Return the entire response object
-      return response; // Return the full response
-    } catch (error: any) {
-      // Handle errors and return the error message
-      return rejectWithValue(error || 'Failed to create employee');
-    }
+    // Return the entire response object
+    return response; // Return the full response
+  } catch (error: any) {
+    // Handle errors and return the error message
+    return rejectWithValue(error || 'Failed to create employee');
   }
-);
-
-
+});
 
 // Action to get an employee by ID
 // export const getEmployeeById = createAsyncThunk<
@@ -52,7 +45,6 @@ export const createEmployee = createAsyncThunk<
 //   }
 // );
 
-
 // Action to update an existing employee
 // export const updateEmployee = createAsyncThunk<
 //   AxiosResponse<any>,
@@ -71,20 +63,20 @@ export const createEmployee = createAsyncThunk<
 //   }
 // );
 // // Action to get all employees with pagination support
-// // Action to get all employees with pagination support
-// export const getAllEmployees = createAsyncThunk<
-//   AxiosResponse<{ total: number; currentPage: number; totalPages: number; employees: Employee[] }>, // Return type
-//   { page: number; limit: number }, // Input type
-//   { rejectValue: any }
-// >(
-//   'employees/getAll',
-//   async ({ page, limit }, { rejectWithValue }) => {
-//     try {
-//       const response = await apiCall('GET', /admin/employee?page=${page}&limit=${limit});
-//       console.log('API Response for all employees:', response);
-//       return response; // Return full response including employees and pagination data
-//     } catch (error: any) {
-//       return rejectWithValue(error || 'Failed to fetch employees');
-//     }
-//   }
-// );
+// Action to get all employees with pagination support
+export const getAllEmployees = createAsyncThunk<
+  AxiosResponse<{ total: number; currentPage: number; totalPages: number; employees: any[] }>, // Return type
+  { page: number; limit: number }, // Input type
+  { rejectValue: any }
+>(
+  'employees/getAll',
+  async ({ page, limit }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall('GET', `/admin/allEmp?page=${page}&limit=${limit}`);
+      // console.log('API Response for all employees:', response);
+      return response; // Return full response including employees and pagination data
+    } catch (error: any) {
+      return rejectWithValue(error || 'Failed to fetch employees');
+    }
+  }
+);

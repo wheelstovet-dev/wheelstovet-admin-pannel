@@ -1,6 +1,6 @@
 
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { createEmployee } from '../actions/employeeAction';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createEmployee, getAllEmployees } from '../actions/employeeAction';
 import { AxiosResponse } from 'axios';
 
 interface EmployeeState {
@@ -56,20 +56,21 @@ const employeeSlice = createSlice({
     //     state.loading = false;
     //     state.error = action.payload;
     //   })
-    //   .addCase(getAllEmployees.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(getAllEmployees.fulfilled, (state, action: PayloadAction<AxiosResponse<{ total: number; currentPage: number; totalPages: number; employees: Employee[] }>>) => {
-    //     state.loading = false;
-    //     state.employees = action.payload.data.employees; // Directly set employees from response
-    //     state.totalEmployees = action.payload.data.total; // Total employees from response
-    //     state.currentPage = action.payload.data.currentPage; // Current page from response
-    //     state.totalPages = action.payload.data.totalPages; // Total pages from response
-    //   })
-    //   .addCase(getAllEmployees.rejected, (state, action: PayloadAction<any>) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   })
+      .addCase(getAllEmployees.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllEmployees.fulfilled, (state, action: PayloadAction<AxiosResponse<{ total: number; currentPage: number; totalPages: number; employees: any[] }>>) => {
+        // console.log(action.payload);
+        state.loading = false;
+        state.employees = action.payload.data.employees; // Directly set employees from response
+        state.totalEmployees = action.payload.data.total; // Total employees from response
+        state.currentPage = action.payload.data.currentPage; // Current page from response
+        state.totalPages = action.payload.data.totalPages; // Total pages from response
+      })
+      .addCase(getAllEmployees.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
     //   .addCase(updateEmployee.pending, (state) => {
     //     state.loading = true;
     //   })
