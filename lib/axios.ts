@@ -3,9 +3,9 @@ import { getSessionStorageItem } from '@/utils/localStorage';
 
 function authRequestInterceptor(config: any) {
   config.headers = config.headers ?? {};
-  const token = getSessionStorageItem('token');
+  const token:any= getSessionStorageItem('token');
   if (token) {
-    config.headers.authorization = `Bearer ${token}`;
+    config.headers.authorization = `Bearer ${token.token}`;
   }
   config.headers.Accept = 'application/json';
   return config;
