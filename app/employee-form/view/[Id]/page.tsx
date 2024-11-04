@@ -1,6 +1,6 @@
 'use client';
 import BreadCrumb from '@/components/breadcrumb';
-import CreateEmployeeForm from '@/components/forms/employee-stepper/create-employee';
+import { CreateEmployeeForm } from '@/components/forms/employee-stepper/create-employee';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRouter } from 'next/navigation';
