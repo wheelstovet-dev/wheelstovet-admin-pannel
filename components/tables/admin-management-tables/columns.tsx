@@ -1,12 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AdminManagement } from '@/constants/admin-management-data'; 
+import { CellAction } from './cell-action';
+import { Mail } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
+import { updateAdminStatus } from '@/app/redux/actions/adminAction';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/app/redux/store';
 
-import { CellAction } from './cell-action'; 
-import { Check, X, Mail, Phone, MapPin, Award } from 'lucide-react'; 
 // Function to generate a random color in hex format
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -17,7 +20,35 @@ const getRandomColor = () => {
   return color;
 };
 
-export const columns: ColumnDef<AdminManagement>[] = [
+const IsActiveCell = ({ row }: { row: any }) => {
+  // console.log(row.original);
+  const [isActive, setIsActive] = useState(row.original.IsActive);
+  const dispatch = useDispatch<AppDispatch>(); // Use dispatch to trigger actions
+
+  const handleToggleStatus = async (newStatus: boolean) => {
+    setIsActive(newStatus);
+    try {
+      // Dispatch the updateAdminStatus action instead of making the Axios call directly
+      await dispatch(updateAdminStatus({ id: row.original._id, adminStatus: { IsActive: newStatus } }));
+    } catch (error) {
+      setIsActive(false);
+      console.error("Failed to update status:", error);
+    }
+  };
+
+  useEffect(() => {
+    setIsActive(row.original.IsActive); // Sync with Redux store or response from getAllAdmin
+  }, [row.original.IsActive]);
+
+  return (
+    <div className="flex items-center justify-between p-2">
+      <span className="text-base">{isActive ? "Active" : "Inactive"}</span>
+      <Switch checked={isActive} onCheckedChange={handleToggleStatus} color='red' />
+    </div>
+  );
+};
+
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -35,71 +66,41 @@ export const columns: ColumnDef<AdminManagement>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
-    accessorKey: 'adminID', 
-    header: 'Admin ID',
-    cell: ({ row }) => (
-      <div className="flex justify-center">
-        <span className="text-red-600 font-bold px-1" style={{ borderRadius: '50%' }}>
-          {row.original.sno} 
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'fullName', 
+    accessorKey: 'Name',
     header: 'Name',
     cell: ({ row }) => (
       <div className="flex items-center">
-        <div 
+        <div
           className="flex items-center justify-center w-8 h-8 rounded-full mr-2"
           style={{ backgroundColor: getRandomColor(), color: 'white' }}
         >
-          {row.original.fullName?.charAt(0) || ''} 
+          {row.original.Name?.charAt(0) || ''}
         </div>
-        <span>{row.original.fullName} </span> 
+        <span>{row.original.Name}</span>
       </div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: 'contactInformation.email',
+    accessorKey: 'Email',
     header: 'Email',
     cell: ({ row }) => (
-        <div className="flex items-center mt-1">
-          <Mail className="text-blue-500 mr-2" width={10} height={10} />
-          <span className="">{row.original.contactInformation.email}</span>
-        </div>
-    )
-  },
- 
-  
-  {
-    accessorKey: 'status',
-    header: 'Activity Status',
-    cell: ({ row }) => (
-      <div
-        style={{ borderRadius: '20px' }}
-        className={`flex items-center px-2 py-1 ${
-          row.original.status === 'Active' ? 'bg-orange-400' : 'bg-red-600'
-        }`}
-      >
-        {row.original.status === 'Active' ? (
-          <Check width={16} height={16} className="text-orange-800 mr-2" />
-        ) : (
-          <X width={16} height={16} className="text-red-900 mr-2" />
-        )}
-        <span className="text-black bold">{row.original.status}</span>
+      <div className="flex items-center mt-1">
+        <Mail className="text-blue-500 mr-2" width={10} height={10} />
+        <span>{row.original.Email}</span>
       </div>
     ),
   },
- 
- 
-
+  {
+    accessorKey: 'IsActive',
+    header: 'Activity Status',
+    cell: (props) => <IsActiveCell row={props.row} />, // Use IsActiveCell component
+  },
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />,
-  }
+  },
 ];
