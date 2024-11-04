@@ -3,7 +3,9 @@ import React from 'react';
 import BreadCrumb from '@/components/breadcrumb';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ViewUser from '@/components/forms/viewUser';
+import { ViewUser } from '@/components/forms/view-user/view-user';
+
+
 
 
 const breadcrumbItems = [{ title: 'View', link: '/user-management/page.tsx' }];
