@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { createAdmin, getAdminById, getAllAdmin } from '../actions/adminAction';
+import { createAdmin, getAdminById, getAllAdmin, updateAdmin, updateAdminStatus } from '../actions/adminAction';
 
 interface AdminState {
   loading: boolean;
@@ -10,6 +10,7 @@ interface AdminState {
   currentPage: number;
   totalAdmin: number;
   totalPages: number;
+  IsActive: boolean;
 }
 
 const initialState: AdminState = {
@@ -20,6 +21,7 @@ const initialState: AdminState = {
   currentPage: 1,
   totalAdmin: 0,
   totalPages: 0,
+  IsActive: false,
 };
 
 const adminSlice = createSlice({
@@ -58,6 +60,47 @@ const adminSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     })
+
+    // update admin slice
+      .addCase(updateAdmin.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateAdmin.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        const updatedAdmin = action.payload.data;
+        // Ensure state.admin is an array before attempting to map over it
+        if (Array.isArray(state.admin)) {
+          state.admin = state.admin.map(admin =>
+            admin._id === updatedAdmin._id ? updatedAdmin : admin
+          );
+        }
+        state.selectedAdmin = updatedAdmin;
+      })
+      .addCase(updateAdmin.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+       // Update admin status
+      .addCase(updateAdminStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateAdminStatus.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        const updatedAdminStatus = action.payload.data;
+        if (Array.isArray(state.admin)) {
+          state.admin = state.admin.map((admin) =>
+            admin._id === updatedAdminStatus._id ? { ...admin, IsActive: updatedAdminStatus.IsActive } : admin
+          );
+        }
+        if (state.selectedAdmin && state.selectedAdmin._id === updatedAdminStatus._id) {
+          state.selectedAdmin = { ...state.selectedAdmin, IsActive: updatedAdminStatus.IsActive };
+        }
+      })
+      .addCase(updateAdminStatus.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
     //get all admins slice
       .addCase(getAllAdmin.pending, (state) => {
