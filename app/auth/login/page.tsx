@@ -41,7 +41,7 @@ export default function Page() {
                   <a href="/forgot-password" className="hover:underline text-customAmber">Forgot Password?</a>
                 </div>
                 <div className="text-xs">
-                  <a href="/signup" className="hover:underline text-customAmber">Don't have an account? Sign up</a>
+                  <a href="/signup" className="hover:underline text-customAmber">Don&apos;t have an account? Sign up</a>
                 </div>
               </div>
               
