@@ -20,3 +20,25 @@ export const getAllUsers = createAsyncThunk<
     }
   }
 );
+
+// Action to get an admin by ID
+export const getUserById = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type of the admin ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'user/getById',
+  async (UserId, { rejectWithValue }) => {
+    try {
+      // Make API call to get the user by ID
+      const response = await apiCall('GET', `/admin/UserById/${UserId}`);
+      // console.log('API Response:', response); // Log the full response for debugging
+
+      // Return the entire response object
+      return response; // Return the full response
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch user credentials');
+    }
+  }
+);
