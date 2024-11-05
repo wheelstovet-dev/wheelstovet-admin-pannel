@@ -18,7 +18,11 @@ import { useEffect, useState } from 'react';
 // Employee form schema for validation
 const employeeFormSchema = z.object({
   Name: z.string().min(1, 'Name is required'),
-  MobileNo: z.string().min(1, 'Mobile Number is required'),
+  MobileNo: z
+  .string()
+  .min(10, 'Phone number must be 10 digits')
+  .max(10, 'Phone number must be 10 digits')
+  .regex(/^(?!(\d)\1{5,})\d{10}$/, 'Phone number must be 10 digits and cannot have repetitive patterns'), // 10 digits and no repetitive patterns,
   Email: z.string().email('Invalid email format').min(1, 'Email is required'),
   AadharNo: z.string().length(12, 'Aadhar number must be 12 digits'),
   Gender: z.string().min(1, 'Gender is required'),
@@ -159,7 +163,7 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
               <FormItem>
                 <FormLabel>Mobile Number</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Enter Mobile Number" {...field} disabled={currentMode === 'view'} />
+                  <Input type="number" placeholder="Enter Mobile Number" {...field} disabled={currentMode === 'view'} />
                 </FormControl>
                 <FormMessage>{renderErrorMessage(errors.MobileNo)}</FormMessage>
               </FormItem>

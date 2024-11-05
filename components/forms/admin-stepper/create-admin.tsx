@@ -19,7 +19,11 @@ import { useEffect, useState } from 'react';
 const adminFormSchema = z.object({
   Name: z.string().min(1, 'Name is required'),
   Email: z.string().email('Invalid email format').min(1, 'Email is required'),
-  Phone: z.number().min(1, 'Phone is required'),
+  Phone: z
+    .string()
+    .min(10, 'Phone number must be 10 digits')
+    .max(10, 'Phone number must be 10 digits')
+    .regex(/^(?!(\d)\1{5,})\d{10}$/, 'Phone number must be 10 digits and cannot have repetitive patterns'), // 10 digits and no repetitive patterns
   Password: z.string().min(1, 'Password is required'),
 });
 
@@ -168,7 +172,7 @@ export const AdminForm: React.FC<AdminFormProps> = ({ mode: propMode }) => {
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input
-                      type="text"
+                      type="number"
                       placeholder="Enter Phone"
                       {...field}
                       disabled={currentMode === 'view'}  // Disable in view mode
