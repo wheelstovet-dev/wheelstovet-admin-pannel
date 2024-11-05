@@ -1,6 +1,6 @@
 'use client';
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { Pencil, Trash, Plus } from 'lucide-react';
+import { Pencil,   } from 'lucide-react';
 
 const initialRoles = [
   'Dog Walking',
@@ -43,7 +43,7 @@ export default function EmployeeForm() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add your form submission logic here
-    console.log('Form submitted:', formData);
+    // console.log('Form submitted:', formData);
   };
 
   const handleAddRole = () => {

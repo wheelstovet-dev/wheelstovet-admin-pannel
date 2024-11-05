@@ -1,8 +1,8 @@
 'use client';
 import BreadCrumb from '@/components/breadcrumb';
+import { CreateEmployeeForm } from '@/components/forms/employee-stepper/create-employee';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CreateEmployeeForm } from '@/components/forms/employee-stepper/create-employee';
 import { useRouter } from 'next/navigation';
 
 const breadcrumbItems = [{ title: 'View Employee Detail', link: '/dashboard/employee' }];
@@ -39,7 +39,7 @@ export default function Page() {
        <ScrollArea className="h-full">
        <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
         <BreadCrumb items={breadcrumbItems} />
-        <CreateEmployeeForm initialData = {initialData} isEnabled = {isEnabled}/>
+        <CreateEmployeeForm />
       </div>
       <div className="relative mb-4 gap-8 rounded-md border p-4 md:flex md:items-center md:justify-center">
 

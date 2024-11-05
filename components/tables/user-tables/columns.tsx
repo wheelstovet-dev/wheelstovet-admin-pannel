@@ -1,11 +1,11 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { UserManagement } from '@/constants/user-management-data';
+// import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Mail, Phone } from 'lucide-react';
 
-export const columns: ColumnDef<UserManagement>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -25,16 +25,16 @@ export const columns: ColumnDef<UserManagement>[] = [
     enableSorting: false,
     enableHiding: false
   },
+  // {
+  //   accessorKey: 'userId',
+  //   header: 'User Id'
+  // },
   {
-    accessorKey: 'userId',
-    header: 'User Id'
-  },
-  {
-    accessorKey: 'firstName',
+    accessorKey: 'FirstName',
     header: 'First Name'
   },
   {
-    accessorKey: 'lastName',
+    accessorKey: 'LastName',
     header: 'Last Name'
   },
   {
@@ -44,20 +44,20 @@ export const columns: ColumnDef<UserManagement>[] = [
       <div className="flex flex-col me-5">
         <div className="flex items-center mt-1">
           <Mail className="text-blue-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.email}</span>
+          <span className="text-[12px]">{row.original.Email}</span>
         </div>
         <div className="flex items-center mt-2">
           <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.phone}</span>
+          <span className="text-[12px]">{row.original.MobileNo}</span>
         </div>
       </div>
     ),
   },
-  {
-    accessorKey: 'activityStatus',
-    header: 'Activity Status',
+  // {
+  //   accessorKey: 'AccountStatus',
+  //   header: 'Activity Status',
    
-  },
+  // },
   // {
   //   accessorKey: 'address',
   //   header: 'Address'
@@ -70,18 +70,26 @@ export const columns: ColumnDef<UserManagement>[] = [
   //   accessorKey: 'state',
   //   header: 'State'
   // },
+  // {
+  //    accessorKey: 'IsSubscribed',
+  //   header: 'Subscription'
+  // },
+//   {
+//     accessorKey: 'lastLogin',
+//    header: 'Last Login'
+//  }
+// {
+//     accessorKey: 'LoginType',
+//    header: 'Login Type'
+//  },
+  // {
+  //   accessorKey: 'reference',
+  //   header: 'Reference'
+  // },
   {
-     accessorKey: 'isSubscribed',
-    header: 'Subscription'
-  },
-  {
-    accessorKey: 'lastLogin',
-   header: 'Last Login'
- },
-  {
-    accessorKey: 'reference',
-    header: 'Reference'
-  },
+      accessorKey: 'LocationDescription',
+      header: 'Address'
+    },
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />

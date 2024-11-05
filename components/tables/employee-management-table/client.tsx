@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
@@ -11,19 +11,54 @@ import { Plus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { FaUserCheck } from 'react-icons/fa';
+import { setLoading } from '@/app/redux/slices/authslice';
+import { useDispatch } from 'react-redux';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { getAllEmployees } from '@/app/redux/actions/employeeAction';
+import { AppDispatch } from '@/app/redux/store';
 
 
 export const EmployeeManagementClient: React.FC = () => {
   const router = useRouter();
-  const initialData: EmployeeManagement[] = EmployeeManagementData;
-  const [data, setData] = useState<EmployeeManagement[]>(initialData);
+  // const initialData: EmployeeManagement[] = EmployeeManagementData;
+  const [data, setData] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const [loader, setLoader] = useState(true);
+
 
   const handleSearch = (searchValue: string) => {
-    const filteredData = initialData.filter(item =>
-      item.status.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    setData(filteredData);
+    // const filteredData = initialData.filter(item =>
+    //   item.status.toLowerCase().includes(searchValue.toLowerCase())
+    // );
+    // setData(filteredData);
   };
+
+  useEffect(() => {
+    getallemployee();
+  }, [])
+  
+  const getallemployee = async () =>{
+    dispatch(setLoading(true));
+    try {
+      const resultAction:any = await dispatch(getAllEmployees({ page: 1, limit: 10 }));
+      // console.log(resultAction);
+
+      if (resultAction.type==='employees/getAll/fulfilled') {
+        setData(resultAction?.payload?.data)
+        setLoader(false);
+        // console.log(resultAction);
+      } else {
+        throw new Error(resultAction.payload.message || 'Failed to fetch employees');
+      }
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to get employees',
+      });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
 
   const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
 
@@ -71,6 +106,7 @@ export const EmployeeManagementClient: React.FC = () => {
         </Button>
         </div>
       <Separator />
+      {loader ? 'Loading...' :
       <DataTable
         searchKeys={["fullName"]}
         columns={columns}
@@ -78,6 +114,7 @@ export const EmployeeManagementClient: React.FC = () => {
         onSearch={handleSearch} 
         filters={filters}
       />
+}
     </>
   );
 };

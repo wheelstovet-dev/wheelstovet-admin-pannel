@@ -3,9 +3,9 @@ import { getSessionStorageItem } from '@/utils/localStorage';
 
 function authRequestInterceptor(config: any) {
   config.headers = config.headers ?? {};
-  const token = getSessionStorageItem('token');
+  const token:any= getSessionStorageItem('token');
   if (token) {
-    config.headers.authorization = `Bearer ${token}`;
+    config.headers.authorization = `Bearer ${token.token}`;
   }
   config.headers.Accept = 'application/json';
   return config;
@@ -58,9 +58,10 @@ async function apiCall<T = any>(
       data,
       // You can add headers or other configurations here if needed
     });
+    // console.log(data);
     return response; // Return the whole response object
   } catch (error: any) {
-    console.error('API call error:', error); // Log the error for debugging
+    // console.error('API call error:', error); // Log the error for debugging
     throw error; // Rethrow the error for handling in the caller
   }
 }

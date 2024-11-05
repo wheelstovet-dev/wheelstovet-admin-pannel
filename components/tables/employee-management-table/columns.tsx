@@ -3,11 +3,11 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Mail, Phone, ChevronDown } from 'lucide-react';
-import { EmployeeManagement } from '@/constants/employee-management-data';
+import { Mail, Phone } from 'lucide-react';
 import { SetStateAction, useState } from 'react';
 import { Row } from '@tanstack/react-table';
-
+import { Switch } from "@/components/ui/switch";
+import axios from 'axios';
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -17,62 +17,40 @@ const getRandomColor = () => {
   }
   return color;
 };
+
 interface RowData {
-  status: string;
-  // Add other fields that exist in your table row, e.g., name, id, etc.
-  [key: string]: any; // Optionally, add an index signature if you have dynamic fields
+  status: boolean;
+  id: string; // Unique identifier for each row, needed for API call
+  [key: string]: any; // Additional dynamic fields
 }
 
 const StatusCell = ({ row }: { row: Row<RowData> }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState(row.original.status);
 
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusToggle = async (newStatus: boolean) => {
     setStatus(newStatus);
-    setIsOpen(false);
-    // Optionally handle any additional logic such as API calls to save status change
+    try {
+      await axios.post('your-api-url', {
+        id: row.original.id,
+        status: newStatus,
+      });
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
   };
 
   return (
-    <div className="relative">
-      <div 
-        style={{ borderRadius: "20px", cursor: "pointer" }}
-        className={`flex justify-between items-center px-4 py-2 ${
-          status === 'Available' ? 'bg-yellow-400' :
-          status === 'Unavailable' ? 'bg-red-400' :
-          'bg-gray-400'
-        }`}
-      >
-        <span className='text-black font'>{status}</span>
-        <button 
-          className="focus:outline-none ml-auto"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <ChevronDown className="text-black" size={16} />
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-          <div 
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            onClick={() => handleStatusChange('Available')}
-          >
-            Available
-          </div>
-          <div 
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            onClick={() => handleStatusChange('Unavailable')}
-          >
-            Unavailable
-          </div>
-        </div>
-      )}
+    <div className="flex items-center justify-between p-4 rounded-lg gap-2">
+      <span className="text-base">{status ? "Active" : "Inactive"}</span>
+      <Switch
+        checked={status}
+        onCheckedChange={handleStatusToggle}
+      />
     </div>
   );
 };
 
-export const columns: ColumnDef<EmployeeManagement>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -90,17 +68,10 @@ export const columns: ColumnDef<EmployeeManagement>[] = [
       />
     ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
   },
   {
-    accessorKey: 'caseId',
-    header: 'Case Id',
-   
-  },
-
- 
-  {
-    accessorKey: 'fullName',
+    accessorKey: 'Name',
     header: 'Name',
     cell: ({ row }) => (
       <div className="flex items-center">
@@ -108,17 +79,16 @@ export const columns: ColumnDef<EmployeeManagement>[] = [
           className="flex items-center justify-center w-8 h-8 rounded-full mr-2"
           style={{ backgroundColor: getRandomColor(), color: 'white' }}
         >
-          {row.original.fullName.charAt(0)}
+          {row.original.Name?.charAt(0)}
         </div>
-        <span>{row.original.fullName}</span>
+        <span>{row.original.Name}</span>
       </div>
     ),
     enableSorting: true,
   },
-
   {
-    accessorKey: 'gender',
-    header: 'Gender'
+    accessorKey: 'Gender',
+    header: 'Gender',
   },
   {
     accessorKey: 'contact',
@@ -127,37 +97,31 @@ export const columns: ColumnDef<EmployeeManagement>[] = [
       <div className="flex flex-col me-5">
         <div className="flex items-center mt-1">
           <Mail className="text-blue-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.email}</span>
+          <span className="text-[12px]">{row.original.MobileNo}</span>
         </div>
         <div className="flex items-center mt-2">
           <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.phoneNumber}</span>
+          <span className="text-[12px]">{row.original.Email}</span>
         </div>
       </div>
     ),
   },
   {
-    accessorKey: 'serviceAssigned',
-    header: 'Service Assigned'
+    accessorKey: 'Role',
+    header: 'Service Assigned',
   },
   {
-    accessorKey: 'assigneddate',
-    header: 'Assigned Date'
+    accessorKey: 'CreatedAt',
+    header: 'Assigned Date',
   },
-  // {
-  //   accessorKey: 'timeSlot',
-  //   header: 'Time Slot'
-  // },
- 
   {
-    accessorKey: 'status',
+    accessorKey: 'Status',
     header: 'Status',
-    cell: (props) => <StatusCell row={props.row} />, // Use the component here
+    cell: (props) => <StatusCell row={props.row} />,
   },
-  
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
+    cell: ({ row }) => <CellAction data={row.original} />,
+  },
 ];

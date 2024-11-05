@@ -8,17 +8,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { UserManagement } from '@/constants/user-management-data';
+// import { UserManagement } from '@/constants/user-management-data';
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: UserManagement;
-}
+// interface CellActionProps {
+//   data: any;
+// }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false);
+export const CellAction: React.FC<any> = ({ data }) => {
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -42,18 +42,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.userId}`)}
+            onClick={() => router.push(`/view-user?id=${data._id}`)}
           >
             <Eye className="mr-2 h-4 w-4" /> View
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.userId}`)}
+            onClick={() => router.push(`/viewPet?id=${data._id}`)} //change the url according to action
           >
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> View Pets
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/user/${data.userId}`)} //change the url according to action
+          >
+            <Edit className="mr-2 h-4 w-4" /> View Cases
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/user/${data.userId}`)} //change the url according to action
+          >
+            <Edit className="mr-2 h-4 w-4" /> View Subscription
+          </DropdownMenuItem>
+          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

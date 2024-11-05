@@ -9,38 +9,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { AdminManagement } from '@/constants/admin-management-data';
-import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
+import { Eye, UserCheck, MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: AdminManagement;
-}
+// interface CellActionProps {
+//   data: AdminManagement;
+// }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  // console.log("admin data- "+data._id);
 
   const onConfirm = async () => {
     // Your confirm logic here
   };
 
- 
-  const editEmployeeDetails = () => {
-    router.push(`/employee-management/editEmployeeDetails/${data}`); 
+  // Navigate to the admin page with mode=view and admin ID
+  const viewAdmin = () => {
+    router.push(`/admin?mode=view&id=${data._id}`); // Pass mode and id as query parameters
   };
 
-  const viewEmployeePerformance = () => {
-    router.push(`/employee-management/viewEmployeePerformance/${data}`); 
+  // Navigate to the admin page with mode=update and admin ID
+  const editAdmin = () => {
+    router.push(`/admin?mode=update&id=${data._id}`); // Pass mode and id as query parameters
   };
-
-  const assignUserToEmployee = () => {
-    router.push(`/employee-management/assignUserToEmployee/${data}`); 
-  };
-
-
 
   return (
     <>
@@ -59,13 +54,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={editEmployeeDetails}>
-            <UserCheck className="mr-2 h-4 w-4" /> Edit Admin Details
+          
+          {/* View Admin Action */}
+          <DropdownMenuItem onClick={viewAdmin}>
+            <Eye className="mr-2 h-4 w-4" /> View Admin
           </DropdownMenuItem>
-     
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete Admin
+
+          {/* Update Admin Action */}
+          <DropdownMenuItem onClick={editAdmin}>
+            <UserCheck className="mr-2 h-4 w-4" /> Update Admin
           </DropdownMenuItem>
+          
         </DropdownMenuContent>
       </DropdownMenu>
     </>
