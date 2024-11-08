@@ -1,6 +1,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createEmployee, getAllEmployees, getEmployeeById, updateEmployee } from '../actions/employeeAction';
+import { assignEmployee, createEmployee, getAllEmployees, getEmployeeById, updateEmployee, updateEmployeeStatus } from '../actions/employeeAction';
 import { AxiosResponse } from 'axios';
 
 interface EmployeeState {
@@ -11,6 +11,7 @@ interface EmployeeState {
   currentPage: number; // Track the current page
   totalEmployees: number; // Track the total number of employees
   totalPages: number; // Track the total number of pages
+  assignmentStatus: string | null; // Track the assignment status
 }
 
 const initialState: EmployeeState = {
@@ -21,6 +22,7 @@ const initialState: EmployeeState = {
   currentPage: 1,
   totalEmployees: 0,
   totalPages: 0,
+  assignmentStatus: null, // Initialize assignmentStatus as null
 };
 
 const employeeSlice = createSlice({
@@ -98,6 +100,44 @@ const employeeSlice = createSlice({
       
       .addCase(updateEmployee.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update Status
+      .addCase(updateEmployeeStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateEmployeeStatus.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        const updatedStatus = action.payload?.data;
+
+        if (updatedStatus && Array.isArray(state.employees)) {
+          state.employees = state.employees.map(employee =>
+            employee?._id === updatedStatus._id ? { ...employee, status: updatedStatus.status } : employee
+          );
+        }
+
+        if (updatedStatus && state.selectedEmployee && state.selectedEmployee._id === updatedStatus._id) {
+          state.selectedEmployee = { ...state.selectedEmployee, status: updatedStatus.status };
+        }
+      })
+      .addCase(updateEmployeeStatus.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Assign Employee to Subscription
+      .addCase(assignEmployee.pending, (state) => {
+        state.loading = true;
+        state.assignmentStatus = null; // Reset assignment status on new request
+      })
+      .addCase(assignEmployee.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.assignmentStatus = 'success'; // Set success status
+      })
+      .addCase(assignEmployee.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.assignmentStatus = 'failed'; // Set failed status
         state.error = action.payload;
       });
   },
