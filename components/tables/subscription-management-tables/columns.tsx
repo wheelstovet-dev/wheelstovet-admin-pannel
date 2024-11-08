@@ -4,7 +4,7 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import { SubscriptionManagement } from '@/constants/subscription-management-data';
+// import { SubscriptionManagement } from '@/constants/subscription-management-data';
 import { Calendar, Check, ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
 // interface SubscriptionManagement {
@@ -13,7 +13,7 @@ import { useState } from 'react';
 //   [key: string]: any; // Optionally, add an index signature if you have dynamic fields
 // }
 
-const StatusCell = ({ row }: { row: Row<SubscriptionManagement> }) => {
+const StatusCell = ({ row }: { row: Row<any> }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState(row.original.status);
 
@@ -68,68 +68,68 @@ const StatusCell = ({ row }: { row: Row<SubscriptionManagement> }) => {
     </div>
   );
 };
-export const columns: ColumnDef<SubscriptionManagement>[] = [
+export const columns: ColumnDef<any>[] = [
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false
+  // },
+  // {
+  //   accessorKey: 'subscriptionId',
+  //   header: 'Subscription ID',
+  //   cell: ({ row }) => (
+  //     <div className="flex justify-center">
+  //      <span className="text-green-600 font-bold  px-1" style={{borderRadius:"50%"}} > {row.original.subscriptionId}</span>
+  //     </div>
+  //   )
+  // },
+  // {
+  //   accessorKey: 'userId',
+  //   header: 'User ID',
+  //   cell: ({ row }) => (
+  //     <div className="flex justify-center">
+  //      <span className="  text-red-600 font-bold px-1" style={{borderRadius:"50%"}} > {row.original.userId}</span>
+  //     </div>
+  //   )
+  // },
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false
-  },
-  {
-    accessorKey: 'subscriptionId',
-    header: 'Subscription ID',
-    cell: ({ row }) => (
-      <div className="flex justify-center">
-       <span className="text-green-600 font-bold  px-1" style={{borderRadius:"50%"}} > {row.original.subscriptionId}</span>
-      </div>
-    )
-  },
-  {
-    accessorKey: 'userId',
-    header: 'User ID',
-    cell: ({ row }) => (
-      <div className="flex justify-center">
-       <span className="  text-red-600 font-bold px-1" style={{borderRadius:"50%"}} > {row.original.userId}</span>
-      </div>
-    )
-  },
-  {
-    accessorKey: 'subscriptionPlan',
+    accessorKey: 'Plan.Name',
     header: 'Plan'
   },
   {
-    accessorKey: 'frequency',
+    accessorKey: 'Plan.Frequency',
     header: 'Frequency'
   },
   {
-    accessorKey: 'employeeId',
-    header: 'Employee ID',
+    accessorKey: 'AssignedEmp.Name',
+    header: 'Employee Name',
     cell: ({ row }) => (
       <div className="flex justify-center">
-       <span className="  text-yellow-600 font-bold px-1" style={{borderRadius:"50%"}} > {row.original.userId}</span>
+       <span className="  text-yellow-600 font-bold px-1" style={{borderRadius:"50%"}} >   {row.original.AssignedEmp?.Name || "N/A"}</span>
       </div>
     )
   },
   {
-    accessorKey: 'subscriptionStartDate',
+    accessorKey: 'StartDate',
     header: 'Start Date',
     cell: ({ row }) => (
       <div className="flex items-center mt-1">
         <Calendar className="text-blue-500 mr-2" width={16} height={16} />
-        <span className="text-[12px]">{row.original.subscriptionStartDate}</span>
+        <span className="text-[12px]">{row.original?.StartDate}</span>
       </div>
    
   )
@@ -154,21 +154,21 @@ export const columns: ColumnDef<SubscriptionManagement>[] = [
     cell: (props) => <StatusCell row = {props.row} />, // Use the component here
   },
   {
-    accessorKey: 'activity',
+    accessorKey: 'IsActive',
     header: 'Activity',
     cell: ({ row }) => (
       <div 
         style={{ borderRadius: "20px" }}
         className={`flex items-center me-5 justify-between px-4 py-2 ${
-          row.original.subscriptionStatus === 'Active' ? 'bg-yellow-400' : 'bg-red-400'
+          row.original.IsActive ? 'bg-yellow-400' : 'bg-red-400'
         }`}
       >
-        {row.original.subscriptionStatus === 'Active' ? (
+        {row.original.IsActive ? (
           <Check width={16} height={16} className="text-yellow-500 mr-2" />
         ) : (
           <X width={16} height={16} className="text-red-900 mr-2" />
         )}
-        <span className='text-black bold'>{row.original.subscriptionStatus}</span>
+        <span className='text-black '>{row.original.IsActive ? 'Active' : 'Inactive'}</span>
       </div>
     )
   },
