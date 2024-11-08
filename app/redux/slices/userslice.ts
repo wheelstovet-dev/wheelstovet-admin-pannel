@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { getAllUsers } from '../actions/userAction';
+import { getAllUsers, getPetById } from '../actions/userAction';
 
 interface UserState {
   loading: boolean;
@@ -10,6 +10,8 @@ interface UserState {
   currentPage: number;
   totalUsers: number;
   totalPages: number;
+  selectedPet: any | null; // State for selected pet details
+  pets: any[]; // List of pets for a user
 }
 
 const initialState: UserState = {
@@ -20,6 +22,8 @@ const initialState: UserState = {
   currentPage: 1,
   totalUsers: 0,
   totalPages: 0,
+  selectedPet: null, // Initialize selected pet
+  pets: [], // Initialize pets list
 };
 
 const userSlice = createSlice({
@@ -47,6 +51,19 @@ const userSlice = createSlice({
         }
       )
       .addCase(getAllUsers.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get pet by ID
+      .addCase(getPetById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPetById.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.selectedPet = action.payload.data; // Set selected pet details
+      })
+      .addCase(getPetById.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
       });
