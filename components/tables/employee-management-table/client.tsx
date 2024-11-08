@@ -67,7 +67,7 @@ export const EmployeeManagementClient: React.FC = () => {
       } else {
         ToastAtTopRight.fire({
           icon: 'error',
-          title: response?.message || 'Failed to assign employee',
+          title: 'Failed to assign employee',
         });
       }
     } catch (error: any) {
