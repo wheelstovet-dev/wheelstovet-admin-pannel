@@ -5,13 +5,15 @@ import authReducer from './slices/authslice';
 import employeeReducer from './slices/employee';
 import adminReducer from './slices/adminslice';
 import userReducer from './slices/userslice';
+import subscriptionReducer from './slices/subscriptionslice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     employee: employeeReducer,
     admin:adminReducer,
-    user: userReducer
+    user: userReducer,
+    subscription: subscriptionReducer
   }
 });
 
