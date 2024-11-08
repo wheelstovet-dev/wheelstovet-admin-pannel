@@ -1,13 +1,14 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
+import { CellAction } from './cell-action';
 import { Mail, Phone } from 'lucide-react';
-import { SetStateAction, useState } from 'react';
-import { Row } from '@tanstack/react-table';
 import { Switch } from "@/components/ui/switch";
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/app/redux/store';
+import { updateEmployeeStatus } from '@/app/redux/actions/employeeAction';
 
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -18,58 +19,35 @@ const getRandomColor = () => {
   return color;
 };
 
-interface RowData {
-  status: boolean;
-  id: string; // Unique identifier for each row, needed for API call
-  [key: string]: any; // Additional dynamic fields
-}
+const StatusCell = ({ row }: { row: any }) => {
+  const [status, setStatus] = useState(row.original.Status);
+  const dispatch = useDispatch<AppDispatch>();
 
-const StatusCell = ({ row }: { row: Row<RowData> }) => {
-  const [status, setStatus] = useState(row.original.status);
-
-  const handleStatusToggle = async (newStatus: boolean) => {
+  const handleToggleStatus = async (newStatus: boolean) => {
     setStatus(newStatus);
     try {
-      await axios.post('your-api-url', {
-        id: row.original.id,
-        status: newStatus,
-      });
+      // Dispatch the updateEmployeeStatus action
+      await dispatch(updateEmployeeStatus({ id: row.original._id, status: newStatus ? 'Available' : 'Unavailable' }));
     } catch (error) {
       console.error("Failed to update status:", error);
+      // Revert the toggle in case of an error
+      setStatus(!newStatus);
     }
   };
 
+  useEffect(() => {
+    setStatus(row.original.Status === 'Available'); // Sync with the latest response or Redux store
+  }, [row.original.Status]);
+
   return (
-    <div className="flex items-center justify-between p-4 rounded-lg gap-2">
+    <div className="flex items-center justify-between p-2">
       <span className="text-base">{status ? "Active" : "Inactive"}</span>
-      <Switch
-        checked={status}
-        onCheckedChange={handleStatusToggle}
-      />
+      <Switch checked={status} onCheckedChange={handleToggleStatus} />
     </div>
   );
 };
 
 export const columns: ColumnDef<any>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: 'Name',
     header: 'Name',
