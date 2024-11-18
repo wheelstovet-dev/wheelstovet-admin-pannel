@@ -11,8 +11,10 @@ export default function CaseManagementPage() {
     <MainLayout meta={{ title: 'Case Management' }}>
       <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">      
+      
         <CaseManagementClient/>
         <DogManagementClient/>
+        
       </div>
       </ScrollArea>
     </MainLayout>
