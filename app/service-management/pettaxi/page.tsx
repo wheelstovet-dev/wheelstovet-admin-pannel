@@ -1,33 +1,133 @@
 'use client';
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { getAllServices, updateService } from '@/app/redux/actions/servicesAction';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// Define Zod schema for validation
+const chargesSchema = z.object({
+  FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
+  AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
+  PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
+  HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
+  VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
+  MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
+  AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
+  FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
+  TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
+  TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
+  IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
+});
+
+// Create a TypeScript type based on the Zod schema
+type ChargesFormValues = z.infer<typeof chargesSchema>;
 
 export default function PetTaxiPage() {
-  const [charges, setCharges] = useState({
-    oneTimeCharges: 300,
-    petHandlerIncludedCharges: 300,
-    petIncludedCharges: 300,
-    additionalPetHandlerCharges: 300,
-    additionalChargePerOtherPet: 300, // Added this line
+  const [serviceId, setServiceId] = useState<string | null>(null);
+  console.log(serviceId);
+
+  useEffect(() => {
+    // Parse the URL to get the 'id' parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    setServiceId(id);
+  }, []);
+
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { services, loading } = useSelector((state: RootState) => state.service);
+
+  const [initialCharges, setInitialCharges] = useState<ChargesFormValues>({} as ChargesFormValues);
+
+  // Set up React Hook Form with Zod schema resolver
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargesFormValues>({
+    resolver: zodResolver(chargesSchema),
+    defaultValues: {},
   });
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
-    const value = event.target.value === '' ? NaN : Number(event.target.value);
-    setCharges(prevCharges => ({
-      ...prevCharges,
-      [field]: value,
-    }));
-  };
+  useEffect(() => {
+    dispatch(getAllServices());
+  }, [dispatch]);
 
-  const handleSubmit = () => {
-    console.log('Charges saved:', charges);
-    // Add your save logic here
+  useEffect(() => {
+    if (services.length) {
+      const PetTaxiService = services.find(service => service.serviceName === "Pet Taxi");
+      if (PetTaxiService) {
+        const fetchedCharges: ChargesFormValues = {
+          FixedCharges: PetTaxiService.fixedCharge || 0,
+          AdditionalPetCharge: PetTaxiService.additionalPetCharge || 0,
+          PetHandlerCharge: PetTaxiService.petHandlerCharge || 0,
+          HandlingAddOnCharge: PetTaxiService.handlingAddOnCharge || 0,
+          VetVisitAddOnCharge: PetTaxiService.vetVisitAddOnCharge || 0,
+          MinimumChargeIfNotFound: PetTaxiService.minimumChargeIfNotFound || 0,
+          AdditionalTimeCost: PetTaxiService.additionalTimeCharge || 0,
+          FourHourCharge: PetTaxiService.fourHourCharge || 0,
+          TwelveHourCharge: PetTaxiService.twelveHourCharge || 0,
+          TwentyFourHourCharge: PetTaxiService.twentyFourHourCharge || 0,
+          IncludedTime: PetTaxiService.includedTime || 0,
+        };
+
+        // Set initial charges and default values in form
+        setInitialCharges(fetchedCharges);
+        Object.entries(fetchedCharges).forEach(([key, value]) => setValue(key as keyof ChargesFormValues, value));
+      } else {
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: 'Failed to fetch Pet Taxi service',
+        });
+        router.push('/service-management/');
+      }
+    }
+  }, [services, router, setValue]);
+
+  const onSubmit = async (data: ChargesFormValues) => {
+    if (serviceId) {
+      try {
+        const serviceData = {
+          fixedCharge: data.FixedCharges,
+          additionalPetCharge: data.AdditionalPetCharge,
+          petHandlerCharge: data.PetHandlerCharge,
+          handlingAddOnCharge: data.HandlingAddOnCharge,
+          vetVisitAddOnCharge: data.VetVisitAddOnCharge,
+          minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
+          additionalTimeCharge: data.AdditionalTimeCost,
+          fourHourCharge: data.FourHourCharge,
+          twelveHourCharge: data.TwelveHourCharge,
+          twentyFourHourCharge: data.TwentyFourHourCharge,
+          includedTime: data.IncludedTime,
+        };
+
+        console.log(serviceData);
+
+        await dispatch(updateService({ id: serviceId, serviceData })).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Service updated successfully!',
+        });
+      } catch (error) {
+        console.log(error);
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: error || 'Failed to update Service',
+        });
+      }
+    }
   };
 
   const handleCancel = () => {
-    console.log('Cancelled');
-    // Add your cancel logic here
+    // Reset charges to initial charges from API
+    Object.entries(initialCharges).forEach(([key, value]) => setValue(key as keyof ChargesFormValues, value));
+    ToastAtTopRight.fire({
+      icon: 'info',
+      title: 'Changes have been reset',
+    });
   };
 
   return (
@@ -36,59 +136,35 @@ export default function PetTaxiPage() {
         <div className="container mx-auto p-8">
           <h1 className="text-3xl font-bold mb-8">Service Management</h1>
           <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Outing with Pet</h2>
+            <h2 className="text-3xl font-bold mb-8">Pet Taxi Charges</h2>
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">One time charges</label>
-                  <input
-                    type="number"
-                    value={isNaN(charges.oneTimeCharges) ? '' : charges.oneTimeCharges}
-                    onChange={(e) => handleInputChange(e, 'oneTimeCharges')}
-                    className="mt-1 block w-20 border rounded p-2"
-                  />
-                  <span className="ml-2 font-bold">INR</span>
-                </div>
-                <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Pet handler included within one time charges</label>
-                  <input
-                    type="number"
-                    value={isNaN(charges.petHandlerIncludedCharges) ? '' : charges.petHandlerIncludedCharges}
-                    onChange={(e) => handleInputChange(e, 'petHandlerIncludedCharges')}
-                    className="mt-1 block w-20 border rounded p-2"
-                  />
-                  <span className="ml-2 font-bold">INR</span>
-                </div>
-                <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Pet included within one time charges</label>
-                  <input
-                    type="number"
-                    value={isNaN(charges.petIncludedCharges) ? '' : charges.petIncludedCharges}
-                    onChange={(e) => handleInputChange(e, 'petIncludedCharges')}
-                    className="mt-1 block w-20 border rounded p-2"
-                  />
-                  <span className="ml-2 font-bold">INR</span>
-                </div>
-                <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Additional charges per pet handler</label>
-                  <input
-                    type="number"
-                    value={isNaN(charges.additionalPetHandlerCharges) ? '' : charges.additionalPetHandlerCharges}
-                    onChange={(e) => handleInputChange(e, 'additionalPetHandlerCharges')}
-                    className="mt-1 block w-20 border rounded p-2"
-                  />
-                  <span className="ml-2 font-bold">INR</span>
-                </div>
-                <div className="flex items-center">
-                  <label className="block font-bold text-gray-700 w-full">Additional charge per other pet</label>
-                  <input
-                    type="number"
-                    value={isNaN(charges.additionalChargePerOtherPet) ? '' : charges.additionalChargePerOtherPet}
-                    onChange={(e) => handleInputChange(e, 'additionalChargePerOtherPet')}
-                    className="mt-1 block w-20 border rounded p-2"
-                  />
-                  <span className="ml-2 font-bold">INR</span>
-                </div>
+              {loading ? (
+                  <div className="flex justify-center py-8">
+                    <span className="text-gray-500">Loading ...</span>
+                  </div>
+                ) : (
+                  <>
+                    {Object.keys(initialCharges).map((key) => (
+                      <div key={key} className="flex items-center">
+                        <label className="block font-bold text-gray-700 w-full">
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </label>
+                        <input
+                          type="number"
+                          {...register(key as keyof ChargesFormValues, { valueAsNumber: true })} // Register field for validation
+                          className="mt-1 block w-20 border rounded p-2"
+                        />
+                        <span className="ml-2 font-bold">
+                          {key === "IncludedTime" ? "minutes" : "INR"}
+                        </span>
+                        {errors[key as keyof ChargesFormValues] && (
+                          <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
+                        )}
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             <div className="flex justify-start mt-8">
@@ -100,7 +176,7 @@ export default function PetTaxiPage() {
               </button>
               <button
                 className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={handleSubmit}
+                onClick={handleSubmit(onSubmit)} // Use handleSubmit from React Hook Form
               >
                 Save Changes
               </button>
