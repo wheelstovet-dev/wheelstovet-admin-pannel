@@ -3,9 +3,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CaseManagementUser } from '@/constants/case-management-data';
+import { format } from 'date-fns';
 
-export const columns: ColumnDef<CaseManagementUser>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -37,24 +37,27 @@ export const columns: ColumnDef<CaseManagementUser>[] = [
   //   header: 'User Id'
   // },
   {
-    accessorKey: 'serviceName',
+    accessorKey: 'ServiceId.serviceName',
     header: 'Service Name'
   },
   {
-    accessorKey: 'currentStatus',
+    accessorKey: 'CurrentStatus',
     header: 'Current Status'
   },
   {
-    accessorKey: 'assignedEmployee',
-    header: 'Assigned Employee'
+    accessorKey: 'UserId', // Keep the base accessorKey
+    header: 'Assigned Employee',
+    cell: ({ row }) => `${row.original?.UserId.FirstName} ${row.original?.UserId.LastName}`,
   },
   {
-    accessorKey: 'date',
-    header: 'Date'
+    accessorKey: 'CreatedAt',
+    header: 'Date',
+    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
   },
   {
-    accessorKey: 'timeSlot',
-    header: 'Time Slot'
+    accessorKey: 'CreatedAt', // Use the same field as `CreatedAt` to access the time
+    header: 'Time Slot',
+    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'HH:mm:ss'),
   },
 //   {
 //     accessorKey: 'status',
