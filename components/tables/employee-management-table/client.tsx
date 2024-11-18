@@ -9,22 +9,24 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { columns } from './columns';
 import { FaUserCheck } from 'react-icons/fa';
 import { setLoading } from '@/app/redux/slices/authslice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ToastAtTopRight } from '@/lib/sweetalert';
-import { assignEmployee, getAllEmployees } from '@/app/redux/actions/employeeAction';
-import { AppDispatch } from '@/app/redux/store';
+import { assignEmployee, assignEmployeeByCase, getAllEmployees } from '@/app/redux/actions/employeeAction';
+import { AppDispatch, RootState } from '@/app/redux/store';
 import { Row } from '@tanstack/react-table';
-import { Checkbox } from '@radix-ui/react-checkbox';
 
 export const EmployeeManagementClient: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const subscriptionId = searchParams.get('subscriptionId'); // Get the subscription ID from URL
+  const caseId = searchParams.get('caseId'); // Get the case ID from URL
 
   const [data, setData] = useState<any>([]);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
+
+  const { assignmentStatus, loading } = useSelector((state: RootState) => state.employee);
 
   useEffect(() => {
     getAllEmployeesData();
@@ -51,29 +53,38 @@ export const EmployeeManagementClient: React.FC = () => {
   };
 
   const handleAssignEmployee = async () => {
-    if (!selectedEmployeeId || !subscriptionId) return;
+    const id = subscriptionId || caseId;
+    
+    // Check if both `selectedEmployeeId` and `id` are present before proceeding
+    if (!selectedEmployeeId || !id) return;
 
     setLoader(true);
     try {
-      const response = await dispatch(assignEmployee({ id: subscriptionId, employeeId: selectedEmployeeId })).unwrap();
-      // console.log('res-',response);
-      
-      if (response.status) {
-        ToastAtTopRight.fire({
-          icon: 'success',
-          title: 'Employee assigned successfully!',
-        });
-        router.push('/subscription-management'); // Redirect back to Subscription Management
-      } else {
-        ToastAtTopRight.fire({
-          icon: 'error',
-          title: 'Failed to assign employee',
-        });
+      if (subscriptionId) {
+        // Assign to subscription
+        const response = await dispatch(assignEmployee({ id: subscriptionId, employeeId: selectedEmployeeId })).unwrap();
+        if (response.status) {
+          ToastAtTopRight.fire({
+            icon: 'success',
+            title: 'Employee assigned to subscription successfully!',
+          });
+          router.push('/subscription-management');
+        }
+      } else if (caseId) {
+        // Assign to case
+        const response = await dispatch(assignEmployeeByCase({ caseId, employeeId: selectedEmployeeId })).unwrap();
+        if (response.status) {
+          ToastAtTopRight.fire({
+            icon: 'success',
+            title: 'Employee assigned to case successfully!',
+          });
+          router.push('/case-management');
+        }
       }
     } catch (error: any) {
       ToastAtTopRight.fire({
         icon: 'error',
-        title: 'Employee already assigned',
+        title: 'Employee already assigned or failed to assign',
       });
     } finally {
       setLoader(false);
@@ -95,8 +106,8 @@ export const EmployeeManagementClient: React.FC = () => {
         </Button>
       </div>
 
-      {/* Conditionally render Assign button if subscriptionId is present */}
-      {subscriptionId && (
+      {/* Conditionally render Assign button if subscriptionId or caseId is present */}
+      {(subscriptionId || caseId) && (
         <div className="flex justify-end">
           <Button
             className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-600"
@@ -114,30 +125,28 @@ export const EmployeeManagementClient: React.FC = () => {
         'Loading...'
       ) : (
         <DataTable
-  searchKeys={["fullName"]}
-  columns={[
-    ...columns,
-    ...(subscriptionId
-      ? [
-          {
-            accessorKey: 'actions',
-            cell: ({ row }: { row: Row<any> }) => (
-              <Button
-                className={`text-xs ${selectedEmployeeId === row.original._id ? 'bg-blue-500' : 'bg-green-500'}`}
-                onClick={() => setSelectedEmployeeId(row.original._id)} // Set selected employee ID
-              >
-                Select
-              </Button>
-              
-            ),
-            header: 'select',
-          },
-        ]
-      : []),
-  ]}
-  data={data}
-/>
-
+          searchKeys={["fullName"]}
+          columns={[
+            ...columns,
+            ...(subscriptionId || caseId
+              ? [
+                  {
+                    accessorKey: 'actions',
+                    cell: ({ row }: { row: Row<any> }) => (
+                      <Button
+                        className={`text-xs ${selectedEmployeeId === row.original._id ? 'bg-blue-500' : 'bg-green-500'}`}
+                        onClick={() => setSelectedEmployeeId(row.original._id)} // Set selected employee ID
+                      >
+                        Select
+                      </Button>
+                    ),
+                    header: 'Select',
+                  },
+                ]
+              : []),
+          ]}
+          data={data}
+        />
       )}
     </>
   );
