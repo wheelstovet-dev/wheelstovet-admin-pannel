@@ -1,6 +1,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { assignEmployee, createEmployee, getAllEmployees, getEmployeeById, updateEmployee, updateEmployeeStatus } from '../actions/employeeAction';
+import { assignEmployee, assignEmployeeByCase, createEmployee, getAllEmployees, getEmployeeById, updateEmployee, updateEmployeeStatus } from '../actions/employeeAction';
 import { AxiosResponse } from 'axios';
 
 interface EmployeeState {
@@ -136,6 +136,21 @@ const employeeSlice = createSlice({
         state.assignmentStatus = 'success'; // Set success status
       })
       .addCase(assignEmployee.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.assignmentStatus = 'failed'; // Set failed status
+        state.error = action.payload;
+      })
+
+      // Assign Employee to case
+      .addCase(assignEmployeeByCase.pending, (state) => {
+        state.loading = true;
+        state.assignmentStatus = null; // Reset assignment status on new request
+      })
+      .addCase(assignEmployeeByCase.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.assignmentStatus = 'success'; // Set success status
+      })
+      .addCase(assignEmployeeByCase.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.assignmentStatus = 'failed'; // Set failed status
         state.error = action.payload;

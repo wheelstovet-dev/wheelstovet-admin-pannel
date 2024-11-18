@@ -114,3 +114,20 @@ export const assignEmployee = createAsyncThunk<
     }
   }
 );
+
+//Action to assign employees with case id
+export const assignEmployeeByCase = createAsyncThunk<
+  AxiosResponse<any>, // Return type
+  { caseId: string; employeeId: string }, // Input type
+  { rejectValue: any } // Reject value type
+>(
+  'case/assignEmployee',
+  async ({ caseId, employeeId }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('POST', '/admin/assignEmployee', { caseId, employeeId });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to assign employee');
+    }
+  }
+);
