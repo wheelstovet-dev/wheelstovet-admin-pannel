@@ -20,7 +20,8 @@ axios.interceptors.response.use(
     return response.data?.result ? response.data?.result : response.data;
   },
   (error: any) => {
-    let message = error.response?.data?.message || error.message;
+    // console.log(error);
+    let message = error.response?.data || error.message;
     if (
       error.response &&
       error.response.data &&

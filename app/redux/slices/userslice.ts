@@ -43,8 +43,10 @@ const userSlice = createSlice({
         getAllUsers.fulfilled,
         (state, action: PayloadAction<AxiosResponse<{ total: number; currentPage: number; totalPages: number; users: any[] }>>) => {
           state.loading = false;
+          // console.log(action.payload.data.users);
           // Accessing data from action.payload.data
           state.users = action.payload.data.users; // Set admin from response
+          // console.log(state.users);
           state.totalUsers = action.payload.data.total; // Total Admin from response
           state.currentPage = action.payload.data.currentPage; // Current page from response
           state.totalPages = action.payload.data.totalPages; // Total pages from response
@@ -52,7 +54,8 @@ const userSlice = createSlice({
       )
       .addCase(getAllUsers.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.error = action.payload;
+        // console.log(action.payload.message.message);
+        state.error = action.payload.message.message;
       })
 
       // Get pet by ID
