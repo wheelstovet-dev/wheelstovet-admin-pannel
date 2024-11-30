@@ -63,6 +63,23 @@ export const updateEmployee = createAsyncThunk<
   }
 );
 
+// Action to update the status of an existing employee
+export const updateEmployeeStatus = createAsyncThunk<
+  AxiosResponse<any>,
+  { id: string; status: string }, // Input type with employee ID and status
+  { rejectValue: any }
+>(
+  'employees/updateStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('PUT', `/admin/updateAvailability/${id}`, { status });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to update employee status');
+    }
+  }
+);
+
 // Action to get all employees with pagination support
 export const getAllEmployees = createAsyncThunk<
   AxiosResponse<{ total: number; currentPage: number; totalPages: number; employees: any[] }>, // Return type
@@ -77,6 +94,40 @@ export const getAllEmployees = createAsyncThunk<
       return response; // Return full response including employees and pagination data
     } catch (error: any) {
       return rejectWithValue(error || 'Failed to fetch employees');
+    }
+  }
+);
+
+//Action to assign employees with subscription id
+export const assignEmployee = createAsyncThunk<
+  AxiosResponse<any>, // Return type
+  { id: string; employeeId: string }, // Input type
+  { rejectValue: any } // Reject value type
+>(
+  'employees/assignEmployee',
+  async ({ id, employeeId }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('POST', '/admin/assignEmp', { id, employeeId });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to assign employee');
+    }
+  }
+);
+
+//Action to assign employees with case id
+export const assignEmployeeByCase = createAsyncThunk<
+  AxiosResponse<any>, // Return type
+  { caseId: string; employeeId: string }, // Input type
+  { rejectValue: any } // Reject value type
+>(
+  'case/assignEmployee',
+  async ({ caseId, employeeId }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('POST', '/admin/assignEmployee', { caseId, employeeId });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to assign employee');
     }
   }
 );

@@ -1,18 +1,19 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Phone, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/app/redux/store';
+import { getAllServices, updateService, createHostel, getAllHostels } from '@/app/redux/actions/servicesAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
-import { createClinic, getAllClinic, getAllServices, updateService } from '@/app/redux/actions/servicesAction';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-// Zod schema for validation
+// Define Zod schema for charge validation
 const chargeSchema = z.object({
   FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
   AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
@@ -20,24 +21,24 @@ const chargeSchema = z.object({
   HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
   VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
   MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
-  AdditionalTimeCharge: z.number().nonnegative().min(0, "Additional time charge must be non-negative"),
+  AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
   FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
   TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
   TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
   IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
 });
 
-// Zod schema for new clinic form
-const clinicSchema = z.object({
-  clinicName: z.string().min(1, "Clinic name is required"),
-  ContactNo: z.string().length(10, "Contact number must be 10 digits"),
+// Define Zod schema for the new hostel form validation
+const newHostelSchema = z.object({
+  hostelName: z.string().min(1, "Hostel name is required"),
+  ContactNo: z.string().length(10, "Contact number must be in of 10 digits'"),
   address: z.string().min(1, "Address is required"),
 });
 
 type ChargeFormValues = z.infer<typeof chargeSchema>;
-type ClinicFormValues = z.infer<typeof clinicSchema>;
+type NewHostelFormValues = z.infer<typeof newHostelSchema>;
 
-export default function VeterinaryVisitPage() {
+export default function HostelVisitPage() {
   const [serviceId, setServiceId] = useState<string | null>(null);
   console.log(serviceId);
 
@@ -47,62 +48,61 @@ export default function VeterinaryVisitPage() {
     const id = urlParams.get('id');
     setServiceId(id);
   }, []);
-  
+
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { clinics, services, loading } = useSelector((state: RootState) => state.service);
-
-  // State to hold initial charge values
+  const { services, hostels, loading } = useSelector((state: RootState) => state.service);
   const [initialChargeValues, setInitialChargeValues] = useState<ChargeFormValues>({} as ChargeFormValues);
   const [isFormVisible, setFormVisible] = useState(false);
+ 
 
-  // React Hook Form setup for charges
+  // React Hook Form setup for hostel charges
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargeFormValues>({
     resolver: zodResolver(chargeSchema),
     defaultValues: {},
   });
 
-  // React Hook Form setup for new clinic
-  const { register: registerClinic, handleSubmit: handleClinicSubmit, formState: { errors: clinicErrors } } = useForm<ClinicFormValues>({
-    resolver: zodResolver(clinicSchema),
-    defaultValues: { clinicName: '', ContactNo: '', address: '' },
+  // React Hook Form setup for new hostel creation
+  const { register: registerHostel, handleSubmit: handleHostelSubmit, formState: { errors: hostelErrors } } = useForm<NewHostelFormValues>({
+    resolver: zodResolver(newHostelSchema),
+    defaultValues: { hostelName: '', ContactNo: '', address: '' },
   });
 
   useEffect(() => {
-    dispatch(getAllClinic());
     dispatch(getAllServices());
+    dispatch(getAllHostels());
   }, [dispatch]);
 
   useEffect(() => {
     if (services.length) {
-      const clinicService = services.find(service => service.serviceName === "Vet Visit");
-      if (clinicService) {
-        const fetchedCharges: ChargeFormValues = {
-          FixedCharges: clinicService.fixedCharge || 0,
-          AdditionalPetCharge: clinicService.additionalPetCharge || 0,
-          PetHandlerCharge: clinicService.petHandlerCharge || 0,
-          HandlingAddOnCharge: clinicService.handlingAddOnCharge || 0,
-          VetVisitAddOnCharge: clinicService.vetVisitAddOnCharge || 0,
-          MinimumChargeIfNotFound: clinicService.minimumChargeIfNotFound || 0,
-          AdditionalTimeCharge: clinicService.AdditionalTimeCost || 0,
-          FourHourCharge: clinicService.fourHourCharge || 0,
-          TwelveHourCharge: clinicService.twelveHourCharge || 0,
-          TwentyFourHourCharge: clinicService.twentyFourHourCharge || 0,
-          IncludedTime: clinicService.includedTime || 0,
+      const HostelService = services.find(service => service.serviceName === "To Hostel");
+      if (HostelService) {
+        const initialCharges: ChargeFormValues = {
+          FixedCharges: HostelService.fixedCharge || 0,
+          AdditionalPetCharge: HostelService.additionalPetCharge || 0,
+          PetHandlerCharge: HostelService.petHandlerCharge || 0,
+          HandlingAddOnCharge: HostelService.handlingAddOnCharge || 0,
+          VetVisitAddOnCharge: HostelService.vetVisitAddOnCharge || 0,
+          MinimumChargeIfNotFound: HostelService.minimumChargeIfNotFound || 0,
+          AdditionalTimeCost: HostelService.additionalTimeCharge || 0,
+          FourHourCharge: HostelService.fourHourCharge || 0,
+          TwelveHourCharge: HostelService.twelveHourCharge || 0,
+          TwentyFourHourCharge: HostelService.twentyFourHourCharge || 0,
+          IncludedTime: HostelService.includedTime || 0,
         };
-        setInitialChargeValues(fetchedCharges);
-        Object.entries(fetchedCharges).forEach(([key, value]) => setValue(key as keyof ChargeFormValues, value));
+        setInitialChargeValues(initialCharges);
+        Object.entries(initialCharges).forEach(([key, value]) => setValue(key as keyof ChargeFormValues, value));
       } else {
         ToastAtTopRight.fire({
           icon: 'error',
-          title: 'Failed to fetch Vet Visit service',
+          title: 'Failed to fetch Hostel service',
         });
         router.push('/service-management/');
       }
     }
   }, [services, router, setValue]);
 
-  const onSubmitCharges = async (data: ChargeFormValues) => {
+  const onSubmitCharges = async(data: ChargeFormValues) => {
     if (serviceId) {
       try {
         const serviceData = {
@@ -112,14 +112,12 @@ export default function VeterinaryVisitPage() {
           handlingAddOnCharge: data.HandlingAddOnCharge,
           vetVisitAddOnCharge: data.VetVisitAddOnCharge,
           minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
-          additionalTimeCharge: data.AdditionalTimeCharge,
+          additionalTimeCharge: data.AdditionalTimeCost,
           fourHourCharge: data.FourHourCharge,
           twelveHourCharge: data.TwelveHourCharge,
           twentyFourHourCharge: data.TwentyFourHourCharge,
           includedTime: data.IncludedTime,
         };
-
-        console.log(serviceData);
 
         await dispatch(updateService({ id: serviceId, serviceData })).unwrap();
         ToastAtTopRight.fire({
@@ -127,7 +125,6 @@ export default function VeterinaryVisitPage() {
           title: 'Service updated successfully!',
         });
       } catch (error) {
-        console.log(error);
         ToastAtTopRight.fire({
           icon: 'error',
           title: error || 'Failed to update Service',
@@ -136,7 +133,7 @@ export default function VeterinaryVisitPage() {
     }
   };
 
-  const handleCancelCharges = () => {
+  const handleCancel = () => {
     Object.entries(initialChargeValues).forEach(([key, value]) => setValue(key as keyof ChargeFormValues, value));
     ToastAtTopRight.fire({
       icon: 'info',
@@ -144,32 +141,31 @@ export default function VeterinaryVisitPage() {
     });
   };
 
-  const onSubmitClinic = async (data: ClinicFormValues) => {
+  const onSubmitHostel = async (data: NewHostelFormValues) => {
     try {
-      // Use unwrap to handle success and failure correctly
-      await dispatch(createClinic(data)).unwrap();
+      console.log(data);
+      await dispatch(createHostel(data)).unwrap();
       ToastAtTopRight.fire({
         icon: 'success',
-        title: 'Clinic created successfully!',
+        title: 'Hostel created successfully!',
       });
       setFormVisible(false);
-      dispatch(getAllClinic());
-    } catch (error:any) {
-      // console.log(error.message.fields.message);
+      dispatch(getAllHostels());
+    } catch (error) {
       ToastAtTopRight.fire({
-        icon: 'warning',
-        title: error?.message?.fields?.message || 'Failed to create clinic',
+        icon: 'error',
+        title: 'Failed to create hostel',
       });
     }
   };
 
   return (
-    <MainLayout meta={{ title: 'Veterinary Visit Management' }}>
+    <MainLayout meta={{ title: 'Hostel Service Management' }}>
       <ScrollArea className="h-full">
         <div className="container mx-auto p-8">
-          <h1 className="text-3xl font-bold mb-8">Veterinary Visit Management</h1>
+          <h1 className="text-3xl font-bold mb-8">Hostel Service Management</h1>
           <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Veterinary Visit Charges</h2>
+            <h2 className="text-3xl font-bold mb-8">Hostel Visit Charges</h2>
             <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 {loading ? (
@@ -178,7 +174,7 @@ export default function VeterinaryVisitPage() {
                   </div>
                 ) : (
                   <>
-                    {Object.keys(initialChargeValues).map((key) => (
+                    {Object.keys(chargeSchema.shape).map((key) => (
                       <div key={key} className="flex items-center">
                         <label className="block font-bold text-gray-700 w-full">
                           {key.replace(/([A-Z])/g, ' $1')}
@@ -203,7 +199,7 @@ export default function VeterinaryVisitPage() {
                 <button
                   type="button"
                   className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                  onClick={handleCancelCharges}
+                  onClick={handleCancel}
                 >
                   Cancel
                 </button>
@@ -219,7 +215,7 @@ export default function VeterinaryVisitPage() {
 
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Associated Clinics</h2>
+              <h2 className="text-3xl font-bold">Associated Hostels</h2>
               <button
                 className="bg-yellow-500 text-white py-2 px-4 rounded"
                 onClick={() => setFormVisible(true)}
@@ -231,63 +227,53 @@ export default function VeterinaryVisitPage() {
               <thead>
                 <tr className="bg-yellow-500 text-left text-gray-600">
                   <th className="px-4 py-2 border-b border-r-2">Serial No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
+                  <th className="px-4 py-2 border-b border-r-2">Hostel Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
                 </tr>
               </thead>
               <tbody>
-                {clinics.map((clinic, index) => (
+                {hostels.map((hostel, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-6 border-b text-center">{index + 1}</td>
-                    <td className="px-4 py-6 border-b">{clinic.clinicName}</td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        <Phone className="h-4 w-4 mr-2 text-green-600" />
-                        {clinic.ContactNo}
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-red-600" />
-                        {clinic.address}
-                      </div>
-                    </td>
+                    <td className="px-4 py-6 border-b">{hostel.hostelName}</td>
+                    <td className="px-4 py-6 border-b">{hostel.ContactNo}</td>
+                    <td className="px-4 py-6 border-b">{hostel.address}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
             {isFormVisible && (
-              <form onSubmit={handleClinicSubmit(onSubmitClinic)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+              <form onSubmit={handleHostelSubmit(onSubmitHostel)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Clinic Name <span className="text-red-500">*</span></label>
+                    <label className="block font-bold text-gray-700">Hostel Name <span className="text-red-500">*</span></label>
                     <input
                       type="text"
-                      {...registerClinic("clinicName")}
+                      {...registerHostel("hostelName")}
                       className="mt-1 block w-full border rounded p-2"
                     />
-                    {clinicErrors.clinicName && <p className="text-red-500">{clinicErrors.clinicName.message}</p>}
+                    {hostelErrors.hostelName && <p className="text-red-500">{hostelErrors.hostelName.message}</p>}
                   </div>
                   <div className="flex flex-col">
                     <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
                     <input
                       type="text"
-                      {...registerClinic("ContactNo")}
+                      {...registerHostel("ContactNo")}
                       className="mt-1 block w-full border rounded p-2"
-                      maxLength={10}
+                      maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
                     />
-                    {clinicErrors.ContactNo && <p className="text-red-500">{clinicErrors.ContactNo.message}</p>}
+                    {hostelErrors.ContactNo && <p className="text-red-500">{hostelErrors.ContactNo.message}</p>}
                   </div>
                   <div className="flex flex-col">
                     <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
                     <input
                       type="text"
-                      {...registerClinic("address")}
+                      {...registerHostel("address")}
                       className="mt-1 block w-full border rounded p-2"
                     />
-                    {clinicErrors.address && <p className="text-red-500">{clinicErrors.address.message}</p>}
+                    {hostelErrors.address && <p className="text-red-500">{hostelErrors.address.message}</p>}
                   </div>
                 </div>
                 <div className="flex justify-start mt-4">

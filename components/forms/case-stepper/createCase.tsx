@@ -1,214 +1,160 @@
 'use client';
 
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { z, TypeOf } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { useSearchParams } from 'next/navigation';
+import { getCaseById } from '@/app/redux/actions/casesAction';
 
-
-interface CaseFormType {
-  initialData: any | null;
-  isEnabled?: boolean;
-}
-
+// Define the Zod schema for the form
 const caseFormSchema = z.object({
-  caseId: z.string().min(1, 'Case ID is required'),
-  userId: z.string().min(1, 'User ID is required'),
-  petName: z.string().min(1, 'Pet Name is required'),
-  bookingAt: z.string().min(1, 'Booking At is required'),
-  startDate: z.date({ required_error: 'Start Date is required.' }),
-  timeSlot: z.string().min(1, 'Time Slot is required'),
-  assignedEmployee: z.string().min(1, 'Assigned Employee is required'),
-  currentStatus: z.string().min(1, 'Current Status is required'),
-  paymentMethod: z.string().min(1, 'Payment Method is required'),
-  paymentStatus: z.string().min(1, 'Payment Status is required'),
-  document: z.any().optional()
+  userId: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
+  petId: z.string().optional(),
+  serviceName: z.string().optional(),
+  serviceType: z.string().optional(),
+  currentStatus: z.string().optional(),
+  pickupLocation: z.string().optional(),
+  dropLocation: z.string().optional(),
+  charges: z.number().optional(),
+  paymentMode: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
-export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled }) => {
-  const [loading, setLoading] = useState(false);
+// Define the TypeScript type from the Zod schema
+type CaseFormSchemaType = TypeOf<typeof caseFormSchema>;
 
-  const title = initialData && isEnabled ? "View Case" : initialData ? "Edit Case" : "Create New Case";
-  const description = initialData && isEnabled
-    ? "View the case details." : initialData ? "Edit the case details."
-      : "To create a new case, fill in the required information.";
+export const CreateCaseForm: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const searchParams = useSearchParams();
+  const caseId = searchParams.get('id');
 
-  const action = initialData ? 'Save changes' : 'Create';
+  const { selectedCase, loading } = useSelector((state: RootState) => state.caseManagement);
 
-  const form = useForm({
+  const form = useForm<CaseFormSchemaType>({
     resolver: zodResolver(caseFormSchema),
-    defaultValues: initialData || {
-      caseId: '',
-      userId: '',
-      petName: '',
-      bookingAt: '',
-      startDate: new Date(),
-      timeSlot: '',
-      assignedEmployee: '',
-      currentStatus: '',
-      paymentMethod: '',
-      paymentStatus: '',
-      document: null
-    },
+    defaultValues: {},
   });
 
-  const { control, handleSubmit, watch, formState: { errors } } = form;
+  const { control, reset } = form;
 
-  const onSubmit: SubmitHandler<typeof caseFormSchema._type> = async (data) => {
-    try {
-      setLoading(true);
-      if (initialData) {
-        // Update existing case
-      } else {
-        // Create new case
-      }
-      // Refresh or redirect after submission
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (caseId) {
+      dispatch(getCaseById(caseId));
     }
-  };
+  }, [caseId, dispatch]);
 
-  // Watch uploaded document
-  const uploadedDocument = watch('document');
+  useEffect(() => {
+    if (selectedCase) {
+      reset({
+        userId: selectedCase.UserId?._id,
+        firstName: selectedCase.UserId?.FirstName,
+        lastName: selectedCase.UserId?.LastName,
+        email: selectedCase.UserId?.Email,
+        petId: selectedCase.PetId?._id,
+        serviceName: selectedCase.ServiceId?.serviceName,
+        serviceType: selectedCase.ServiceId?.serviceType,
+        currentStatus: selectedCase.CurrentStatus,
+        pickupLocation: selectedCase.PickUp,
+        dropLocation: selectedCase.Drop,
+        charges: selectedCase.Charges,
+        paymentMode: selectedCase.PaymentMode,
+        createdAt: selectedCase.CreatedAt ? new Date(selectedCase.CreatedAt) : undefined,
+        updatedAt: selectedCase.UpdatedAt ? new Date(selectedCase.UpdatedAt) : undefined,
+      });
+    }
+  }, [selectedCase, reset]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
+        <Heading title="View Case" description="View the case details." />
       </div>
       <Separator />
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
 
-            {/* Case ID */}
+            {/* User Information */}
             <FormField
               control={control}
-              name="caseId"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Case ID</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Case ID" {...field} />
+                    <Input type="text" disabled {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" disabled {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            {/* User ID */}
+            {/* Service Information */}
             <FormField
               control={control}
-              name="userId"
+              name="serviceName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User ID</FormLabel>
+                  <FormLabel>Service Name</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter User ID" {...field} />
+                    <Input type="text" disabled {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="serviceType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Service Type</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            {/* Pet Name */}
-            <FormField
-              control={control}
-              name="petName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pet Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Pet Name" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Booking At */}
-            <FormField
-              control={control}
-              name="bookingAt"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Booking At</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Booking Location" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Start Date */}
-            <FormField
-              control={control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Start Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? format(field.value, 'PPP') : 'Pick a date'}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={isEnabled || loading} />
-                    </PopoverContent>
-                  </Popover>
-                </FormItem>
-              )}
-            />
-
-            {/* Time Slot */}
-            <FormField
-              control={control}
-              name="timeSlot"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Time Slot</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Time Slot" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Assigned Employee */}
-            <FormField
-              control={control}
-              name="assignedEmployee"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Assigned Employee</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Assigned Employee ID" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Current Status */}
+            {/* Case Details */}
             <FormField
               control={control}
               name="currentStatus"
@@ -216,101 +162,93 @@ export const CreateCaseForm: React.FC<CaseFormType> = ({ initialData, isEnabled 
                 <FormItem>
                   <FormLabel>Current Status</FormLabel>
                   <FormControl>
-                    <Select disabled={isEnabled || loading} onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input type="text" disabled {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
-
-            {/* Payment Method */}
             <FormField
               control={control}
-              name="paymentMethod"
+              name="pickupLocation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Payment Method</FormLabel>
+                  <FormLabel>Pick-Up Location</FormLabel>
                   <FormControl>
-                    <Select disabled={isEnabled || loading} onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Payment Method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="credit">Credit Card</SelectItem>
-                        <SelectItem value="debit">Debit Card</SelectItem>
-                        <SelectItem value="paypal">PayPal</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input type="text" disabled {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
-
-            {/* Payment Status */}
             <FormField
               control={control}
-              name="paymentStatus"
+              name="dropLocation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Payment Status</FormLabel>
+                  <FormLabel>Drop Location</FormLabel>
                   <FormControl>
-                    <Select disabled={isEnabled || loading} onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Payment Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="paid">Paid</SelectItem>
-                        <SelectItem value="unpaid">Unpaid</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input type="text" disabled {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="charges"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Charges</FormLabel>
+                  <FormControl>
+                    <Input type="number" disabled {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="paymentMode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payment Mode</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            {/* Document Upload */}
+            {/* Timestamps */}
             <FormField
               control={control}
-              name="document" // Assuming document URL is stored in initialData.document
-              render={() => (
+              name="createdAt"
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Document</FormLabel>
+                  <FormLabel>Created At</FormLabel>
                   <FormControl>
-                    {initialData?.document ? (
-                      // Show the document link if the document URL is available
-                      <img
-                      src={initialData.document}
-                      alt="Document"
-                      className="w-auto h-20 object-cover"
+                    <Input
+                      type="text"
+                      disabled
+                      value={field.value ? format(new Date(field.value), 'PPP') : ''}
                     />
-                    ) : (
-                      // Show placeholder text if no document is available
-                      <p className="text-gray-500">No document available</p>
-                    )}
                   </FormControl>
                 </FormItem>
               )}
             />
-
-
-
-          </div>
-          <div className="flex justify-end">
-            {(!isEnabled) && <Button
-              type="submit"
-              disabled={isEnabled || loading}
-              className="ml-4 w-full"
-            >
-              {action}
-            </Button>
-            }
+            <FormField
+              control={control}
+              name="updatedAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Updated At</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      disabled
+                      value={field.value ? format(new Date(field.value), 'PPP') : ''}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
         </form>
       </Form>

@@ -1,31 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-// import { UserManagement, userManagementData } from '@/constants/user-management-data';
-
-import { Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { columns } from './columns';
-import { SubscriptionHistory, SubscriptionHistoryData } from '@/constants/subscriptionHistory';
+import { AppDispatch } from '@/app/redux/store';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/app/redux/slices/authslice';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { getWalkRecords } from '@/app/redux/actions/subscriptionAction';
 
-export const  SubscriptionHistoryClient: React.FC = () => {
-  const router = useRouter();
-  const initialData: SubscriptionHistory[] = SubscriptionHistoryData;
-  const [data, setData] = useState<SubscriptionHistory[]>(initialData);
+export const SubscriptionHistoryClient: React.FC = () => {
+  const [data, setData] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const [loader, setLoader] = useState(true);
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id'); // Get the id from the URL
 
   const handleSearch = (searchValue: string) => {
-    const filteredData = initialData.filter(item =>
-      item.date.toLowerCase().includes(searchValue.toLowerCase())
+    const filteredData = data.filter((item: any) =>
+      item.subscriptionPlan.toLowerCase().includes(searchValue.toLowerCase())
     );
     setData(filteredData);
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchWalkRecords(id);
+    }
+  }, [id]);
+
+  const fetchWalkRecords = async (id: string) => {
+    dispatch(setLoading(true));
+    try {
+      const resultAction: any = await dispatch(getWalkRecords({ id, page: 1, limit: 20 }));
+      
+      if (resultAction.type === 'subscriptions/getWalkRecords/fulfilled') {
+        setData(resultAction?.payload?.data);
+        setLoader(false);
+      } else {
+        throw new Error(resultAction.payload?.message || 'Failed to fetch walk records');
+      }
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to get walk records',
+      });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    // Example: Sorting by first name
     const sortedData = [...data].sort((a, b) => {
       if (sortOrder === 'asc') {
         return a.date.localeCompare(b.date);
@@ -46,28 +74,25 @@ export const  SubscriptionHistoryClient: React.FC = () => {
       subOptions: ['Daily', 'Weekly', 'Monthly'],
     },
   ];
+
   return (
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Manage Subscription (${data.length})`}
+          title={`Manage Subscription History [walk records] (${data?.length})`}
           description="Manage Subscription (Client side table functionalities.)"
         />
-        {/* <Button
-          className="text-xs md:text-sm"
-          onClick={() => router.push(`/subscription`)}
-        >
-          <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button> */}
       </div>
       <Separator />
-      <DataTable
-        searchKeys={["subscriptionPlan"]}
-        columns={columns}
-        data={data}
-        onSearch={handleSearch} 
-        filters={filters}
-      />
+      {loader ? 'Loading...' :
+        <DataTable
+          searchKeys={["subscriptionPlan"]}
+          columns={columns}
+          data={data}
+          onSearch={handleSearch} 
+          filters={filters}
+        />
+      }
     </>
   );
 };

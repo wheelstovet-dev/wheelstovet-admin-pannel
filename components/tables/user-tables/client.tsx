@@ -33,7 +33,7 @@ export const UserClient: React.FC = () => {
     dispatch(setLoading(true));
     try {
       const resultAction: any = await dispatch(getAllUsers({ page: 1, limit: 10 })); // Dispatch the getAllAdmin action
-      console.log(resultAction); 
+      // console.log(resultAction); 
   
       if (resultAction.type==='users/getAll/fulfilled') {
         
@@ -42,7 +42,7 @@ export const UserClient: React.FC = () => {
         // console.log(resultAction.payload.data); 
         
       } else {
-        throw new Error(resultAction.payload?.message || 'Failed to fetch users');
+        throw new Error(resultAction.payload?.message.message || 'Failed to fetch users');
       }
     } catch (error: any) {
       ToastAtTopRight.fire({

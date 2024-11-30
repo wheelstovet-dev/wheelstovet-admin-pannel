@@ -1,39 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-// import { UserManagement, userManagementData } from '@/constants/user-management-data';
-
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
-import { SubscriptionManagement, SubscriptionManagementData } from '@/constants/subscription-management-data';
+
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/app/redux/store';
+import { setLoading } from '@/app/redux/slices/authslice';
+
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { getAllSubscriptions } from '@/app/redux/actions/subscriptionAction';
 
 export const SubscriptionManagementClient: React.FC = () => {
   const router = useRouter();
-  const initialData: SubscriptionManagement[] = SubscriptionManagementData;
-  const [data, setData] = useState<SubscriptionManagement[]>(initialData);
+  const [data, setData] = useState<any>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const [loader, setLoader] = useState(true);
 
   const handleSearch = (searchValue: string) => {
-    const filteredData = initialData.filter(item =>
+    const filteredData = data.filter((item: any) =>
       item.subscriptionPlan.toLowerCase().includes(searchValue.toLowerCase())
     );
     setData(filteredData);
   };
 
-  const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    // Example: Sorting by first name
-    const sortedData = [...data].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a.subscriptionPlan.localeCompare(b.subscriptionPlan);
+  useEffect(() => {
+    fetchAllSubscriptions();
+  }, []);
+
+  const fetchAllSubscriptions = async () => {
+    dispatch(setLoading(true));
+    try {
+      const resultAction: any = await dispatch(getAllSubscriptions({ page: 1, limit: 20 }));
+      
+      if (resultAction.type === 'subscriptions/getAll/fulfilled') {
+        setData(resultAction?.payload?.data);
+        console.log(resultAction);
+        setLoader(false);
       } else {
-        return b.subscriptionPlan.localeCompare(a.subscriptionPlan);
+        throw new Error(resultAction.payload?.message || 'Failed to fetch subscriptions');
       }
-    });
-    setData(sortedData);
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to get subscriptions',
+      });
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
   const filters = [
@@ -46,6 +65,7 @@ export const SubscriptionManagementClient: React.FC = () => {
       subOptions: ['Daily', 'Weekly', 'Monthly'],
     },
   ];
+
   return (
     <>
       <div className="flex items-start justify-between">
@@ -53,6 +73,7 @@ export const SubscriptionManagementClient: React.FC = () => {
           title={`Manage Subscription (${data.length})`}
           description="Manage Subscription (Client side table functionalities.)"
         />
+        {/* Uncomment if you want to add a button for adding subscriptions */}
         {/* <Button
           className="text-xs md:text-sm"
           onClick={() => router.push(`/subscription`)}
@@ -61,6 +82,7 @@ export const SubscriptionManagementClient: React.FC = () => {
         </Button> */}
       </div>
       <Separator />
+      {loader ? 'Loading...' :
       <DataTable
         searchKeys={["subscriptionPlan"]}
         columns={columns}
@@ -68,6 +90,7 @@ export const SubscriptionManagementClient: React.FC = () => {
         onSearch={handleSearch} 
         filters={filters}
       />
+      }
     </>
   );
 };

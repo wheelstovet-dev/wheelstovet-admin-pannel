@@ -1,3 +1,5 @@
+'use client';
+import React, { Suspense } from 'react';
 import BreadCrumb from '@/components/breadcrumb';
 import MainLayout from '@/components/layout/main-layout';
 import { SubscriptionHistoryClient } from '@/components/tables/subscription-history-tables/client';
@@ -12,7 +14,9 @@ export default function SubscriptionHistory() {
 
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
         <BreadCrumb items={breadcrumbItems} />
+        <Suspense fallback={<div>Loading...</div>}>
         < SubscriptionHistoryClient />
+        </Suspense>
       </div>
       </ScrollArea>
 

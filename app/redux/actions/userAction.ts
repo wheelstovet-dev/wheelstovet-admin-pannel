@@ -42,3 +42,25 @@ export const getUserById = createAsyncThunk<
     }
   }
 );
+
+// Action to get a pet by ID
+export const getPetById = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type of the pet ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'pets/getById',
+  async (petId, { rejectWithValue }) => {
+    try {
+      // Make API call to get the pet by ID
+      const response = await apiCall('GET', `/admin/userPets/${petId}`);
+      // console.log('API Response:', response); // Log the full response for debugging
+
+      // Return the entire response object
+      return response;
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch pet details');
+    }
+  }
+);

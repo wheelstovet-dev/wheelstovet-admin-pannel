@@ -15,11 +15,9 @@ import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck, FileText } from 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: CaseManagementUser;
-}
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -32,11 +30,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   
 
   const viewCase = () => {
-    router.push(`/caseManagement-form/view/${data.caseId}`); 
+    router.push(`/caseManagement-form/view/?id=${data._id}`); 
   };
 
   const assignEmployee = () => {
-    router.push(`/employee-management/${data.caseId}`); 
+    router.push(`/employee-management?caseId=${data._id}`); 
   };
   
 
@@ -74,9 +72,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <FileText height={16}  className="mr-2" />
            View Invoice
            </DropdownMenuItem> */}
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

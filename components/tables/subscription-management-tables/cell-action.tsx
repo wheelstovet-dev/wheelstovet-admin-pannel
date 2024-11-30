@@ -9,16 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { SubscriptionManagement } from '@/constants/subscription-management-data';
 import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: SubscriptionManagement;
-}
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -28,7 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleViewSubscriptionHistory = () => {
-    router.push(`/subscription-history/view/${data.subscriptionId}`); 
+    router.push(`/subscription-history/view?id=${data._id}`); 
   };
 
   const handleEditSubscription = () => {
@@ -36,13 +33,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleViewSubscriptionDetail = () => {
-    router.push(`/subscription-form/view/${data.subscriptionId}`); 
+    router.push(`/subscription-form?id=${data._id}`); 
   };
 
  
   const assignEmployee = () => {
-    router.push(`/employee-management/${data.caseId}`); 
+    router.push(`/employee-management?subscriptionId=${data._id}`); 
   };
+  
   
 
 
@@ -76,9 +74,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={assignEmployee}>
             <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Deactivate Subscription
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
