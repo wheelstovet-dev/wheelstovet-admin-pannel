@@ -45,10 +45,14 @@ export const columns: ColumnDef<any>[] = [
     header: 'Current Status'
   },
   {
-    accessorKey: 'UserId', // Keep the base accessorKey
-    header: 'Assigned Employee',
-    cell: ({ row }) => `${row.original?.UserId.FirstName} ${row.original?.UserId.LastName}`,
+  accessorKey: 'UserId', 
+  header: 'Assigned Employee',
+  cell: ({ row }) => {
+    const firstName = row.original?.UserId?.FirstName;
+    const lastName = row.original?.UserId?.LastName;
+    return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
   },
+},
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
