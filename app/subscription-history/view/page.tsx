@@ -4,11 +4,13 @@ import BreadCrumb from '@/components/breadcrumb';
 import MainLayout from '@/components/layout/main-layout';
 import { SubscriptionHistoryClient } from '@/components/tables/subscription-history-tables/client';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ProtectedRoute from '@/components/protectedRoute';
 
 const breadcrumbItems = [{ title: 'Subscription History', link: '/dashboard/subscriptionHistory' }];
 
 export default function SubscriptionHistory() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Subscription History' }}>
             <ScrollArea className="h-full">
 
@@ -21,5 +23,6 @@ export default function SubscriptionHistory() {
       </ScrollArea>
 
     </MainLayout>
+    </ProtectedRoute>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/main-layout';
+import ProtectedRoute from '@/components/protectedRoute';
 
 export default function SettingsPage() {
   const [oldPassword, setOldPassword] = useState('');
@@ -19,6 +20,7 @@ export default function SettingsPage() {
   }, []);
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Settings' }}>
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         <h2 className="text-2xl font-bold">Change Password</h2>
@@ -60,5 +62,6 @@ export default function SettingsPage() {
         </div>
       </div>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

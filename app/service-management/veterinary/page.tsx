@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import ProtectedRoute from '@/components/protectedRoute';
 
 // Zod schema for validation
 const chargeSchema = z.object({
@@ -164,6 +165,7 @@ export default function VeterinaryVisitPage() {
   };
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Veterinary Visit Management' }}>
       <ScrollArea className="h-full">
         <div className="container mx-auto p-8">
@@ -311,5 +313,6 @@ export default function VeterinaryVisitPage() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

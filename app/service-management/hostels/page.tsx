@@ -12,6 +12,7 @@ import { ToastAtTopRight } from '@/lib/sweetalert';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import ProtectedRoute from '@/components/protectedRoute';
 
 // Define Zod schema for charge validation
 const chargeSchema = z.object({
@@ -160,6 +161,7 @@ export default function HostelVisitPage() {
   };
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Hostel Service Management' }}>
       <ScrollArea className="h-full">
         <div className="container mx-auto p-8">
@@ -297,5 +299,6 @@ export default function HostelVisitPage() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

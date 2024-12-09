@@ -4,6 +4,7 @@ import { AdminForm } from '@/components/forms/admin-stepper/create-admin';
 // import { ComplaintForm } from '@/components/forms/complaint-stepper/create-complaint';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ProtectedRoute from '@/components/protectedRoute';
 // import { ComplaintManagementData } from '@/constants/complaint-management-data';
 
 const breadcrumbItems = [{ title: 'Employee', link: '/dashboard/employee' }];
@@ -11,6 +12,7 @@ export default function page() {
   // Example structure of user options
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Create Admin' }}>
 
     <ScrollArea className="h-full">
@@ -22,5 +24,6 @@ export default function page() {
       </div>
     </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }
