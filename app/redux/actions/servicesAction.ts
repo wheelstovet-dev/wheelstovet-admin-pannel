@@ -19,6 +19,23 @@ export const getDogWalkPlans = createAsyncThunk<
   }
 );
 
+// Action to update an existing dog walking plans
+export const updateDogPlan = createAsyncThunk<
+  AxiosResponse<any>,
+  { id: string; planData: any }, // Input type includes service ID and data
+  { rejectValue: any }
+>(
+  'dogPlan/update',
+  async ({ id, planData }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('PATCH', `/admin/updatePlan/${id}`, planData);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error || 'Failed to update Service');
+    }
+  }
+);
+
 // Action to get all services without pagination
 export const getAllServices = createAsyncThunk<
   any[], // Define return type as any[]
