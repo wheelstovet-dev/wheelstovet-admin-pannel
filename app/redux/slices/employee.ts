@@ -1,6 +1,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { assignEmployee, assignEmployeeByCase, createEmployee, getAllEmployees, getEmployeeById, updateEmployee, updateEmployeeStatus } from '../actions/employeeAction';
+import { assignEmployee, assignEmployeeByCase, createEmployee, getAllEmployees, getAssignedCasesById, getAssignedSubscriptionById, getEmployeeById, updateEmployee, updateEmployeeStatus } from '../actions/employeeAction';
 import { AxiosResponse } from 'axios';
 
 interface EmployeeState {
@@ -12,6 +12,8 @@ interface EmployeeState {
   totalEmployees: number; // Track the total number of employees
   totalPages: number; // Track the total number of pages
   assignmentStatus: string | null; // Track the assignment status
+  assignedCases: any[];
+  assignedSubscription: any[];
 }
 
 const initialState: EmployeeState = {
@@ -23,6 +25,8 @@ const initialState: EmployeeState = {
   totalEmployees: 0,
   totalPages: 0,
   assignmentStatus: null, // Initialize assignmentStatus as null
+  assignedCases:[],
+  assignedSubscription:[],
 };
 
 const employeeSlice = createSlice({
@@ -153,6 +157,32 @@ const employeeSlice = createSlice({
       .addCase(assignEmployeeByCase.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.assignmentStatus = 'failed'; // Set failed status
+        state.error = action.payload;
+      })
+
+      //get assigned cases by id
+      .addCase(getAssignedCasesById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAssignedCasesById.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.assignedCases = action.payload.data;
+      })
+      .addCase(getAssignedCasesById.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      //get assigned subscription by id
+      .addCase(getAssignedSubscriptionById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAssignedSubscriptionById.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.assignedSubscription = action.payload.data;
+      })
+      .addCase(getAssignedSubscriptionById.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

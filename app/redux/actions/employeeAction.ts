@@ -131,3 +131,47 @@ export const assignEmployeeByCase = createAsyncThunk<
     }
   }
 );
+
+// Action to get assigned cases of employee by ID
+export const getAssignedCasesById = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type is the employee ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'AssignedCases/getById',
+  async (employeeId, { rejectWithValue }) => {
+    try {
+      // Make API call to get the employee by ID
+      const response = await apiCall('GET', `/admin/employee/getAssignedCases/${employeeId}`);
+      // console.log('API Response:', response); // Log the full response for debugging
+
+      // Return the entire response object
+      return response; // Return the full response
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch assigned cases details');
+    }
+  }
+);
+
+// Action to get assigned cases of employee by ID
+export const getAssignedSubscriptionById = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type is the employee ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'AssignedSubscription/getById',
+  async (employeeId, { rejectWithValue }) => {
+    try {
+      // Make API call to get the employee by ID
+      const response = await apiCall('GET', `/admin/employee/getAssignedSubscriptions/${employeeId}`);
+      // console.log('API Response:', response); // Log the full response for debugging
+
+      // Return the entire response object
+      return response; // Return the full response
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch assigned subscription details');
+    }
+  }
+);
