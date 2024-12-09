@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
@@ -9,10 +9,23 @@ import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { AssignedSubscription, AssignedSubscriptionData } from '@/constants/assigned-subscription-data';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { getAssignedSubscriptionById } from '@/app/redux/actions/employeeAction';
 
 export const  AssignedSubscriptionClient: React.FC = () => {
-  const router = useRouter();
-  const [data, setData] = useState<AssignedSubscription[]>(AssignedSubscriptionData); 
+  // Parse the URL to get the 'id' parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { assignedSubscription, loading } = useSelector((state: RootState) => state.employee);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getAssignedSubscriptionById(id));
+    }
+  }, [dispatch, id]);
 
 //   const handleSearch = (searchValue: string) => {
 //     const filteredData = TaskHistoryData.filter(item =>
@@ -46,21 +59,24 @@ export const  AssignedSubscriptionClient: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Assigned Subscription (${data.length})`}
+          title={`Assigned Subscription (${assignedSubscription.length})`}
           description="View assigned employee subscription"
         />
       
       </div>
       <Separator />
+
+      {loading ? 'Loading...' :
       <DataTable
         // searchKey="type"
         columns={columns}
-        data={data}
+        data={assignedSubscription}
         // onSearch={handleSearch}
         // filters={filters}
         // rowNo={0}
         // onSort={handleSort}
       />
+}
     </>
   );
 };
