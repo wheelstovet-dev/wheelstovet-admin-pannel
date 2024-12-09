@@ -3,62 +3,71 @@ import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Check, X, Mail, Phone, MapPin, Award } from 'lucide-react';
 import { AssignedCase } from '@/constants/assigned-case-data';
-export const columns: ColumnDef<AssignedCase>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'caseId',
-    header: 'Case ID',
-    cell: ({ row }) => <span className="text-red-600 font-bold px-1" style={{ borderRadius: '50%' }}>{row.original.caseId}</span>,
-  },
+import { format } from 'date-fns';
+export const columns: ColumnDef<any>[] = [
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
+  // {
+  //   accessorKey: 'caseId',
+  //   header: 'Case ID',
+  //   cell: ({ row }) => <span className="text-red-600 font-bold px-1" style={{ borderRadius: '50%' }}>{row.original.caseId}</span>,
+  // },
  
   {
-    accessorKey: 'assignedService',
+    accessorKey: 'ServiceId.serviceName',
     header: 'Assigned Service',
-    cell: ({ row }) => <span>{row.original.assignedService}</span>,
+    cell: ({ row }) => <span>{row.original.ServiceId?.serviceName || 'N/A'}</span>,
   },
  
   
  
   {
-    accessorKey: 'status',
+    accessorKey: 'CurrentStatus',
     header: 'Status',
-    cell: ({ row }) => <span>{row.original.status}</span>,
+    cell: ({ row }) => <span>{row.original?.CurrentStatus}</span>,
   },
 
   {
-    accessorKey: 'assignedDate',
+    accessorKey: 'CreatedAt',
     header: 'Assigned Date',
-    cell: ({ row }) => (
-      <span>{row.original.assignedDate ? new Date(row.original.assignedDate).toLocaleDateString() : 'N/A'}</span>
-    ),
+    cell: ({ row }) => format(new Date(row.original?.CreatedAt), 'dd-MMM-yyyy'),
   },
  
   {
-    accessorKey: 'timeSlot',
-    header: 'Time Slot',
-    cell: ({ row }) => <span>{row.original.timeSlot}</span>,
+    accessorKey: 'Charges',
+    header: 'Charges',
+    cell: ({ row }) => <span>{row.original?.Charges}</span>,
+  },
+  {
+    accessorKey: 'PaymentMode',
+    header: 'Payment Mode',
+    cell: ({ row }) => <span>{row.original?.PaymentMode}</span>,
+  },
+  {
+    accessorKey: 'PickUp',
+    header: 'Pickup Address',
+    cell: ({ row }) => <span>{row.original?.PickUp}</span>,
   },
   
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => <CellAction data={row.original} />,
+  // },
 ];

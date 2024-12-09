@@ -30,6 +30,7 @@ import { RecentCases } from '@/components/recent-cases';
 import { caseData, petData, unassignedData } from '@/constants/casesData';
 import { EmployeeEsclatedClient } from '@/components/tables/employee-esclation-tables/client';
 import { EnquiryClient } from '@/components/tables/enquiry-management-table/client';
+import ProtectedRoute from '@/components/protectedRoute';
 
 ChartJS.register(
   CategoryScale,
@@ -278,6 +279,7 @@ export default function Page() {
   };
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Dashboard' }}>
       <ScrollArea className="h-full">
         <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
@@ -435,5 +437,6 @@ export default function Page() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

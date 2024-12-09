@@ -3,6 +3,7 @@ import BreadCrumb from '@/components/breadcrumb';
 import { CreateCoupons } from '@/components/forms/coupons-stepper/create-coupons';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import MainLayout from '@/components/layout/main-layout';
+import ProtectedRoute from '@/components/protectedRoute';
 
 const breadcrumbItems = [
     { title: 'Manage Routes', 
@@ -11,6 +12,7 @@ const breadcrumbItems = [
 
 export default function CouponsManagement() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Manage Coupons' }}>
        <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
@@ -19,6 +21,7 @@ export default function CouponsManagement() {
       </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }
 

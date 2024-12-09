@@ -8,6 +8,7 @@ import {
   getAllSalons,
   getAllServices,
   getDogWalkPlans,
+  updateDogPlan,
   updateService
 } from '../actions/servicesAction';
 import { AxiosResponse } from 'axios';
@@ -16,6 +17,7 @@ interface ServiceState {
   loading: boolean;
   services: any[];
   selectedService: any | null;
+  selectedPlan: any | null;
   dogPlans: any[];
   salons: any[];
   hostels: any[];
@@ -30,6 +32,7 @@ const initialState: ServiceState = {
   loading: false,
   services: [],
   selectedService: null,
+  selectedPlan: null,
   dogPlans: [],
   salons: [],
   hostels: [],
@@ -87,6 +90,29 @@ const serviceSlice = createSlice({
           state.error = action.payload;
         }
       )
+
+      // update dog walk plans
+      .addCase(updateDogPlan.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(
+        updateDogPlan.fulfilled,
+        (state, action: PayloadAction<AxiosResponse<any>>) => {
+          state.loading = false;
+          const updateDogPlan = action.payload.data;
+          // Ensure state.services is an array before attempting to map over it
+          if (Array.isArray(state.services)) {
+            state.dogPlans = state.services.map((dogPlans) =>
+              dogPlans._id === updateDogPlan._id ? updateDogPlan : dogPlans
+            );
+          }
+          state.selectedPlan = updateDogPlan;
+        }
+      )
+      .addCase(updateDogPlan.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
       // Salons
       .addCase(getAllSalons.pending, (state) => {

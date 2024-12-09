@@ -1,5 +1,6 @@
 // import BreadCrumb from "@/components/breadcrumb";
 import MainLayout from "@/components/layout/main-layout";
+import ProtectedRoute from "@/components/protectedRoute";
 import { ComplaintManagementClient } from "@/components/tables/complaint-management-tables/client";
 import ComplaintManagementUserPage from "@/components/tables/user-complaint-management-tables/client";
 
@@ -7,6 +8,7 @@ const breadcrumbItems = [{ title: 'Complaint Management', link: '/dashboard/comp
 
 export default function SubscriptionManagementPage() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Complaint Management' }}>
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
         {/* <BreadCrumb items={breadcrumbItems} /> */}
@@ -14,6 +16,7 @@ export default function SubscriptionManagementPage() {
         <ComplaintManagementUserPage  />
       </div>
     </MainLayout>
+    </ProtectedRoute>
   );
 }
 

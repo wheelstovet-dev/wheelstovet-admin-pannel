@@ -3,6 +3,7 @@ import BreadCrumb from '@/components/breadcrumb';
 import { BillSummary } from '@/components/analytics/BillSummary';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ProtectedRoute from '@/components/protectedRoute';
 const breadcrumbItems = [
     { title: 'Reports and Analytics', link: '/report' },
     { title: 'Bill Summary', link: '/report-management/billSummary' }
@@ -10,6 +11,7 @@ const breadcrumbItems = [
 
 export default function BillSummaryPage() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Bill Summary' }}>
        <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
@@ -18,5 +20,6 @@ export default function BillSummaryPage() {
       </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

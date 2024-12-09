@@ -3,6 +3,7 @@ import BreadCrumb from '@/components/breadcrumb';
 import { TaxSummary } from '@/components/analytics/TaxSummary';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ProtectedRoute from '@/components/protectedRoute';
 
 const breadcrumbItems = [
   { title: 'Reports and Analytics', link: '/report' },
@@ -11,6 +12,7 @@ const breadcrumbItems = [
 
 export default function TaxSummaryPage() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Tax Summary' }}>
       <ScrollArea className="h-full">
         <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
@@ -19,5 +21,6 @@ export default function TaxSummaryPage() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

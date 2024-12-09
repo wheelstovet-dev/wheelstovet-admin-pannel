@@ -4,6 +4,7 @@
 import {InvoiceSummary} from '@/components/analytics/InvoiceSummary';
 import BreadCrumb from '@/components/breadcrumb';
 import MainLayout from '@/components/layout/main-layout';
+import ProtectedRoute from '@/components/protectedRoute';
 import { ScrollArea } from '@/components/ui/scroll-area';
 const breadcrumbItems = [
   { title: 'Report And Analytics', link: '/report-management' },
@@ -12,6 +13,7 @@ const breadcrumbItems = [
 
 const InvoiceSummaryPage = () => {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Invoice Summary' }}>
         <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
@@ -20,6 +22,7 @@ const InvoiceSummaryPage = () => {
       </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 };
 

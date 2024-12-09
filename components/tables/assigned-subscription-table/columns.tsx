@@ -4,66 +4,83 @@ import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Check, X, Mail, Phone, MapPin, Award } from 'lucide-react';
 import { AssignedSubscription } from '@/constants/assigned-subscription-data';
-export const columns: ColumnDef<AssignedSubscription>[] = [
+import { format } from 'date-fns';
+export const columns: ColumnDef<any>[] = [
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
+  // {
+  //   accessorKey: 'UserId',
+  //   header: 'Employee Name',
+  //   cell: ({ row }) => {
+  //     const firstName = row.original?.UserId?.FirstName;
+  //     const lastName = row.original?.UserId?.LastName;
+  //     return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
+  //   },
+  // },
+
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'caseId',
-    header: 'Case ID',
-    cell: ({ row }) => <span className="text-red-600 font-bold px-1" style={{ borderRadius: '50%' }}>{row.original.caseId}</span>,
+    accessorKey: 'AssignedEmp',
+    header: 'Employee Name',
+    cell: ({ row }) => {
+      const Name = row.original?.AssignedEmp?.Name;
+      return `${Name ? Name : 'N/A'}`;
+    },
   },
  
   {
-    accessorKey: 'plan',
+    accessorKey: 'Plan',
     header: 'Plan',
-    cell: ({ row }) => <span>{row.original.plan}</span>,
+    cell: ({ row }) => <span>{row.original?.Plan?.Name}</span>,
   },
  
   
  
   {
-    accessorKey: 'frequency',
+    accessorKey: 'Frequency',
     header: 'Frequency',
-    cell: ({ row }) => <span>{row.original.frequency}</span>,
+    cell: ({ row }) => <span>{row.original?.Plan?.Frequency}</span>,
   },
   {
-    accessorKey: 'userFeedback',
-    header: 'userFeedback',
-    cell: ({ row }) => <span>{row.original.userFeedback}</span>,
+    accessorKey: 'Status',
+    header: 'Status',
+    cell: ({ row }) => <span>{row.original?.Status}</span>,
   },
   {
-    accessorKey: 'assignedDate',
+    accessorKey: 'PickupLocation',
+    header: 'PickupLocation',
+    cell: ({ row }) => <span>{row.original?.PickupLocation}</span>,
+  },
+  {
+    accessorKey: 'CreatedAt',
     header: 'Assigned Date',
-    cell: ({ row }) => (
-      <span>{row.original.assignedDate ? new Date(row.original.assignedDate).toLocaleDateString() : 'N/A'}</span>
-    ),
+    cell: ({ row }) => format(new Date(row.original?.CreatedAt), 'dd-MMM-yyyy'),
   },
  
-  {
-    accessorKey: 'timeSlot',
-    header: 'Time Slot',
-    cell: ({ row }) => <span>{row.original.timeSlot}</span>,
-  },
+  // {
+  //   accessorKey: 'timeSlot',
+  //   header: 'Time Slot',
+  //   cell: ({ row }) => <span>{row.original.timeSlot}</span>,
+  // },
   
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => <CellAction data={row.original} />,
+  // },
 ];

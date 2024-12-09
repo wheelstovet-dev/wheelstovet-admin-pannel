@@ -2,6 +2,7 @@
 import BreadCrumb from '@/components/breadcrumb';
 import { SettingForm } from '@/components/forms/settingsForm/SettingsForms';
 import MainLayout from '@/components/layout/main-layout';
+import ProtectedRoute from '@/components/protectedRoute';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 
@@ -14,6 +15,7 @@ const breadcrumbItems = [
 
 export default function PaymentSettings() {
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Payments Settings' }}>
       <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
@@ -22,5 +24,6 @@ export default function PaymentSettings() {
       </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

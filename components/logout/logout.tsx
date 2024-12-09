@@ -6,9 +6,18 @@ export default function Logout() {
   const router = useRouter();
 
   const handleLogout = () => {
-    // Add your logout logic here
-   
-    router.push('/login'); // Redirect to the login page after logout
+    // 1. Clear session storage (or local storage) to remove user data
+    sessionStorage.removeItem('token'); // Adjust if you're using a different key for the session
+
+    // Optional: If you have an API endpoint to invalidate the session, you can call it here
+    // fetch('/api/logout', { method: 'POST' })
+    //   .then(() => {
+    //     console.log('User logged out');
+    //   })
+    //   .catch((error) => console.error('Logout failed', error));
+
+    // 2. Redirect to the login page after logout
+    router.push('/login');
   };
 
   return (

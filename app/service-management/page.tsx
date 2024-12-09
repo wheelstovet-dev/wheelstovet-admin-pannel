@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useEffect } from 'react';
 import { getAllServices } from '../redux/actions/servicesAction';
+import ProtectedRoute from '@/components/protectedRoute';
 
 const servicesData = [
   { name: 'DOG WALKING', folderRoute: "dogwalking", icon: '/images/Frame (2).png' },
@@ -46,6 +47,7 @@ export default function ServiceManagementPage() {
   
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Service Management' }}>
       <ScrollArea className="h-full">
         <div className="space-y-8 p-8">
@@ -81,5 +83,6 @@ export default function ServiceManagementPage() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }

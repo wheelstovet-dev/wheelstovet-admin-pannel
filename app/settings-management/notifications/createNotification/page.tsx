@@ -2,6 +2,7 @@ import BreadCrumb from '@/components/breadcrumb';
 import { ComplaintForm } from '@/components/forms/complaint-stepper/create-complaint';
 import { CreateNotificationForm } from '@/components/forms/notification-stepper/create-notification';
 import MainLayout from '@/components/layout/main-layout';
+import ProtectedRoute from '@/components/protectedRoute';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const breadcrumbItems = [{ title: 'Notifications', link: '/notification' }];
@@ -10,6 +11,7 @@ export default function page() {
 
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Create Notification' }}>
 
     <ScrollArea className="h-full">
@@ -19,5 +21,6 @@ export default function page() {
       </div>
     </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }
