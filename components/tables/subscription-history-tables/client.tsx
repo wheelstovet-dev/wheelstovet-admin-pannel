@@ -6,8 +6,8 @@ import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { columns } from './columns';
-import { AppDispatch } from '@/app/redux/store';
-import { useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/app/redux/slices/authslice';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getWalkRecords } from '@/app/redux/actions/subscriptionAction';
@@ -19,6 +19,31 @@ export const SubscriptionHistoryClient: React.FC = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id'); // Get the id from the URL
 
+  const { walkRecords, loading,error } = useSelector((state: RootState) => state.subscription);
+  // console.log("walkRecords" + walkRecords.length);
+
+  useEffect(() => {
+    if (id) {
+      // Fetch the case data by ID
+      dispatch(getWalkRecords({ id, page:1, limit:20 }));
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    // Set data whenever walkRecords changes
+    if (walkRecords?.length > 0) {
+      setData(walkRecords);
+    }
+    else if(error){
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error || 'Failed to get walk records',
+      });
+    }
+  }, [walkRecords, loading,error]);
+
+  
+
   const handleSearch = (searchValue: string) => {
     const filteredData = data.filter((item: any) =>
       item.subscriptionPlan.toLowerCase().includes(searchValue.toLowerCase())
@@ -26,32 +51,32 @@ export const SubscriptionHistoryClient: React.FC = () => {
     setData(filteredData);
   };
 
-  useEffect(() => {
-    if (id) {
-      fetchWalkRecords(id);
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     fetchWalkRecords(id);
+  //   }
+  // }, [id]);
 
-  const fetchWalkRecords = async (id: string) => {
-    dispatch(setLoading(true));
-    try {
-      const resultAction: any = await dispatch(getWalkRecords({ id, page: 1, limit: 20 }));
+  // const fetchWalkRecords = async (id: string) => {
+  //   dispatch(setLoading(true));
+  //   try {
+  //     const resultAction: any = await dispatch(getWalkRecords({ id, page: 1, limit: 20 }));
       
-      if (resultAction.type === 'subscriptions/getWalkRecords/fulfilled') {
-        setData(resultAction?.payload?.data);
-        setLoader(false);
-      } else {
-        throw new Error(resultAction.payload?.message || 'Failed to fetch walk records');
-      }
-    } catch (error: any) {
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: error.message || 'Failed to get walk records',
-      });
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
+  //     if (resultAction.type === 'subscriptions/getWalkRecords/fulfilled') {
+  //       setData(resultAction?.payload?.data);
+  //       setLoader(false);
+  //     } else {
+  //       throw new Error(resultAction.payload?.message || 'Failed to fetch walk records');
+  //     }
+  //   } catch (error: any) {
+  //     ToastAtTopRight.fire({
+  //       icon: 'error',
+  //       title: error || 'Failed to get walk records',
+  //     });
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //   }
+  // };
 
   const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
     const sortedData = [...data].sort((a, b) => {
