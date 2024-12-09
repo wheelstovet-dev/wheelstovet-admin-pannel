@@ -40,16 +40,16 @@ export default function Page() {
                 <div className="text-xs">
                   <a href="/forgot-password" className="hover:underline text-customAmber">Forgot Password?</a>
                 </div>
-                <div className="text-xs">
+                {/* <div className="text-xs">
                   <a href="/signup" className="hover:underline text-customAmber">Don&apos;t have an account? Sign up</a>
-                </div>
+                </div> */}
               </div>
               
-              <div className="mt-6 flex items-center justify-center mt-10">
+              {/* <div className="mt-6 flex items-center justify-center mt-10">
                 <button className="w-full py-3 px-6 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                   Sign in with Google
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           <img src="/images/Group 1000004801.png" alt="Bottom right" className="absolute bottom-56 right-0 h-10 w-10 m-4" />
