@@ -65,7 +65,7 @@ export default function UserAuthForm() {
       dispatch(setLoading(false)); 
       ToastAtTopRight.fire({
         icon: 'error',
-        title: error.response?.data?.message || 'Invalid credentials',
+        title: error.response?.data?.fields?.message || 'Invalid credentials',
       });
     } 
   };
