@@ -11,20 +11,21 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import ProtectedRoute from '@/components/protectedRoute';
 
 // Define Zod schema for charges validation
 const chargesSchema = z.object({
   FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
-  AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
-  PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
-  HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
-  VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
-  MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
-  AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
-  FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
-  TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
+  // AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
+  // PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
+  // HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
+  // VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
+  // MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
+  // AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
+  // FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
+  // TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
   TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
-  IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
+  // IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
 });
 
 // Create a TypeScript type based on the Zod schema
@@ -32,7 +33,14 @@ type ChargesFormValues = z.infer<typeof chargesSchema>;
 
 export default function PetHandlingPage() {
   const [serviceId, setServiceId] = useState<string | null>(null);
-  console.log(serviceId);
+  // console.log(serviceId);
+  const [totalCharges, setTotalCharges] = useState<number>(0); // State to track total charges
+
+   // Set up React Hook Form with Zod schema resolver
+   const { register, handleSubmit, setValue,watch, formState: { errors } } = useForm<ChargesFormValues>({
+    resolver: zodResolver(chargesSchema),
+    defaultValues: {},
+  });
 
   useEffect(() => {
     // Parse the URL to get the 'id' parameter
@@ -47,11 +55,7 @@ export default function PetHandlingPage() {
 
   const [initialCharges, setInitialCharges] = useState<ChargesFormValues>({} as ChargesFormValues); // Store initial charges
 
-  // Set up React Hook Form with Zod schema resolver
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargesFormValues>({
-    resolver: zodResolver(chargesSchema),
-    defaultValues: {},
-  });
+ 
 
   useEffect(() => {
     dispatch(getAllServices());
@@ -63,16 +67,16 @@ export default function PetHandlingPage() {
       if (PetHandlingService) {
         const fetchedCharges: ChargesFormValues = {
           FixedCharges: PetHandlingService.fixedCharge || 0,
-          AdditionalPetCharge: PetHandlingService.additionalPetCharge || 0,
-          PetHandlerCharge: PetHandlingService.petHandlerCharge || 0,
-          HandlingAddOnCharge: PetHandlingService.handlingAddOnCharge || 0,
-          VetVisitAddOnCharge: PetHandlingService.vetVisitAddOnCharge || 0,
-          MinimumChargeIfNotFound: PetHandlingService.minimumChargeIfNotFound || 0,
-          AdditionalTimeCost: PetHandlingService.additionalTimeCharge || 0,
-          FourHourCharge: PetHandlingService.fourHourCharge || 0,
-          TwelveHourCharge: PetHandlingService.twelveHourCharge || 0,
+          // AdditionalPetCharge: PetHandlingService.additionalPetCharge || 0,
+          // PetHandlerCharge: PetHandlingService.petHandlerCharge || 0,
+          // HandlingAddOnCharge: PetHandlingService.handlingAddOnCharge || 0,
+          // VetVisitAddOnCharge: PetHandlingService.vetVisitAddOnCharge || 0,
+          // MinimumChargeIfNotFound: PetHandlingService.minimumChargeIfNotFound || 0,
+          // AdditionalTimeCost: PetHandlingService.additionalTimeCharge || 0,
+          // FourHourCharge: PetHandlingService.fourHourCharge || 0,
+          // TwelveHourCharge: PetHandlingService.twelveHourCharge || 0,
           TwentyFourHourCharge: PetHandlingService.twentyFourHourCharge || 0,
-          IncludedTime: PetHandlingService.includedTime || 0,
+          // IncludedTime: PetHandlingService.includedTime || 0,
         };
 
         // Set initial charges and default values in form
@@ -88,21 +92,34 @@ export default function PetHandlingPage() {
     }
   }, [services, router, setValue]);
 
+  useEffect(() => {
+    const calculateTotalCharges = () => {
+      const total =
+        (watch('FixedCharges') || 0) +
+        (watch('TwentyFourHourCharge') || 0);
+      setTotalCharges(total);
+    };
+
+    // Subscribe to changes in form values
+    const subscription = watch(() => calculateTotalCharges());
+    return () => subscription.unsubscribe(); // Cleanup subscription on unmount
+  }, [watch]);
+
   const onSubmit = async (data: ChargesFormValues) => {
     if (serviceId) {
       try {
         const serviceData = {
           fixedCharge: data.FixedCharges,
-          additionalPetCharge: data.AdditionalPetCharge,
-          petHandlerCharge: data.PetHandlerCharge,
-          handlingAddOnCharge: data.HandlingAddOnCharge,
-          vetVisitAddOnCharge: data.VetVisitAddOnCharge,
-          minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
-          additionalTimeCharge: data.AdditionalTimeCost,
-          fourHourCharge: data.FourHourCharge,
-          twelveHourCharge: data.TwelveHourCharge,
+          // additionalPetCharge: data.AdditionalPetCharge,
+          // petHandlerCharge: data.PetHandlerCharge,
+          // handlingAddOnCharge: data.HandlingAddOnCharge,
+          // vetVisitAddOnCharge: data.VetVisitAddOnCharge,
+          // minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
+          // additionalTimeCharge: data.AdditionalTimeCost,
+          // fourHourCharge: data.FourHourCharge,
+          // twelveHourCharge: data.TwelveHourCharge,
           twentyFourHourCharge: data.TwentyFourHourCharge,
-          includedTime: data.IncludedTime,
+          // includedTime: data.IncludedTime,
         };
 
         console.log(serviceData);
@@ -132,6 +149,7 @@ export default function PetHandlingPage() {
   };
 
   return (
+    <ProtectedRoute>
     <MainLayout meta={{ title: 'Service Management' }}>
       <ScrollArea className="h-full">
         <div className="container mx-auto p-8">
@@ -156,18 +174,22 @@ export default function PetHandlingPage() {
                           {...register(key as keyof ChargesFormValues, { valueAsNumber: true })} // Register field for validation with valueAsNumber
                           className="mt-1 block w-20 border rounded p-2"
                         />
-                        <span className="ml-2 font-bold">
-                          {key === "IncludedTime" ? "minutes" : "INR"}
-                        </span>
-                        {/* {errors[key as keyof ChargesFormValues] && (
-                          <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
-                        )} */}
+                       <span className="ml-2 font-bold">INR</span>
+                          {errors[key as keyof ChargesFormValues] && (
+                            <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
+                          )}
                       </div>
                     ))}
                   </>
                 )}
               </div>
             </div>
+            {/* Display Total Charges */}
+            <div className="mt-4">
+                <h3 className="text-2xl font-bold">
+                  Total Charges: <span className="text-yellow-500">{totalCharges} INR</span> {/* Display total charges dynamically */}
+                </h3>
+              </div>
             <div className="flex justify-start mt-8">
               <button
                 className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
@@ -186,5 +208,6 @@ export default function PetHandlingPage() {
         </div>
       </ScrollArea>
     </MainLayout>
+    </ProtectedRoute>
   );
 }
