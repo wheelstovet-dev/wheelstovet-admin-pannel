@@ -11,7 +11,7 @@ import { Search, Bell, HelpCircle } from 'lucide-react'; // Import necessary ico
 import Image from 'next/image'; // Assuming next/image for optimized image loading
 
 const Header = () => {
-  const { user } = useAuthContext() as IAuthContext;
+  
 
   return (
     <div className="fixed top-0 left-0 right-0 z-20 flex items-center bg-white  ml-72">
@@ -32,7 +32,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <HelpCircle className="h-6 w-6 text-gray-600 cursor-pointer" />
           <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
-          <UserNav user={user} />
+          <UserNav />
          {/* <ThemeToggle /> */}
         </div>
 
