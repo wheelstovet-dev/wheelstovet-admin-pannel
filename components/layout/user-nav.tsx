@@ -13,6 +13,8 @@ import { getSessionStorageItem } from '@/utils/localStorage';
 // import Logout from '../logout/logout';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
+import { AlertModal } from '@/components/modal/alert-modal';
+import { useState } from 'react';
 
 
 // Function to generate a random background color
@@ -28,6 +30,9 @@ const getRandomColor = () => {
 export function UserNav() {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
   // Retrieve user data from sessionStorage using the token key
   const user: any = getSessionStorageItem('token');
   // console.log(user); // Inspect the user object
@@ -41,37 +46,50 @@ export function UserNav() {
   const firstLetter = user?.admin.Name.charAt(0).toUpperCase();
 
   
+  const onConfirm = async () => {
+    sessionStorage.removeItem('token');
+    router.push('/auth/login');
+  }
 
    // Handle logout redirection
-   const handleLogout = () => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will be logged out of your account.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, log me out!',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // 1. Clear session storage (or local storage) to remove user data
-        sessionStorage.removeItem('token'); // Adjust if you're using a different key for the session
+  //  const handleLogout = () => {
+  //   Swal.fire({
+  //     title: 'Are you sure?',
+  //     text: 'You will be logged out of your account.',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Yes, log me out!',
+  //     cancelButtonText: 'Cancel'
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       // 1. Clear session storage (or local storage) to remove user data
+  //       sessionStorage.removeItem('token'); // Adjust if you're using a different key for the session
 
-        // Optional: If you have an API endpoint to invalidate the session, you can call it here
-        // fetch('/api/logout', { method: 'POST' })
-        //   .then(() => {
-        //     console.log('User logged out');
-        //   })
-        //   .catch((error) => console.error('Logout failed', error));
+  //       // Optional: If you have an API endpoint to invalidate the session, you can call it here
+  //       // fetch('/api/logout', { method: 'POST' })
+  //       //   .then(() => {
+  //       //     console.log('User logged out');
+  //       //   })
+  //       //   .catch((error) => console.error('Logout failed', error));
 
-        // 2. Redirect to the login page after logout
-        router.push('/auth/login');
-      }
-    });
-  };
+  //       // 2. Redirect to the login page after logout
+  //       router.push('/auth/login');
+  //     }
+  //   });
+  // };
 
   return (
+    <>
+    <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onConfirm}
+        loading={loading}
+        description='You will be logged out'
+      />
+    
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -97,11 +115,16 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
+        {/* <DropdownMenuItem onClick={handleLogout}>
+          Log out
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+        </DropdownMenuItem> */}
+        <DropdownMenuItem onClick={() => setOpen(true)}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 }

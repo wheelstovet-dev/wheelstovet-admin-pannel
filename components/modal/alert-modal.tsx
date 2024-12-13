@@ -8,13 +8,17 @@ interface AlertModalProps {
   onClose: () => void;
   onConfirm: () => void;
   loading: boolean;
+  title?: string; // Optional prop for title
+  description?: string; // Optional prop for description
 }
 
 export const AlertModal: React.FC<AlertModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  loading
+  loading,
+  title = "Are you sure?", // Default value for title
+  description = "This action cannot be undone." // Default value for description
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -28,8 +32,8 @@ export const AlertModal: React.FC<AlertModalProps> = ({
 
   return (
     <Modal
-      title="Are you sure?"
-      description="This action cannot be undone."
+      title={title} // Use the provided title or default
+      description={description} // Use the provided description or default
       isOpen={isOpen}
       onClose={onClose}
     >
