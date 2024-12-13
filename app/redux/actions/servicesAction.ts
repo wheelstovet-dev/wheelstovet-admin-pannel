@@ -90,6 +90,22 @@ export const createSalon = createAsyncThunk<AxiosResponse<any>, any, { rejectVal
   }
 );
 
+// delete associated salon by id
+export const deleteSalon = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: any }
+>(
+  'salon/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiCall('DELETE', `/admin/salon/${id}`);
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to delete salon');
+    }
+  }
+);
+
 // Action to get all clinic [vet visit] without pagination
 export const getAllClinic = createAsyncThunk<
   any[], // Define return type as any[]
@@ -124,6 +140,22 @@ export const createClinic = createAsyncThunk<AxiosResponse<any>, any, { rejectVa
       // Handle errors and return error message
       // console.log(error);
       return rejectWithValue(error || 'Failed to add clinic');
+    }
+  }
+);
+
+// delete associated clicnic by id
+export const deleteClinic = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: any }
+>(
+  'clinic/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiCall('DELETE', `/admin/clinic/${id}`);
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to delete clinic');
     }
   }
 );
@@ -178,6 +210,22 @@ export const getAllHostels = createAsyncThunk<
       return response.data; // Return only the array of clinic
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch hostel');
+    }
+  }
+);
+
+// delete associated hostel by id
+export const deleteHostel = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: any }
+>(
+  'hostel/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiCall('DELETE', `/admin/hostel/${id}`);
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to delete hostel');
     }
   }
 );

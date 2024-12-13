@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin } from 'lucide-react';
-import { getAllSalons, getAllServices, createSalon, updateService } from '@/app/redux/actions/servicesAction';
+import { Phone, MapPin, Trash2 } from 'lucide-react';
+import { getAllSalons, getAllServices, createSalon, updateService, deleteSalon } from '@/app/redux/actions/servicesAction';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -145,6 +145,22 @@ export default function SalonVisitPage() {
     });
   };
 
+  const handleDelete = async (salonId: string) => {
+    try {
+      await dispatch(deleteSalon(salonId)).unwrap();
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Salon deleted successfully!',
+      });
+      dispatch(getAllSalons()); // Refresh the salons list
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error || 'Failed to delete salon',
+      });
+    }
+  };
+
   const onSubmitSalon = async (data: NewSalonFormValues) => {
     try {
       await dispatch(createSalon(data));
@@ -234,6 +250,7 @@ export default function SalonVisitPage() {
                   <th className="px-4 py-2 border-b border-r-2">Salon Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -243,6 +260,12 @@ export default function SalonVisitPage() {
                     <td className="px-4 py-6 border-b">{salon.salonName}</td>
                     <td className="px-4 py-6 border-b">{salon.ContactNo}</td>
                     <td className="px-4 py-6 border-b">{salon.address}</td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center">
+                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(salon._id)} />
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
