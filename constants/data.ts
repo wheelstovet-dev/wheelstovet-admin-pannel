@@ -143,7 +143,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Coupon/Offers Management',
-    href: '/coupons',
+    href: '/coupons-management',
     icon: 'coupon_management',
     label: 'Coupon Management'
   },
