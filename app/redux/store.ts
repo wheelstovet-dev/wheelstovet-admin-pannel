@@ -8,6 +8,8 @@ import userReducer from './slices/userslice';
 import subscriptionReducer from './slices/subscriptionslice';
 import serviceReducer from './slices/servicesslice';
 import caseManagementReducer from './slices/casesslice';
+import complaintManagementReducer from './slices/complaintslice';
+import couponReducer from './slices/couponslice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     subscription: subscriptionReducer,
     service:serviceReducer,
     caseManagement: caseManagementReducer,
+    complaintManagement:complaintManagementReducer,
+    coupons: couponReducer,
   }
 });
 
