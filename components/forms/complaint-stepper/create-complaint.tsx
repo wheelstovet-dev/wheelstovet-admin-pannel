@@ -1,201 +1,244 @@
 'use client';
 
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useDispatch } from 'react-redux';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { AppDispatch } from '@/app/redux/store';
+import { ToastAtTopRight } from '@/lib/sweetalert';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getComplaintById, updateComplaint } from '@/app/redux/actions/complaintAction';
+import { TextBox } from '@/components/ui/textbox';
 
-export interface ComplaintManagement {
-  complaintId: number;
-  userId: number;
-  complaintType: 'Delay' | 'Bad quality' | 'Wrong item' | 'Not reached';
-  description: string;
-  status: 'Active' | 'Inactive';
-  resolution?: 'Coupon' | 'Store credits' | 'Add-on bag';
-}
-
+// Complaint form schema for validation
 const complaintFormSchema = z.object({
-  complaintId: z.number().nonnegative(),
-  userId: z.number().nonnegative(),
-  complaintType: z.string(),
-  description: z.string().min(1, 'Description is required'),
-  status: z.enum(['Active', 'Inactive']),
-  resolution: z.string(),
+  ComplaintType: z.string().min(1, 'Complaint Type is required'),
+  ComplaintBy: z.string().min(1, 'Complaint By is required'),
+  Description: z.string().min(1, 'Description is required'),
+  Status: z.string().min(1, 'Status is required'),
+  Priority: z.string().min(1, 'Priority is required'),
+  Resolution: z.string().min(1, 'Resolution is required'),
+  ResolvedAt: z.string().optional(),
 });
 
-export const ComplaintForm: React.FC<{ initialData?: ComplaintManagement }> = ({ initialData }) => {
-  const [loading, setLoading] = useState(false);
-  const form = useForm<ComplaintManagement>({
+interface ComplaintFormProps {
+  mode?: 'view' | 'update';
+}
+
+export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const urlMode = searchParams.get('mode');
+  const complaintId: any = searchParams.get('id');
+
+  // const urlParams = new URLSearchParams(window.location.search);
+  //   const complaintId:any = urlParams.get('id');
+  //   const urlMode = urlParams.get('mode');
+
+  const [currentMode, setCurrentMode] = useState<'view' | 'update'>(propMode || (urlMode as 'view' | 'update') || 'view');
+  const [complaintData, setComplaintData] = useState();
+  const [loader, setLoader] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (urlMode) {
+      setCurrentMode(urlMode as 'view' | 'update');
+    } else if (propMode) {
+      setCurrentMode(propMode);
+    }
+  }, [urlMode, propMode]);
+
+  const form = useForm({
     resolver: zodResolver(complaintFormSchema),
-    defaultValues: initialData || {
-      complaintId: 0,
-      userId: 0,
-      complaintType: 'Delay',
-      description: '',
-      status: 'Active',
-      resolution: undefined,
+    defaultValues: complaintData || {
+      ComplaintType: '',
+      ComplaintBy: '',
+      Description: '',
+      Status: '',
+      Priority: '',
+      Resolution: '',
+      ResolvedAt: '',
     },
   });
 
+  useEffect(() => {
+    if (currentMode === 'view' || currentMode === 'update') {
+      setLoader(true);
+      dispatch(getComplaintById(complaintId))
+        .unwrap()
+        .then((data: any) => {
+          setComplaintData(data.data);
+          form.reset(data.data);
+        })
+        .catch((error: any) => {
+          ToastAtTopRight.fire({
+            icon: 'error',
+            title: 'Error fetching complaint data',
+            text: error.message,
+          });
+        })
+        .finally(() => setLoader(false));
+    }
+  }, [currentMode, complaintId, dispatch]);
+
   const { control, handleSubmit, formState: { errors } } = form;
 
-  const onSubmit: SubmitHandler<ComplaintManagement> = async (data) => {
+  const onSubmit: SubmitHandler<any> = async (data: any) => {
     try {
-      setLoading(true);
-      if (initialData) {
-        // Update existing complaint
-      } else {
-        // Create new complaint
-      }
-      // Refresh or redirect after submission
-    } catch (error) {
-      console.error(error);
+      setLoader(true); // Optional loader to indicate submission in progress
+      const response = await dispatch(updateComplaint({ id: complaintId, complaintData: data })).unwrap();
+
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Complaint updated successfully!',
+      });
+
+      // Optionally redirect or update the form state
+      router.push('/complaints'); // Adjust the path as needed
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: 'Error updating complaint',
+        text: error.message || 'Failed to update complaint',
+      });
     } finally {
-      setLoading(false);
+      setLoader(false);
     }
   };
 
+
+  const renderErrorMessage = (error: any) => {
+    if (!error) return null;
+    if (typeof error === 'string') return error;
+    return error.message || null;
+  };
+
+  if (loader) return <div>Loading...</div>;
+
   return (
     <div className="container mx-auto p-4">
-      <Heading title={initialData ? 'Edit Complaint' : 'Create Complaint'} description="Fill in the details below" />
-      <Separator />
+      <h2 className="text-2xl font-bold mb-4">
+        {currentMode === 'view' ? 'View Complaint' : 'Update Complaint'}
+      </h2>
+
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* <FormField
-              control={control}
-              name="complaintId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Complaint ID</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={loading} placeholder="Enter Complaint ID" {...field} />
-                  </FormControl>
-                  <FormMessage>{errors.complaintId?.message}</FormMessage>
-                </FormItem>
-              )}
-            /> */}
-            {/* <FormField
-              control={control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>User ID</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={loading} placeholder="Enter User ID" {...field} />
-                  </FormControl>
-                  <FormMessage>{errors.userId?.message}</FormMessage>
-                </FormItem>
-              )}
-            /> */}
-     <FormField
-  control={control}
-  name="complaintType"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Complaint Type</FormLabel>
-      <FormControl>
-        <Input 
-          disabled={loading} 
-          onChange={field.onChange} 
-          value={field.value} 
-          placeholder="Enter Complaint Type" 
-        />
-      </FormControl>
-      <FormMessage>{errors.complaintType?.message}</FormMessage>
-    </FormItem>
-  )}
-/>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
 
+            <FormField control={control} name="ComplaintType" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Complaint Type</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Enter Complainant Type" {...field} disabled={currentMode === 'view'} />
+                </FormControl>
+                <FormMessage>{renderErrorMessage(errors.ComplaintType)}</FormMessage>
+              </FormItem>
+            )} />
 
-            <FormField
-              control={control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors.status?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-            {/* <FormField
-              control={control}
-              name="resolution"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Resolution</FormLabel>
-                  <FormControl>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Resolution" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Coupon">Coupon</SelectItem>
-                        <SelectItem value="Store credits">Store credits</SelectItem>
-                        <SelectItem value="Add-on bag">Add-on bag</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors.resolution?.message}</FormMessage>
-                </FormItem>
-              )}
-            /> */}
+            <FormField control={control} name="ComplaintBy" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Complaint By</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Enter Complainant" {...field} disabled={currentMode === 'view'} />
+                </FormControl>
+                <FormMessage>{renderErrorMessage(errors.ComplaintBy)}</FormMessage>
+              </FormItem>
+            )} />
 
-<FormField
-  control={control}
-  name="resolution"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Resolution</FormLabel>
-      <FormControl>
-        <Input 
-          disabled={loading} 
-          onChange={field.onChange} 
-          value={field.value} 
-          placeholder="Enter Resolution" 
-        />
-      </FormControl>
-      <FormMessage>{errors.resolution?.message}</FormMessage>
-    </FormItem>
-  )}
-/>
-
-          </div>
-          <FormField
-            control={control}
-            name="description"
-            render={({ field }) => (
+            <FormField control={control} name="Description" render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input type="text" disabled={loading} placeholder="Enter Description" {...field} />
+                  <Input type="text" placeholder="Enter Description" {...field} disabled={currentMode === 'view'} />
                 </FormControl>
-                <FormMessage>{errors.description?.message}</FormMessage>
+                <FormMessage>{renderErrorMessage(errors.Description)}</FormMessage>
               </FormItem>
+            )} />
+
+            <FormField control={control} name="Status" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value || ''} disabled={currentMode === 'view'}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="resolved">Resolved</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage>{renderErrorMessage(errors.Status)}</FormMessage>
+              </FormItem>
+            )} />
+
+            <FormField control={control} name="Priority" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Priority</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value || ''} disabled={currentMode === 'view'}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage>{renderErrorMessage(errors.Priority)}</FormMessage>
+              </FormItem>
+            )} />
+
+            <FormField control={control} name="Resolution" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Resolution</FormLabel>
+                <FormControl>
+                  {/* <Input type="textbox" placeholder="Enter Resolution" {...field} disabled={currentMode === 'view'} /> */}
+                <TextBox placeholder="Enter Resolution" {...field} disabled={currentMode === 'view'} />
+                </FormControl>
+                <FormMessage>{renderErrorMessage(errors.Resolution)}</FormMessage>
+              </FormItem>
+            )} />
+
+            {currentMode === 'view' && (
+              // <FormField control={control} name="ResolvedAt" render={({ field }) => (
+              //   <FormItem>
+              //     <FormLabel>Resolved At</FormLabel>
+              //     <FormControl>
+              //       <Input type="calendar"  disabled />
+              //     </FormControl>
+              //   </FormItem>
+
+              <FormField control={control} name="ResolvedAt" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    {/* <Input type="date" placeholder="Enter Date of Birth" {...field} disabled={currentMode === 'view'} /> */}
+                    <Input type="date" {...field} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''} disabled={currentMode === 'view'} />
+                  </FormControl>
+                  <FormMessage>{renderErrorMessage(errors.ResolvedAt)}</FormMessage>
+                </FormItem>
+              )} />
             )}
-          />
-          <Button type="submit" disabled={loading}>
-            {initialData ? 'Save Changes' : 'Create Complaint'}
-          </Button>
+          </div>
+
+          {currentMode === 'update' && (
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              Update Complaint
+            </Button>
+          )}
         </form>
       </Form>
     </div>
   );
 };
+

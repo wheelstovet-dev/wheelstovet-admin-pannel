@@ -3,9 +3,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ComplaintManagementUser } from '@/constants/complaint-management-data-user';
+// import { ComplaintManagementUser } from '@/constants/complaint-management-data-user';
 
-export const columns: ColumnDef<ComplaintManagementUser>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -32,33 +32,41 @@ export const columns: ColumnDef<ComplaintManagementUser>[] = [
   },
 
   {
-    accessorKey: 'name',
-    header: 'Name'
+    accessorKey: 'AssignedEmployee', // A generic accessor key
+    header: 'Assigned Employee',
+    cell: ({ row }) => {
+      const firstName = row.original?.UserId?.FirstName || row.original?.EmployeeId?.FirstName;
+      const lastName = row.original?.UserId?.LastName || row.original?.EmployeeId?.LastName;
+      return firstName && lastName ? `${firstName} ${lastName}` : 'N/A';
+    },
   },
   {
-    accessorKey: 'complaintBy',
+    accessorKey: 'ComplaintBy',
     header: 'Complaint By'
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'Description',
     header: 'Description'
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'Status',
     header: 'Status',
     cell: ({ row }) => (
-      <div 
+      <div
         style={{ borderRadius: "20px" }}
         className={`flex items-center justify-center px-2 py-1 ${
-          row.original.status === 'Open' ? 'bg-yellow-400' :
-          row.original.status === 'Closed' ? 'bg-green-300' :
-          'bg-red-200'
+          row.original?.Status === 'RESOLVED' || row.original?.Status === 'resolved'
+            ? 'bg-yellow-400'
+            : row.original?.Status === 'PENDING' || row.original?.Status === 'pending'
+            ? 'bg-red-400'
+            : 'bg-red-200'
         }`}
       >
-        <span className='text-black bold'>{row.original.status}</span>
+        <span className='text-black bold'>{row.original?.Status}</span>
       </div>
     )
-  },
+  }
+  ,
 
   // {
   //   accessorKey: 'resolution',
