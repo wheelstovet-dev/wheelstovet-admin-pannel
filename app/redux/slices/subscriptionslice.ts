@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { getAllSubscriptions, getSubscriptionById, getWalkRecords } from '../actions/subscriptionAction';
+import { getAllSubscriptions, getSubscriptionById, getWalkRecords, updateSubscriptionStatus } from '../actions/subscriptionAction';
 
 
 interface SubscriptionState {
@@ -84,6 +84,29 @@ const subscriptionSlice = createSlice({
       .addCase(getWalkRecords.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // slice to update the status of subscription
+      .addCase(updateSubscriptionStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateSubscriptionStatus.fulfilled,
+        (state, action: PayloadAction<AxiosResponse<any>>) => {
+          state.loading = false;
+          const updatedSubscription = action.payload.data;
+          if (Array.isArray(state.subscriptions)) {
+            state.subscriptions = state.subscriptions.map((subscription) =>
+              subscription._id === updatedSubscription._id ? updatedSubscription : subscription
+            );
+          }
+          state.selectedSubscription = updatedSubscription;
+        }
+      )
+      .addCase(updateSubscriptionStatus.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update subscription Status';
       });
   },
 });
