@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createCoupon, getAllCoupons, getCouponByCode, updateCoupon } from '../actions/couponAction';
+import { createCoupon, deleteCoupon, getAllCoupons, getCouponByCode, updateCoupon } from '../actions/couponAction';
 import { AxiosResponse } from 'axios';
 
 interface CouponState {
@@ -102,7 +102,23 @@ const couponslice = createSlice({
       .addCase(updateCoupon.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+
+      // Handle delete coupon
+    builder.addCase(deleteCoupon.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    builder.addCase(deleteCoupon.fulfilled, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      // Remove the deleted coupon from the state
+      state.Coupons = state.Coupons.filter((coupon) => coupon._id !== action.payload);
+    })
+    builder.addCase(deleteCoupon.rejected, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      state.error = action.payload || 'Failed to delete coupon';
+    });
+
     },
 });
 
