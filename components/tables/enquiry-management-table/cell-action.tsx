@@ -14,11 +14,8 @@ import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-re
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data:  Enquiry;
-}
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -39,7 +36,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 //     router.push(`/subscription-management/view/${data.caseId}`); 
 //   };
   const handleView = () => {
-    router.push(`/query-form/view/${data.caseId}`); 
+    router.push(`/query-form/view/${data._id}`); 
   };
 
 //   const hanldeResheduleAndSkips = () => {

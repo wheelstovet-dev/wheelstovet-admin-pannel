@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Heading } from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -34,6 +34,7 @@ const enquiryFormSchema = z.object({
 
 export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEnabled }) => {
   const [loading, setLoading] = useState(false);
+  console.log(initialData);
 
   const title = initialData && isEnabled ? "View Enquiry" : initialData ? "Edit Enquiry" : "Create New Enquiry";
   const description = initialData && isEnabled 
@@ -44,17 +45,31 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
 
   const form = useForm({
     resolver: zodResolver(enquiryFormSchema),
-    defaultValues: initialData || {
-      enquiryName: '',
-      preferredDate: new Date(),
-      preferredTime: '',
-      email: '',
-      phoneNo: '',
-      pickupAddress: '',
-      status: '',
-      note: '',
+    defaultValues: {
+      enquiryName: `${initialData?.UserId?.FirstName } ${initialData?.UserId?.LastName }`.trim(),
+      preferredDate: initialData?.PreferredDate ? new Date(initialData.PreferredDate) : new Date(),
+      preferredTime: initialData?.PreferredHours ,
+      email: initialData?.UserId?.Email ,
+      phoneNo: initialData?.UserId?.MobileNo ,
+      pickupAddress: initialData?.PickupLocation ,
+      status: initialData?.Status || 'pending',
     },
   });
+
+  // Reset form when initialData arrives
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        enquiryName: `${initialData?.UserId?.FirstName || ''} ${initialData?.UserId?.LastName || ''}`.trim(),
+        preferredDate: initialData?.PreferredDate ? new Date(initialData.PreferredDate) : new Date(),
+        preferredTime: initialData?.PreferredHours || '',
+        email: initialData?.UserId?.Email || '',
+        phoneNo: initialData?.UserId?.MobileNo || '',
+        pickupAddress: initialData?.PickupLocation || '',
+        status: initialData?.Status || 'pending',
+      });
+    }
+  }, [initialData, form.reset]);
 
   const { control, handleSubmit, formState: { errors } } = form;
 
@@ -207,7 +222,7 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
               )}
             />
 
-            {/* Note */}
+            {/* Note
             <FormField
               control={control}
               name="note"
@@ -219,7 +234,7 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
           <div className="flex justify-end">
