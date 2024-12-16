@@ -3,15 +3,16 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, Trash2 } from 'lucide-react';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
-import { createClinic, getAllClinic, getAllServices, updateService } from '@/app/redux/actions/servicesAction';
+import { createClinic, deleteClinic, getAllClinic, getAllServices, updateService } from '@/app/redux/actions/servicesAction';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ProtectedRoute from '@/components/protectedRoute';
+
 
 // Zod schema for validation
 const chargeSchema = z.object({
@@ -144,6 +145,22 @@ export default function VeterinaryVisitPage() {
       title: 'Changes have been reset',
     });
   };
+  
+  const handleDelete = async (clinicId: string) => {
+    try {
+      await dispatch(deleteClinic(clinicId)).unwrap();
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Clinic deleted successfully!',
+      });
+      dispatch(getAllClinic()); // Refresh the clinics list
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error || 'Failed to delete clinic',
+      });
+    }
+  };
 
   const onSubmitClinic = async (data: ClinicFormValues) => {
     try {
@@ -236,6 +253,7 @@ export default function VeterinaryVisitPage() {
                   <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,6 +271,12 @@ export default function VeterinaryVisitPage() {
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2 text-red-600" />
                         {clinic.address}
+                      </div>
+                    </td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center">
+                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(clinic._id)} />
                       </div>
                     </td>
                   </tr>

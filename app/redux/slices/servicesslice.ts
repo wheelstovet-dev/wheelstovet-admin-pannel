@@ -3,6 +3,9 @@ import {
   createClinic,
   createHostel,
   createSalon,
+  deleteClinic,
+  deleteHostel,
+  deleteSalon,
   getAllClinic,
   getAllHostels,
   getAllSalons,
@@ -149,6 +152,21 @@ const serviceSlice = createSlice({
         state.error = action.payload;
       })
 
+       // Handle delete salon
+    builder.addCase(deleteSalon.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    builder.addCase(deleteSalon.fulfilled, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      // Remove the deleted salon from the state
+      state.salons = state.clinics.filter((salon) => salon._id !== action.payload);
+    })
+    builder.addCase(deleteSalon.rejected, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      state.error = action.payload || 'Failed to delete salon';
+    })
+
       // Clinics [vet visit]
       .addCase(getAllClinic.pending, (state) => {
         state.loading = true;
@@ -184,6 +202,21 @@ const serviceSlice = createSlice({
         // console.log(action);
         state.error = action.payload.message.fields;
       })
+
+      // Handle delete clinic
+    builder.addCase(deleteClinic.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    builder.addCase(deleteClinic.fulfilled, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      // Remove the deleted clinic from the state
+      state.clinics = state.clinics.filter((clinic) => clinic._id !== action.payload);
+    })
+    builder.addCase(deleteClinic.rejected, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      state.error = action.payload || 'Failed to delete clinic';
+    })
 
       // update service slice
       .addCase(updateService.pending, (state) => {
@@ -241,7 +274,22 @@ const serviceSlice = createSlice({
       .addCase(getAllHostels.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+
+         // Handle delete hostel
+    builder.addCase(deleteHostel.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    builder.addCase(deleteHostel.fulfilled, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      // Remove the deleted hostel from the state
+      state.hostels = state.hostels.filter((hostel) => hostel._id !== action.payload);
+    })
+    builder.addCase(deleteHostel.rejected, (state, action: PayloadAction<any>) => {
+      state.loading = false;
+      state.error = action.payload || 'Failed to delete hostel';
+    });
   }
 });
 

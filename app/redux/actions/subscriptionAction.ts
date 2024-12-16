@@ -63,21 +63,19 @@ export const getWalkRecords = createAsyncThunk<
 
 
 
-//  Action to update an status of admin
-// export const updateAdminStatus = createAsyncThunk<
-//   AxiosResponse<any>,
-//   { id: string; adminStatus: { IsActive: boolean } }, // Input type includes admin ID and status
-//   { rejectValue: any }
-// >(
-//   'admin/updateStatus',
-//   async ({ id, adminStatus }, { rejectWithValue }) => {
-//     try {
-//       // console.log(adminData);
-//       const response = await apiCall<any>('PUT', `/admin/changeStatus/${id}`, adminStatus);
-//       // console.log('API Response:', response);
-//       return response;
-//     } catch (error: any) {
-//       return rejectWithValue(error || 'Failed to update Admin Status');
-//     }
-//   }
-// );
+// Action to update the status of subscription
+export const updateSubscriptionStatus = createAsyncThunk<
+  AxiosResponse<any>,
+  { id: string; status: string }, // Input type includes subsciption ID and status
+  { rejectValue: any }
+>(
+  'subsciption/updateStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>('PUT', `/admin/updateStatus/${id}`, { status });
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error || 'Failed to update Admin Status');
+    }
+  }
+);

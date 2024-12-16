@@ -10,13 +10,44 @@ import { ChevronDown, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { CouponManagement, CouponManagementData } from '@/constants/coupons-management-data';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { getAllCoupons } from '@/app/redux/actions/couponAction';
+import { ToastAtTopRight } from '@/lib/sweetalert';
 
 export const CouponsManagementClient: React.FC = () => {
   const router = useRouter();
   const initialData: CouponManagement[] = CouponManagementData;
-  const [data, setData] = useState<CouponManagement[]>(initialData);
+  // const [data, setData] = useState<CouponManagement[]>(initialData);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
+
+// -------
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { Coupons, loading, error } = useSelector(
+    (state: RootState) => state.coupons
+  );
+
+  const [data, setData] = useState(Coupons);
+
+  useEffect(() => {
+    dispatch(getAllCoupons({ page: 1, limit: 20 }))
+      .unwrap()
+      .catch((err: any) => {
+        const errorMessage = err.message || 'Failed to fetch coupons';
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+        });
+      });
+  }, [dispatch]);
+
+  useEffect(() => {
+    setData(Coupons);
+  }, [Coupons]);
+
+//  ----------
 
   const handleSearch = (searchValue: string) => {
     const filteredData = initialData.filter(item =>
@@ -45,7 +76,7 @@ export const CouponsManagementClient: React.FC = () => {
       <div className="flex items-end justify-end">
         <Button
           className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-400"
-          onClick={() => router.push(`/coupons-management`)}
+          onClick={() => router.push(`/coupons?mode=create`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
@@ -74,12 +105,14 @@ export const CouponsManagementClient: React.FC = () => {
           </DropdownMenu> */}
         </div>
       </div>
+      {loading ? 'Loading...' : (
       <DataTable
         searchKeys={["code"]}
         columns={columns}
         data={data}
         onSearch={handleSearch}
       />
+      )}
     </>
   );
 };

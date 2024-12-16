@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/app/redux/store';
-import { getAllServices, updateService, createHostel, getAllHostels } from '@/app/redux/actions/servicesAction';
+import { getAllServices, updateService, createHostel, getAllHostels, deleteHostel } from '@/app/redux/actions/servicesAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -142,6 +142,23 @@ export default function HostelVisitPage() {
     });
   };
 
+  const handleDelete = async (hostelId: string) => {
+    try {
+      await dispatch(deleteHostel(hostelId)).unwrap();
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Hostel deleted successfully!',
+      });
+      dispatch(getAllHostels()); // Refresh the hostels list
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error || 'Failed to delete hostel',
+      });
+    }
+  };
+
+
   const onSubmitHostel = async (data: NewHostelFormValues) => {
     try {
       console.log(data);
@@ -232,6 +249,7 @@ export default function HostelVisitPage() {
                   <th className="px-4 py-2 border-b border-r-2">Hostel Name</th>
                   <th className="px-4 py-2 border-b border-r-2">Contact No</th>
                   <th className="px-4 py-2 border-b border-r-2">Address</th>
+                  <th className="px-4 py-2 border-b border-r-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -241,6 +259,12 @@ export default function HostelVisitPage() {
                     <td className="px-4 py-6 border-b">{hostel.hostelName}</td>
                     <td className="px-4 py-6 border-b">{hostel.ContactNo}</td>
                     <td className="px-4 py-6 border-b">{hostel.address}</td>
+                    <td className="px-4 py-6 border-b">
+                      <div className="flex items-center">
+                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(hostel._id)} />
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

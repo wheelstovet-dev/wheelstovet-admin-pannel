@@ -8,67 +8,54 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar, Check, ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
 import { format } from 'date-fns';
-// interface SubscriptionManagement {
-//   status: string;
-//   // Add other fields that exist in your table row, e.g., name, id, etc.
-//   [key: string]: any; // Optionally, add an index signature if you have dynamic fields
-// }
+import { updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/app/redux/store';
+const StatusCell = ({ row }: { row: Row<any> }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState(row.original?.Status);
 
-// const StatusCell = ({ row }: { row: Row<any> }) => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [status, setStatus] = useState(row.original.status);
+  const handleStatusChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = event.target.value;
+    setStatus(newStatus);
+    try {
+      await dispatch(
+        updateSubscriptionStatus({
+          id: row.original?._id, // Ensure your row contains a unique ID for the subscription
+          status: newStatus,
+        })
+      ).unwrap();
+      alert(`Status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      alert('Failed to update status');
+    }
+  };
 
-//   const handleStatusChange = (newStatus: string) => {
-//     setStatus(newStatus);
-//     setIsOpen(false);
-//     // Optionally handle any additional logic such as API calls to save status change
-//   };
-
-//   return (
-//     <div className="relative">
-//       <div 
-//         style={{ borderRadius: "20px", cursor: "pointer" }}
-//         className={`flex justify-between items-center px-4 py-2 ${
-//           status === 'Approve' ? 'bg-green-400' :
-//           status === 'Reject' ? 'bg-red-400' :
-//           status === 'Pending' ? 'bg-yellow-400' :
-//           'bg-gray-400'
-//         }`}
-//       >
-//         <span className='text-black font'>{status}</span>
-//         <button 
-//           className="focus:outline-none ml-auto"
-//           onClick={() => setIsOpen(!isOpen)}
-//         >
-//           <ChevronDown className="text-black" size={16} />
-//         </button>
-//       </div>
-
-//       {isOpen && (
-//         <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-//           <div 
-//             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-//             onClick={() => handleStatusChange('Approve')}
-//           >
-//             Approve
-//           </div>
-//           <div 
-//             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-//             onClick={() => handleStatusChange('Reject')}
-//           >
-//            Reject
-//           </div>
-//           <div 
-//             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-//             onClick={() => handleStatusChange('Pending')}
-//           >
-//            Pending
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
+  return (
+    <div className="relative">
+      <select
+        value={status}
+        onChange={handleStatusChange}
+        style={{ borderRadius: "20px" }}
+        className={`appearance-none w-full px-4 py-2  ${
+          status === 'Approval Received'
+            ? 'bg-green-400 text-white'
+            : status === 'Approval Rejected'
+            ? 'bg-red-400 text-white'
+            : 'bg-yellow-400 text-black'
+        }`}
+      >
+        
+        <option value="approval pending">Approval Pending</option>
+        <option value="Meeting scheduled">Meeting Scheduled</option>
+        <option value="Approval received">Approval Received</option>
+        <option value="Dog walking scheduled">Dog Walking Scheduled</option>
+      </select>
+    </div>
+  );
+};
 export const columns: ColumnDef<any>[] = [
   // {
   //   id: 'select',
@@ -142,10 +129,15 @@ export const columns: ColumnDef<any>[] = [
   //     </div>
   // )
   // },
+  // {
+  //   accessorKey: 'Status',
+  //   header: 'Status',
+  //   cell: ({ row }) => <span>{row.original?.Status}</span>,
+  // },
   {
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => <span>{row.original?.Status}</span>,
+    cell: ({ row }) => <StatusCell row={row} />,
   },
   {
     accessorKey: 'IsActive',

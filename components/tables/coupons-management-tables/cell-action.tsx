@@ -14,11 +14,9 @@ import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-re
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: CouponManagement;
-}
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -27,12 +25,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     // Logic for delete confirmation
   };
 
-  const handleEditCoupon = () => {
-    router.push(`/coupon-management/edit/${data.sno}`); 
+  const handleUpdateCoupon = () => {
+    router.push(`/coupons?mode=update&code=${data.CouponCode}&id=${data._id}`); 
   };
 
-  const updateCouponVisibility = () => {
-    router.push(`/coupon-management/update-visibility/${data.sno}`); 
+  const handleAssignCoupon = () => {
+    router.push(`/coupons?mode=update&code=${data.CouponCode}`); 
+  };
+
+  const handleViewCoupon = () => {
+    router.push(`/coupons?mode=view&code=${data.CouponCode}`); 
   };
 
   return (
@@ -52,10 +54,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-          <DropdownMenuItem onClick={handleEditCoupon}>
-            <Edit className="mr-2 h-4 w-4" /> Edit Coupon Details
+          <DropdownMenuItem onClick={handleViewCoupon}>
+            <Edit className="mr-2 h-4 w-4" /> View Coupon Details
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleEditCoupon}>
+          <DropdownMenuItem onClick={handleUpdateCoupon}>
+            <Edit className="mr-2 h-4 w-4" /> Update Coupon Details
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleAssignCoupon}>
             <Edit className="mr-2 h-4 w-4" /> Assign Customers
           </DropdownMenuItem>
           {/* <DropdownMenuItem onClick={updateCouponVisibility}>

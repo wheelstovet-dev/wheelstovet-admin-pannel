@@ -5,9 +5,9 @@ import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { CouponManagement } from '@/constants/coupons-management-data';
 
-export const columns: ColumnDef<CouponManagement>[] = [
+
+export const columns: ColumnDef<any>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -29,14 +29,14 @@ export const columns: ColumnDef<CouponManagement>[] = [
   },
   {
     accessorKey: 'id',
-    header: 'ID',
+    header: 'Sno',
     cell: ({ row }) => row.index + 1,
     size: 100, // Increased column width
   },
   {
-    accessorKey: 'Code',
+    accessorKey: 'CouponCode',
     header: 'Coupon Code',
-    cell: ({ row }) => row.original.code,
+    cell: ({ row }) => row.original?.CouponCode,
     size: 250, // Increased column width
   },
   {
@@ -44,23 +44,24 @@ export const columns: ColumnDef<CouponManagement>[] = [
     header: 'Image',
     cell: ({ row }) => (
       <div className="flex items-center">
-        <Image src={row.original.image} alt={row.original.code} width={50} height={50} />
+        {/* <Image src={row.original?.Image} alt={row.original?.CouponCode} width={50} height={50} loading='lazy' /> */}
+        {/* <Image src="https://plus.unsplash.com/premium_photo-1671076131210-5376fccb100b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzV8fGNvdXBvbnxlbnwwfHwwfHx8MA%3D%3D" alt={row.original?.CouponCode} width={50} height={50} loading='lazy' />       */}
       </div>
     ),
     size: 300, // Increased column width
   },
   {
-    accessorKey: 'discountType',
+    accessorKey: 'DiscountType',
     header: 'Discount Type',
-    cell: ({ row }) => `₹${row.original.discountPrice}`,
+    cell: ({ row }) => `${row.original?.DiscountType}`,
     size: 300, // Increased column width
   },
   {
-    accessorKey: 'couponType',
+    accessorKey: 'CouponType',
     header: 'Coupon Type',
     cell: ({ row }) => (
       <div className="text-start">
-        {row.original.subscriptionType ? row.original.subscriptionType.name : 'N/A'}
+        {row.original?.CouponType ? row.original?.CouponType : 'N/A'}
       </div>
     ),
     size: 250, // Increased column width
@@ -73,15 +74,21 @@ export const columns: ColumnDef<CouponManagement>[] = [
   // },
  
   {
-    accessorKey: 'startDate',
+    accessorKey: 'StartDate',
     header: 'Start Date',
-    cell: ({ row }) => row.original.startDate ? format(row.original.startDate, 'dd MMM yyyy') : 'N/A',
+    cell: ({ row }) => {
+      const date = row.original?.StartDate;
+      return date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A';
+    },  
     size: 200, // Increased column width
   },
   {
-    accessorKey: 'endDate',
+    accessorKey: 'EndDate',
     header: 'End Date',
-    cell: ({ row }) => row.original.endDate ? format(row.original.endDate, 'dd MMM yyyy') : 'N/A',
+    cell: ({ row }) => {
+      const date = row.original?.EndDate;
+      return date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A';
+    },  
     size: 200, 
   },
   {

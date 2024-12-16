@@ -1,5 +1,6 @@
-'use client';
+'use client'
 
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Heading } from '@/components/ui/heading';
@@ -8,191 +9,220 @@ import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { SubmitHandler, useForm, Controller } from 'react-hook-form';
-import ReactSelect from 'react-select';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useForm } from 'react-hook-form';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCoupon, getCouponByCode, updateCoupon } from '@/app/redux/actions/couponAction';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+// import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
-interface CouponFormProps {
-  initialData: any | null;
-}
-
 const couponFormSchema = z.object({
-  code: z.string().min(1, 'Coupon Code is required'),
-  discountPrice: z.number().positive('Discount Price must be greater than zero'),
-  couponType: z.enum(['global', 'subscription','freeDelivery']),
-  discountType: z.enum(['price', 'percentage']),
-  visibility: z.enum(['Public','Private']),
-  subscriptionType: z.array(z.object({
-    id: z.string(),
-    name: z.string()
-  })).optional(),
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  description: z.string().optional(),
-  image: z.any(),
-  times: z.string(),
+  CouponType: z.enum(['global', 'subscription', 'freeDelivery']),
+  CouponCode: z.string().min(1, 'Coupon Code is required'),
+  DiscountType: z.enum(['price', 'percentage']),
+  DiscountPercentage: z.number().positive('Discount Percentage must be greater than zero'),
+  StartDate: z.date({
+    required_error: "starting Date is required.",
+  }),
+  EndDate: z.date({
+    required_error: "Ending Date is required.",
+  }),
+  CouponVisibility: z.enum(['public', 'private']),
+  NoOfTimesCanBeApplied: z.number().positive('Must be greater than zero'),
+  Description: z.string().optional(),
+  UsageLimit: z.string().optional(),
+  UsageCount: z.string().optional(),
+  Status: z.enum(['active', 'inactive']),
 });
 
 type CouponFormSchema = z.infer<typeof couponFormSchema>;
 
-const subscriptionTypes = [
-  { id: '1', name: '1 time dog walking daily' },
-  { id: '2', name: '1 time dog walking weekly' },
-  { id: '3', name: '1 time dog walking monthly' },
-  { id: '4', name: '2 times dog walking daily' },
-  { id: '5', name: '2 times dog walking weekly' },
-  { id: '6', name: '2 times dog walking monthly' },
-];
-
-export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
-  const params = useParams();
+export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> = ({ mode: propMode }) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const title = initialData ? 'Edit Coupon' : 'Create New Coupon';
-  const description = initialData ? 'Edit the Coupon details.' : 'To create a new Coupon, fill in the required information.';
-  const toastMessage = initialData ? 'Coupon updated.' : 'Coupon created.';
-  const action = initialData ? 'Save changes' : 'Create';
+  const searchParams = useSearchParams();
+  const urlMode = searchParams.get('mode');
+  const couponId = searchParams.get('id');
+  const couponCode = searchParams.get('code');
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [date, setDate] = React.useState<Date>()
+
+  const { selectedCoupons, loading, error } = useSelector((state: RootState) => state.coupons);
+  console.log(selectedCoupons);
+
+  const [currentMode, setCurrentMode] = useState<'create' | 'update' | 'view'>(
+    (urlMode as 'create' | 'view' | 'update') || 'create'
+  );
+
+  // Format function for default values
+  // const formatDate = (date: any | null) => {
+  //   if (!date) return '';
+  //   return format(new Date(date), 'dd-mm-yyyy');
+  // };
+
+  useEffect(() => {
+    if (urlMode) {
+      setCurrentMode(urlMode as 'create' | 'view' | 'update');
+    } else if (propMode) {
+      setCurrentMode(propMode);
+    }
+  }, [urlMode, propMode]);
+
+  useEffect(() => {
+    if ((currentMode === 'view' || currentMode === 'update') && couponCode) {
+      dispatch(getCouponByCode(couponCode));
+    }
+  }, [currentMode, couponCode, dispatch]);
 
   const form = useForm<CouponFormSchema>({
     resolver: zodResolver(couponFormSchema),
     mode: 'onChange',
-    defaultValues: {
-      code: initialData?.code || '',
-      discountPrice: initialData?.discountPrice || 0,
-      visibility: initialData?.visibility || 'Public',
-      couponType: initialData?.couponType || 'global',
-      discountType: initialData?.discountType || 'price',
-      subscriptionType: initialData?.subscriptionType || [],
-      startDate: initialData?.startDate ? new Date(initialData.startDate) : undefined,
-      endDate: initialData?.endDate ? new Date(initialData.endDate) : undefined,
-      description: initialData?.description || '',
-      times: initialData?.times || '',
-      image: undefined
-    }
+    defaultValues: selectedCoupons
+      ? {
+          ...selectedCoupons,
+          StartDate: selectedCoupons.StartDate ? new Date(selectedCoupons.StartDate) : undefined,
+          EndDate: selectedCoupons.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
+        }
+      : {
+          CouponType: 'global',
+          CouponCode: '',
+          DiscountType: 'price',
+          DiscountPercentage: 0,
+          StartDate: undefined,
+          EndDate: undefined,
+          CouponVisibility: 'public',
+          NoOfTimesCanBeApplied: 0,
+          Description: '',
+          UsageLimit: '',
+          UsageCount: '0',
+          Status: 'active',
+        },
   });
+  
 
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = form;
-
-  const selectedCouponType = watch('couponType');
-  const selectedDiscountType = watch('discountType');
-  const selectedSubscriptionType = watch('subscriptionType');
-  const discountPrice = watch('discountPrice');
+  const { handleSubmit, control, reset, formState: { errors } } = form;
 
   useEffect(() => {
-    if (selectedCouponType === 'global') {
-      setValue('subscriptionType', []);
+    if (selectedCoupons && currentMode !== 'create') {
+      reset(selectedCoupons);
     }
-  }, [selectedCouponType, setValue]);
+  }, [selectedCoupons, currentMode, reset]);
 
-  const onSubmit: SubmitHandler<CouponFormSchema> = async (data) => {
+  const onSubmit = async (data: CouponFormSchema) => {
+    const formattedData = {
+      ...data,
+      StartDate: data.StartDate ? data.StartDate.toISOString() : null,
+      EndDate: data.EndDate ? data.EndDate.toISOString() : null,
+    };
+  
     try {
-      setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/coupons/edit-coupon/${initialData._id}`, data);
-      } else {
-        // await axios.post(`/api/coupons/create-coupon`, data);
+      if (currentMode === 'create') {
+        await dispatch(createCoupon(formattedData)).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Coupon created successfully!',
+        });
+      } else if (currentMode === 'update' && couponId) {
+        await dispatch(updateCoupon({ id: couponId, couponData: formattedData })).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Coupon updated successfully!',
+        });
       }
-      // router.refresh();
-      // router.push(`/dashboard/coupons`);
+      router.push('/coupons-management');
     } catch (error: any) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      // await axios.delete(`/api/coupons/${params.couponId}`);
-      // router.refresh();
-      // router.push(`/dashboard/coupons`);
-    } catch (error: any) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-      setOpen(false);
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: 'Error processing coupon',
+        text: error.message || 'Failed to process coupon',
+      });
     }
   };
 
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+    <div>
+      <Heading
+        title={
+          currentMode === 'create'
+            ? 'Create Coupon'
+            : currentMode === 'update'
+              ? 'Update Coupon'
+              : 'View Coupon'
+        }
+        description={
+          currentMode === 'create'
+            ? 'Fill out the form below to create a new coupon.'
+            : currentMode === 'update'
+              ? 'Modify the details of the coupon.'
+              : 'View the details of the coupon.'
+        }
+      />
       <Separator />
       <Form {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-full space-y-8"
-        >
+        <form onSubmit={currentMode !== 'view' ? handleSubmit(onSubmit) : undefined} className="space-y-8">
           <div className="w-full gap-8 md:grid md:grid-cols-3">
+            {/* Coupon Type */}
             <FormField
-              control={form.control}
-              name="couponType"
+              control={control}
+              name="CouponType"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Coupon Type</FormLabel>
                   <FormControl>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled={loading || currentMode === 'view'}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Coupon Type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="global">Global</SelectItem>
-                        <SelectItem value="subscription">Subscription</SelectItem>                  
+                        <SelectItem value="subscription">Subscription</SelectItem>
+                        <SelectItem value="freeDelivery">Free Delivery</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormMessage>{errors.couponType?.message}</FormMessage>
+                  <FormMessage>{errors.CouponType?.message}</FormMessage>
                 </FormItem>
               )}
             />
 
-            
-
+            {/* Coupon Code */}
             <FormField
-              control={form.control}
-              name="code"
+              control={control}
+              name="CouponCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Coupon Code</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Coupon Code"
-                      {...field}
-                    />
+                    <Input placeholder="Enter Coupon Code" {...field} disabled={loading || currentMode === 'view'} />
                   </FormControl>
-                  <FormMessage>{errors.code?.message}</FormMessage>
+                  <FormMessage>{errors.CouponCode?.message}</FormMessage>
                 </FormItem>
               )}
             />
 
-{selectedCouponType !== 'freeDelivery' && <FormField
-              control={form.control}
-              name="discountType"
+            {/* Discount Type */}
+            <FormField
+              control={control}
+              name="DiscountType"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount Type</FormLabel>
                   <FormControl>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      disabled={loading || currentMode === 'view'}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Discount Type" />
                       </SelectTrigger>
@@ -202,263 +232,265 @@ export const CreateCoupons: React.FC<CouponFormProps> = ({ initialData }) => {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormMessage>{errors.discountType?.message}</FormMessage>
+                  <FormMessage>{errors.DiscountType?.message}</FormMessage>
                 </FormItem>
               )}
-            />}
+            />
 
-      {selectedCouponType !== 'freeDelivery' &&    
-      <>
-       {selectedDiscountType ==='price' && <FormField
-              control={form.control}
-              name="discountPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Discount Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Discount Price"
-                      onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.discountPrice?.message}</FormMessage>
-                </FormItem>
-              )}
-            />}
-
-     {selectedDiscountType==="percentage" &&   <FormField
-              control={form.control}
-              name="discountPrice"
+            {/* Discount Percentage */}
+            <FormField
+              control={control}
+              name="DiscountPercentage"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount Percentage</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="Discount Percentage"
+                      placeholder="Enter Discount Percentage"
+                      {...field}
                       onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
-                      value={field.value || ''}
+                      disabled={loading || currentMode === 'view'}
                     />
                   </FormControl>
-                  <FormMessage>{errors.discountPrice?.message}</FormMessage>
-                </FormItem>
-              )}
-            />}
-            </>
-            }
-
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Start Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={`w-full pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
-                        >
-                          {field.value ? format(field.value, 'dd MMM yyyy') : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0)) || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage>{errors.startDate?.message}</FormMessage>
+                  <FormMessage>{errors.DiscountPercentage?.message}</FormMessage>
                 </FormItem>
               )}
             />
 
+            {/* Start Date */}
             <FormField
-              control={form.control}
-              name="endDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>End Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={`w-full pl-3 text-left font-normal ${!field.value && 'text-muted-foreground'}`}
-                        >
-                          {field.value ? format(field.value, 'dd MMM yyyy') : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0)) || date < new Date("1900-01-01")
-                        }
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage>{errors.endDate?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="visibility"
+              control={control}
+              name="StartDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Coupons Visibility</FormLabel>
+                  <FormLabel>Start Date</FormLabel>
                   <FormControl>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value}>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            disabled={loading || currentMode === 'view'}
+                          >
+                            {field.value ? (
+                              format(field.value, "dd MMM yyyy")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={loading || currentMode === 'view'}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage>{errors.StartDate?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+
+
+            {/* End Date */}
+            <FormField
+              control={control}
+              name="EndDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>End Date</FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            disabled={loading || currentMode === 'view'}
+                          >
+                            {field.value ? (
+                              format(field.value, "dd MMM yyyy")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={loading || currentMode === 'view'}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage>{errors.EndDate?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+
+
+            {/* Coupon Visibility */}
+            <FormField
+              control={control}
+              name="CouponVisibility"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Coupon Visibility</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={loading || currentMode === 'view'}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Visibility" />
                       </SelectTrigger>
                       <SelectContent>
-                      {/* <SelectItem value="">Public</SelectItem> */}
-                        <SelectItem value="Public">Public</SelectItem>
-                        <SelectItem value="Private">Private</SelectItem>
+                        <SelectItem value="public">Public</SelectItem>
+                        <SelectItem value="private">Private</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormMessage>{errors.visibility?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="times"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>No of times can be applied</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      disabled={loading}
-                      placeholder="Enter No of times can be applied"
-                      onChange={(e) => field.onChange(e.target.value)}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <FormMessage>{errors.CouponVisibility?.message}</FormMessage>
                 </FormItem>
               )}
             />
 
+            {/* No of Times Can Be Applied */}
             <FormField
-              control={form.control}
-              name="description"
+              control={control}
+              name="NoOfTimesCanBeApplied"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of Times Can Be Applied</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter No of Times"
+                      {...field}
+                      disabled={loading || currentMode === 'view'}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.NoOfTimesCanBeApplied?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+
+            {/* Description */}
+            <FormField
+              control={control}
+              name="Description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Description"
+                      type="text"
+                      placeholder="Enter Description"
                       {...field}
+                      disabled={loading || currentMode === 'view'}
                     />
                   </FormControl>
-                  <FormMessage>{errors.description?.message}</FormMessage>
+                  <FormMessage>{errors.Description?.message}</FormMessage>
                 </FormItem>
               )}
             />
 
+            {/* Usage Limit */}
             <FormField
               control={control}
-              name="image"
+              name="UsageLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Coupon Image</FormLabel>
+                  <FormLabel>Usage Limit</FormLabel>
                   <FormControl>
                     <Input
-                      type="file"
-                      disabled={form.formState.isSubmitting}
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          field.onChange(e.target.files[0]);
-                        }
-                      }}
+                      type="text"
+                      placeholder="Enter Usage Limit"
+                      {...field}
+                      disabled={loading || currentMode === 'view'}
                     />
                   </FormControl>
+                  <FormMessage>{errors.UsageLimit?.message}</FormMessage>
                 </FormItem>
               )}
             />
-            
+
+            {/* Usage Count */}
+            <FormField
+              control={control}
+              name="UsageCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Usage Count</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter Usage Count"
+                      {...field}
+                      disabled={loading || currentMode === 'view'}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.UsageCount?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+
+            {/* Status */}
+            <FormField
+              control={control}
+              name="Status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={loading || currentMode === 'view'}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage>{errors.Status?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
           </div>
-          {selectedCouponType === 'subscription' && (
-              <FormField
-                control={form.control}
-                name="subscriptionType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subscription Type</FormLabel>
-                    <FormControl>
-                      <Controller
-                        control={form.control}
-                        name="subscriptionType"
-                        render={({ field: { onChange, value } }) => (
-                          <ReactSelect
-                            isClearable
-                            isSearchable
-                            isMulti
-                            options={subscriptionTypes}
-                            getOptionLabel={(option) => option.name}
-                            getOptionValue={(option) => option.id}
-                            onChange={(selected) => onChange(selected ? selected.map(s => ({ id: s.id, name: s.name })) : [])}
-                            value={subscriptionTypes.filter(option => value?.some((v: any) => v.id === option.id))}
-                          />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage>{errors.subscriptionType?.message}</FormMessage>
-                  </FormItem>
-                )}
-              />
-            )}
-          <div className="mt-8 flex justify-between">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full"
-            >
-              {action}
+
+
+          {currentMode !== 'view' && (
+            <Button type="submit" disabled={loading} className="w-full">
+              {currentMode === 'create' ? 'Create Coupon' : 'Update Coupon'}
             </Button>
-          </div>
+          )}
         </form>
       </Form>
-      {initialData && (
-        <div className="mt-8 pt-5 border-t border-gray-200">
-          <div className="flex justify-between">
-            <Heading
-              title="Delete Coupon"
-              description="This action cannot be undone."
-            />
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={onDelete}
-              disabled={loading}
-            >
-              Delete Coupon
-            </Button>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
