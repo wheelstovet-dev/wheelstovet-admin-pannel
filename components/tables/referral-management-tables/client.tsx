@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
@@ -11,11 +11,19 @@ import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { ReferralManagement, ReferralManagementData } from '@/constants/referral-management-data';
 
-export const ReferralManagementClient: React.FC = () => {
-  const router = useRouter();
-  const initialData: ReferralManagement[] = ReferralManagementData;
-  const [data, setData] = useState<ReferralManagement[]>(initialData);
+interface ReferralManagementClientProps {
+  initialData: any[];
+  loading:boolean;
+}
 
+export const ReferralManagementClient: React.FC<ReferralManagementClientProps> = ({initialData,loading}) => {
+  
+  // const initialData: ReferralManagement[] = ReferralManagementData;
+  const [data, setData] = useState<any[]>(initialData || []);
+
+  useEffect(() => {
+    setData(initialData || []);
+  }, [initialData]);
 
 
   return (
@@ -27,11 +35,13 @@ export const ReferralManagementClient: React.FC = () => {
         />
       </div>
       <Separator />
+      {loading ? 'Loading...' : (
       <DataTable
         searchKeys={["couponCode"]}
         columns={columns}
         data={data}
       />
+      )}
     </>
   );
 };
