@@ -1,26 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { getAllReferrals, getReferralByUserId } from '../actions/referralAction';
+import { getAllReferrals, getReferralByUserId, getReferralDetails } from '../actions/referralAction';
 
 interface ReferralState {
   loading: boolean;
+
   Referral: any[];
   selectedReferral: any | null;
+  totalReferrals: number;
+
+  ReferralDetails:any|null;
+  totalReferralDetails: number;
+  
   successMessage: string | null;
   error: string | null;
   currentPage: number;
-  totalReferrals: number;
+  
   totalPages: number;
 }
 
 const initialState: ReferralState = {
   loading: false,
+
   Referral: [],
   selectedReferral: null,
+  totalReferrals: 0,
+
+  ReferralDetails: null,
+  totalReferralDetails: 0,
+
   successMessage: null,
   error: null,
   currentPage: 1,
-  totalReferrals: 0,
+  
   totalPages: 0,
 };
 
@@ -64,7 +76,24 @@ const referralslice = createSlice({
       .addCase(getReferralByUserId.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+
+      // Fetch all referral details
+      .addCase(getReferralDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getReferralDetails.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.ReferralDetails = action.payload.data;
+        state.totalReferralDetails = action.payload.total;
+        state.currentPage = action.payload.currentPage;
+        state.totalPages = action.payload.totalPages;
+      })
+      .addCase(getReferralDetails.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
     //   //update  referral by id
     //   .addCase(updateReferrral.pending, (state) => {

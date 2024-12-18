@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useEffect } from 'react';
-import { getAllReferrals } from '../redux/actions/referralAction';
+import { getAllReferrals, getReferralDetails } from '../redux/actions/referralAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 const breadcrumbItems = [{ title: 'Referral Management', link: '/dashboard/referral' }];
 
@@ -19,15 +19,16 @@ export default function ReferralManagementPage() {
 
   // -------Api integration--------
   const dispatch = useDispatch<AppDispatch>();
-  const { Referral, loading, error } = useSelector(
+  const { Referral, ReferralDetails, loading, error } = useSelector(
     (state: RootState) => state.referrals
   );
 
   console.log("refferal", Referral);
 
-  useEffect(() => {
-    dispatch(getAllReferrals({ page: 1, limit: 20 }))
-      .unwrap()
+  
+  const fetchAllReferrals =async()=>{
+    await dispatch(getAllReferrals({ page: 1, limit: 20 }))
+    .unwrap()
       .catch((err: any) => {
         const errorMessage = err.message || 'Failed to fetch Referrals';
         ToastAtTopRight.fire({
@@ -35,6 +36,23 @@ export default function ReferralManagementPage() {
           title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
         });
       });
+  }
+
+  const fetchReferralsDetails =async()=>{
+    await dispatch(getReferralDetails({ page: 1, limit: 20 }))
+    .unwrap()
+      .catch((err: any) => {
+        const errorMessage = err.message || 'Failed to fetch Referrals Details';
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+        });
+      });
+  }
+
+  useEffect(() => {
+    fetchAllReferrals();
+    fetchReferralsDetails();
   }, [dispatch]);
 
   return (
@@ -43,8 +61,8 @@ export default function ReferralManagementPage() {
               <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
         <BreadCrumb items={breadcrumbItems} />
-        <ReferralManagementClient initialData={[]} loading={false}/>
-        <ReferralManagementViewClient initialData={Referral} loading={loading}/>
+        <ReferralManagementClient initialData={ReferralDetails||[]} loading={loading}/>
+        <ReferralManagementViewClient initialData={Referral||[]} loading={loading}/>
         {/* <ComplaintManagementUserPage  /> */}
       
       </div>

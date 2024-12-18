@@ -40,6 +40,25 @@ export const getReferralByUserId = createAsyncThunk<
   }
 });
 
+
+// Action to get all referral details with pagination support
+export const getReferralDetails = createAsyncThunk<
+  any, // Return type as `any`
+  { page: number; limit: number }, // Input type
+  { rejectValue: any }
+>('referralDetails/getAll', async ({ page, limit }, { rejectWithValue }) => {
+  try {
+    const response = await apiCall(
+      'GET',
+      `/admin/ReferralPercentage?page=${page}&limit=${limit}`
+    );
+    return response; // Return full response including referral details and pagination data
+  } catch (error: any) {
+    return rejectWithValue(error || 'Failed to fetch referral details');
+  }
+});
+
+
 // // Action to update an existing referral
 // export const updateReferrral = createAsyncThunk<
 //   AxiosResponse<any>,
