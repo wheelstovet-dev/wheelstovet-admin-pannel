@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
@@ -8,12 +8,22 @@ import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
-import { Enquiry, EnquiryData } from '@/constants/enquiry-data';
 
-export const EnquiryClient: React.FC = () => {
+
+
+interface EnquiryManagementClientProps {
+  initialData: any[];
+  loading:boolean;
+}
+
+export const EnquiryClient: React.FC<EnquiryManagementClientProps> = ({initialData,loading}) => {
   const router = useRouter();
-  const initialData: Enquiry[] = EnquiryData;
-  const [data, setData] = useState<Enquiry[]>(initialData);
+  // const initialData: Enquiry[] = EnquiryData;
+  const [data, setData] = useState<any[]>(initialData || []);
+
+  useEffect(() => {
+    setData(initialData || []);
+  }, [initialData]);
 
 
   return (
@@ -31,11 +41,13 @@ export const EnquiryClient: React.FC = () => {
         </Button> */}
       </div>
       <Separator />
+      {loading ? 'Loading...' : (
       <DataTable
         // searchKey=" assignedEmployee"
         columns={columns}
         data={data}
       />
+      )}
     </>
   );
 };

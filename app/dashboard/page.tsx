@@ -1,6 +1,6 @@
 'use client'; // Add this directive at the top
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -31,6 +31,10 @@ import { caseData, petData, unassignedData } from '@/constants/casesData';
 import { EmployeeEsclatedClient } from '@/components/tables/employee-esclation-tables/client';
 import { EnquiryClient } from '@/components/tables/enquiry-management-table/client';
 import ProtectedRoute from '@/components/protectedRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { getAllEnquiries, getPendingSubscriptions } from '../redux/actions/dashboardAction';
+import { ToastAtTopRight } from '@/lib/sweetalert';
 
 ChartJS.register(
   CategoryScale,
@@ -278,6 +282,50 @@ export default function Page() {
     }
   };
 
+  // -----------------------API INTEGRATION---------------
+  const dispatch = useDispatch<AppDispatch>();
+  
+  const { Enquiries,pendingSubscriptions, loading, error } = useSelector(
+    (state: RootState) => state.dashboard
+  );
+  //==============ENQUIRY=================
+  const getEnqueries =async()=>{
+    await dispatch(getAllEnquiries({ page: 1, limit: 20 }))
+    .unwrap()
+    .catch((err: any) => {
+      const errorMessage = err.message || 'Failed to fetch Enquiries';
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+      });
+    });
+       
+  }
+
+  // ========== PENDING SUBSCRIPTION SECTION ==============
+  const getPendingSubs = async()=>{
+    await dispatch(getPendingSubscriptions({ page: 1, limit: 20 }))
+    .unwrap()
+    .catch((err: any) => {
+      const errorMessage = err.message || 'Failed to fetch Pending Subscription';
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+      });
+    });
+       
+  }
+
+  useEffect(() => {
+    //get all Enquiries
+    getEnqueries();
+
+    //get all Pending Subscriptions
+    getPendingSubs();
+  }, [dispatch]);
+
+  console.log(pendingSubscriptions);
+
   return (
     <ProtectedRoute>
     <MainLayout meta={{ title: 'Dashboard' }}>
@@ -425,7 +473,7 @@ export default function Page() {
 
                 <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
                 <div className="">
-                  <EnquiryClient/>
+                  <EnquiryClient initialData={Enquiries} loading={loading} />
                 <EmployeeEsclatedClient/>
 
                 </div>

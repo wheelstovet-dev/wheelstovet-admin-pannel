@@ -80,3 +80,19 @@ export const updateCoupon = createAsyncThunk<
     return rejectWithValue(error || 'Failed to update coupon');
   }
 });
+
+// delete coupon by id
+export const deleteCoupon = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: any }
+>(
+  'coupon/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiCall('DELETE', `/admin/coupons/${id}`);
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to delete coupon');
+    }
+  }
+);

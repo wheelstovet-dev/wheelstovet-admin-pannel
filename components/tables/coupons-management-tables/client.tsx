@@ -17,7 +17,7 @@ import { ToastAtTopRight } from '@/lib/sweetalert';
 
 export const CouponsManagementClient: React.FC = () => {
   const router = useRouter();
-  const initialData: CouponManagement[] = CouponManagementData;
+  // const initialData: CouponManagement[] = CouponManagementData;
   // const [data, setData] = useState<CouponManagement[]>(initialData);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
@@ -50,8 +50,8 @@ export const CouponsManagementClient: React.FC = () => {
 //  ----------
 
   const handleSearch = (searchValue: string) => {
-    const filteredData = initialData.filter(item =>
-      item.code.toLowerCase().includes(searchValue.toLowerCase())
+    const filteredData = data.filter(item =>
+      item.CouponCode.toLowerCase().includes(searchValue.toLowerCase())
     );
     setData(filteredData);
   };
@@ -107,7 +107,7 @@ export const CouponsManagementClient: React.FC = () => {
       </div>
       {loading ? 'Loading...' : (
       <DataTable
-        searchKeys={["code"]}
+        searchKeys={["CouponCode"]}
         columns={columns}
         data={data}
         onSearch={handleSearch}

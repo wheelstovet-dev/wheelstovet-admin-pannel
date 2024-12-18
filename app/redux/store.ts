@@ -10,6 +10,8 @@ import serviceReducer from './slices/servicesslice';
 import caseManagementReducer from './slices/casesslice';
 import complaintManagementReducer from './slices/complaintslice';
 import couponReducer from './slices/couponslice';
+import referralReducer from './slices/referralslice';
+import dashboardReducer from './slices/dashboardslice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +24,8 @@ export const store = configureStore({
     caseManagement: caseManagementReducer,
     complaintManagement:complaintManagementReducer,
     coupons: couponReducer,
+    referrals: referralReducer,
+    dashboard: dashboardReducer,
   }
 });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
@@ -11,13 +11,27 @@ import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { ReferralManagementView, ReferralManagementViewData } from '@/constants/referral-management-view-data';
 
-export const ReferralManagementViewClient: React.FC = () => {
-  const router = useRouter();
-  const initialData: ReferralManagementView[] = ReferralManagementViewData;
-  const [data, setData] = useState<ReferralManagementView[]>(initialData);
+interface ReferralManagementViewClientProps {
+  initialData: any[];
+  loading:boolean;
+}
+
+export const ReferralManagementViewClient: React.FC<ReferralManagementViewClientProps> = ({initialData,loading}) => {
+  
+
+  
+  // const initialData: ReferralManagementView[] = ReferralManagementViewData;
+  const [data, setData] = useState<any[]>(initialData || []);
+  // console.log("data", data);
+
+  useEffect(() => {
+    setData(initialData || []);
+  }, [initialData]);
+
+  console.log("data", data);
 
   const handleSearch = (searchValue: string) => {
-    const filteredData = initialData.filter(item =>
+    const filteredData = (initialData|| []).filter(item =>
       item.referredBy.couponCode.toLowerCase().includes(searchValue.toLowerCase()) ||
       item.referredTo.couponCode.toLowerCase().includes(searchValue.toLowerCase())
     );
@@ -59,6 +73,7 @@ export const ReferralManagementViewClient: React.FC = () => {
         />
       </div>
       <Separator />
+      {loading ? 'Loading...' : (
       <DataTable
         searchKeys={["referredBy.couponCode", "referredTo.couponCode"]}
         columns={columns}
@@ -66,6 +81,7 @@ export const ReferralManagementViewClient: React.FC = () => {
         onSearch={handleSearch}
         filters={filters}
       />
+      )}
     </>
   );
 };
