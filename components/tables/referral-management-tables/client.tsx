@@ -19,28 +19,30 @@ interface ReferralManagementClientProps {
 export const ReferralManagementClient: React.FC<ReferralManagementClientProps> = ({initialData,loading}) => {
   
   // const initialData: ReferralManagement[] = ReferralManagementData;
-  const [data, setData] = useState<any[]>(initialData || []);
+  const [data, setData] = useState<any>(initialData || []);
 
   useEffect(() => {
     setData(initialData || []);
   }, [initialData]);
 
-
+//   console.log(initialData);
+console.log(data);
   return (
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Referral Coupons (${data.length})`}
+          // title={`Referral Coupons (${data.length})`}
+          title={`Referral Coupons`}
           description="Manage and view referral coupons (Client side table functionalities.)"
         />
       </div>
       <Separator />
       {loading ? 'Loading...' : (
       <DataTable
-        searchKeys={["couponCode"]}
-        columns={columns}
-        data={data}
-      />
+      searchKeys={["couponCode"]}
+      columns={columns}
+      data={Array.isArray(data) ? data : [data]} // Ensure data is always an array
+    />
       )}
     </>
   );

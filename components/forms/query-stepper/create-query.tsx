@@ -26,10 +26,12 @@ const enquiryFormSchema = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   phoneNo: z.string().min(1, 'Phone number is required'),
   pickupAddress: z.string().min(1, 'Pickup Address is required'),
-  status: z.enum(['pending', 'approve', 'reject'], {
+  status: z.enum(['pending', 'resolved'], {
     required_error: 'Status is required',
   }),
-  note: z.string().optional()
+  note: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEnabled }) => {
@@ -52,7 +54,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
       email: initialData?.UserId?.Email ,
       phoneNo: initialData?.UserId?.MobileNo ,
       pickupAddress: initialData?.PickupLocation ,
-      status: initialData?.Status || 'pending',
+      status: initialData?.CurrentStatus || 'N/A',
+      createdAt: initialData?.CreatedAt ? new Date(initialData?.CreatedAt) : undefined,
+      updatedAt: initialData?.UpdatedAt ? new Date(initialData?.UpdatedAt) : undefined,
     },
   });
 
@@ -62,11 +66,15 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
       form.reset({
         enquiryName: `${initialData?.UserId?.FirstName || ''} ${initialData?.UserId?.LastName || ''}`.trim(),
         preferredDate: initialData?.PreferredDate ? new Date(initialData.PreferredDate) : new Date(),
-        preferredTime: initialData?.PreferredHours || '',
+        preferredTime: initialData?.PreferredHours
+  ? `${String(initialData.PreferredHours).padStart(2, '0')}:00:00`
+  : '',
         email: initialData?.UserId?.Email || '',
         phoneNo: initialData?.UserId?.MobileNo || '',
         pickupAddress: initialData?.PickupLocation || '',
-        status: initialData?.Status || 'pending',
+        status: initialData?.CurrentStatus || 'N/A',
+        createdAt: initialData?.CreatedAt ? new Date(initialData?.CreatedAt) : undefined,
+      updatedAt: initialData?.UpdatedAt ? new Date(initialData?.UpdatedAt) : undefined,
       });
     }
   }, [initialData, form.reset]);
@@ -213,10 +221,43 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="approve">Approve</SelectItem>
-                        <SelectItem value="reject">Reject</SelectItem>
+                        <SelectItem value="resolved">resolved</SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Timestamps */}
+            <FormField
+              control={control}
+              name="createdAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Created At</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      disabled
+                      value={field.value ? format(new Date(field.value), 'PPP') : ''}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="updatedAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Updated At</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      disabled
+                      value={field.value ? format(new Date(field.value), 'PPP') : ''}
+                    />
                   </FormControl>
                 </FormItem>
               )}

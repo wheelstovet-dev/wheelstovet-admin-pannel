@@ -163,11 +163,11 @@ export default function DogWalkingPage() {
                 </div>
 
                 {/* Preview of Total Charges */}
-                <div className="mt-8">
+                {/* <div className="mt-8">
                   <h3 className="text-2xl font-bold">
                     Total Charges: <span className="text-yellow-500">{totalCharges} INR</span>
                   </h3>
-                </div>
+                </div> */}
               </div>
 
               <div className="flex justify-start mt-8">
