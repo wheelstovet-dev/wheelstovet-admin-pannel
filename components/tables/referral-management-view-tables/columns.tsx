@@ -60,10 +60,10 @@ export const columns: ColumnDef<any>[] = [
                 <td className="p-2 font-semibold text-yellow-700">Coupon Status:</td>
                 <td className="p-2 font-semibold text-yellow-700">
                   <span
-                    className={`py-1 px-2 text-white ${Status === 'Active' ? 'bg-yellow-500' : 'bg-red-500'
+                    className={`py-1 px-2 text-white ${Status === 'active'||'Active' ? 'bg-yellow-500' : 'bg-red-500'
                       }`}
                   >
-                    {Status === 'Active' ? 'Unused' : 'Used'}
+                    {Status === 'active'||'Active' ? 'Unused' : 'Used'}
                   </span>
                 </td>
               </tr>
@@ -155,10 +155,10 @@ export const columns: ColumnDef<any>[] = [
                 <td className="p-2">
                   <span
                     className={`py-1 px-2 text-white ${
-                      Status === 'active' ? 'bg-yellow-500' : 'bg-red-500'
+                      Status === 'active'||'Active' ? 'bg-yellow-500' : 'bg-red-500'
                     }`}
                   >
-                    {Status === 'active' ? 'Unused' : 'Used'}
+                    {Status === 'active'||'Active' ? 'Unused' : 'Used'}
                   </span>
                 </td>
               </tr>
