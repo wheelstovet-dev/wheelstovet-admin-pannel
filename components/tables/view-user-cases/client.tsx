@@ -22,18 +22,17 @@ import { setLoading } from '@/app/redux/slices/authslice';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getAllCases } from '@/app/redux/actions/casesAction';
 
-const CaseManagementClient: React.FC = () => {
+const UserCasesClient: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
   const { cases, loading, error } = useSelector((state: RootState) => state.caseManagement);
+  console.log(cases);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState(cases);
-  const [filteredCases, setFilteredCases] = useState(cases || []); // State for filtered users
-
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -50,69 +49,34 @@ const CaseManagementClient: React.FC = () => {
       });
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   if (cases) {
-  //     const lowerCasedSearchValue = searchTerm.toLowerCase();
-  //     const newFilteredCases =
-  //       searchTerm.trim() === ""
-  //         ? cases // Show all users if no search value
-  //         : cases.filter((cases: any) =>
-  //             cases?.ServiceId?.serviceName.toLowerCase().includes(lowerCasedSearchValue)
-  //           );
-  //         console.log(newFilteredCases);
-  //     setFilteredCases(newFilteredCases);
-  //   }
-  // }, [cases, searchTerm]);
-
   useEffect(() => {
-    let filtered = cases;
+    setFilteredData(cases);
+  }, [cases]);
 
-    // Apply search filter
-    if (cases) {
-      const lowerCasedSearchValue = searchTerm.toLowerCase();
-      const newFilteredCases =
-        searchTerm.trim() === ""
-          ? cases // Show all users if no search value
-          : cases.filter((cases: any) =>
-              cases?.ServiceId?.serviceName.toLowerCase().includes(lowerCasedSearchValue)
-            );
-          console.log(newFilteredCases);
-      setFilteredCases(newFilteredCases);
-    }
-    // if (searchTerm) {
-    //   console.log("SearchTerm",searchTerm)
-    //   console.log("Filtered",filtered)
-    //   filtered = filtered.filter((item: any) =>
-    //     ['serviceName', 'assignedEmployee'].some((key) =>
-    //       item[key]?.toLowerCase().includes(searchTerm.toLowerCase())
-    //     )
-    //   );
-    //   console.log(filtered)
-    // }
-
-    // Apply status filter
-    if (statusFilter) {
-      filtered = filtered.filter((item: any) => item.ServiceId.serviceName === statusFilter);
-    }
-
+  const handleSearch = (searchValue: string) => {
+    setSearchTerm(searchValue);
+    const filtered = cases.filter(
+      (item:any) =>
+        item.serviceName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item.assignedEmployee.toLowerCase().includes(searchValue.toLowerCase())
+    );
     setFilteredData(filtered);
-  }, [cases, searchTerm, statusFilter]);
-
-  const handleSearch = (value: string) => setSearchTerm(value);
+  };
 
   const handleStatusFilterChange = (serviceName: string) => {
-    setFilterType(serviceName || 'By type');
-    setStatusFilter(serviceName || null);
+    setStatusFilter(serviceName);
+    const filtered = serviceName ? cases.filter((item:any) => item.serviceName === serviceName) : cases;
+    setFilteredData(filtered);
   };
 
   return (
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`All Cases (${filteredData?.length})`}
-          description="Manage Cases"
+          title={`View Case Details (${filteredData?.length})`}
+          description="Detailed information about the Cases."
         />
-        <div className="flex space-x-2 w-full max-w-3xl">
+        {/* <div className="flex space-x-2 w-full max-w-3xl">
           <input
             type="text"
             placeholder="Search by service name or assigned employee"
@@ -133,36 +97,31 @@ const CaseManagementClient: React.FC = () => {
                   Sort by Service
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  {['Salon Visit', 'Vet Visit', 'To Hostel', 'Pet Taxi', 'Pet Handling'].map(
-                    (service) => (
-                      <DropdownMenuItem
-                        key={service}
-                        onClick={() => handleStatusFilterChange(service)}
-                      >
-                        {service}
-                      </DropdownMenuItem>
-                    )
-                  )}
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setFilterType('By type');
-                      setStatusFilter(null);
-                    }}
-                  >
+                  <DropdownMenuItem onClick={() => handleStatusFilterChange('Salon')}>
+                    Salon
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleStatusFilterChange('Veterinary')}>
+                    Veterinary
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleStatusFilterChange('Pet Taxi')}>
+                    Pet Taxi
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleStatusFilterChange('Pet Rescue')}>
+                    Pet Rescue
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setFilterType('By type'); handleStatusFilterChange(''); }}>
                     Reset
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
       </div>
-
+      
       <Separator />
-
-      {loading ? (
-        'Loading...'
-      ) : (
+      
+      {loading ? 'Loading...' : (
         <DataTable
           searchKeys={['serviceName', 'assignedEmployee']}
           columns={columns}
@@ -174,4 +133,4 @@ const CaseManagementClient: React.FC = () => {
   );
 };
 
-export default CaseManagementClient;
+export default UserCasesClient;

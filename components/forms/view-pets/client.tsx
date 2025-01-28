@@ -12,13 +12,12 @@ import { setLoading } from '@/app/redux/slices/authslice';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getPetById } from '@/app/redux/actions/userAction';
 
-
 export const ViewPetClient: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
   const searchParams = useSearchParams();
-  const petId = searchParams.get('id'); // Get the pet ID from the URL
+  const petId = searchParams?.get('id') || ''; // Fallback for missing 'id'
   const router = useRouter();
 
   useEffect(() => {
@@ -31,59 +30,55 @@ export const ViewPetClient: React.FC = () => {
     dispatch(setLoading(true));
     try {
       const resultAction: any = await dispatch(getPetById(id));
-  
-      if (resultAction.type === 'pets/getById/fulfilled') {
-        setData([resultAction.payload.data]); // Wrap in array for single-record table display
-        setLoader(false);
-      }
-      else if(resultAction.payload?.message === 'Request failed with status code 404'){
+      setLoader(false);
+
+      if (resultAction?.type === 'pets/getById/fulfilled') {
+        setData(Array.isArray(resultAction.payload.data) ? resultAction.payload.data : [resultAction.payload.data]);
+
         ToastAtTopRight.fire({
-            icon: 'warning',
-            title: 'No pets found',
-          }).then(() => {
-            // Redirect to the previous page after showing the message
-            router.push('/user-management');
-          });
-      }
-      else {
-        throw new Error(resultAction.payload?.message || 'Failed to fetch pet details');
-        
+          icon: 'success',
+          title: resultAction.payload.message,
+        });
+      } else if (resultAction?.payload?.message === 'Request failed with status code 404') {
+        ToastAtTopRight.fire({
+          icon: 'warning',
+          title: 'No pets found',
+        });
       }
     } catch (error: any) {
-      if (error.response && error?.response?.status === 404) {
-        // Handle 404 error specifically
+      if (error.response && error.response.status === 404) {
         ToastAtTopRight.fire({
           icon: 'warning',
           title: 'No pets found',
         });
       } else {
-        // Handle other errors
         ToastAtTopRight.fire({
           icon: 'error',
-          title: error.message || 'Failed to get pet details',
+          title: 'Failed to get pet details',
         });
       }
     } finally {
       dispatch(setLoading(false));
     }
   };
-  
+
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading
-          title="View Pet Details"
-          description="Detailed information about the pet."
-        />
+        <Heading title="View Pet Details" description="Detailed information about the pet." />
       </div>
       <Separator />
-      {loader ? 'Loading...' :
+      {loader ? (
+        <div>Loading...</div>
+      ) : data.length ? (
         <DataTable
-          searchKeys={["Name", "Species", "Breed", "Temperament"]}
+          searchKeys={['Name', 'Species', 'Breed', 'Temperament']}
           columns={columns}
           data={data}
         />
-      }
+      ) : (
+        <div>No Pet Found for this User</div>
+      )}
     </>
   );
 };

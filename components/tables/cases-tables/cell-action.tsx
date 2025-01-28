@@ -6,16 +6,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {CaseManagementUser } from '@/constants/case-management-data';
-
-import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck, FileText } from 'lucide-react';
+import { ToastAtTopRight } from '@/lib/sweetalert';
+import { Eye, MoreHorizontal, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-
-
+import { useState, useEffect } from 'react';
 
 export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
@@ -24,19 +20,23 @@ export const CellAction: React.FC<any> = ({ data }) => {
 
   const onConfirm = async () => {
     // Your confirm logic here
+    console.log(data);
   };
 
-  
-  
-
   const viewCase = () => {
-    router.push(`/caseManagement-form/view/?id=${data._id}`); 
+    router.push(`/caseManagement-form/view/?id=${data._id}`);
   };
 
   const assignEmployee = () => {
-    router.push(`/employee-management?caseId=${data._id}`); 
+    if (!data.EmpId) {
+      router.push(`/employee-management?caseId=${data._id}`);
+    } else {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title:'Employee Already assigned for this case',
+      });
+    }
   };
-  
 
 
 
@@ -56,25 +56,12 @@ export const CellAction: React.FC<any> = ({ data }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-
-          {/* <DropdownMenuItem onClick={handleRegisterNewSubscription}>
-            <UserPlus className="mr-2 h-4 w-4" /> Create New Subscription
-          </DropdownMenuItem> */}
-         
           <DropdownMenuItem onClick={viewCase}>
             <Eye className="mr-2 h-4 w-4" /> View Case Details
           </DropdownMenuItem>
           <DropdownMenuItem onClick={assignEmployee}>
             <UserCheck className="mr-2 h-4 w-4" /> Assign Employee
           </DropdownMenuItem>
-          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
-            <FileText height={16}  className="mr-2" />
-           View Invoice
-           </DropdownMenuItem> */}
-          {/* <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

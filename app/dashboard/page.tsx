@@ -35,6 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { getAllEnquiries, getPendingSubscriptions } from '../redux/actions/dashboardAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
+import { PendingSubscriptionClient } from '@/components/tables/pending-subscription-table/client';
 
 ChartJS.register(
   CategoryScale,
@@ -291,6 +292,7 @@ export default function Page() {
   //==============ENQUIRY=================
   const getEnqueries =async()=>{
     await dispatch(getAllEnquiries({ page: 1, limit: 20 }))
+    
     .unwrap()
     .catch((err: any) => {
       const errorMessage = err.message || 'Failed to fetch Enquiries';
@@ -308,10 +310,10 @@ export default function Page() {
     .unwrap()
     .catch((err: any) => {
       const errorMessage = err.message || 'Failed to fetch Pending Subscription';
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
-      });
+      // ToastAtTopRight.fire({
+      //   icon: 'error',
+      //   title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+      // });
     });
        
   }
@@ -457,23 +459,12 @@ export default function Page() {
     </CardContent>
   </Card>
 
-  {/* Card 3: Pending Subscription Cases */}
-  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
-    <CardHeader>
-      <CardTitle>Pending Subscription Cases</CardTitle>
-      <CardDescription>
-        26 Pending Subscription Cases for Approvals.
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      <RecentCases cases={caseData} />
-    </CardContent>
-  </Card>
 </div>
 
                 <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
                 <div className="">
                   <EnquiryClient initialData={Enquiries} loading={loading} />
+                  <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
                 <EmployeeEsclatedClient/>
 
                 </div>

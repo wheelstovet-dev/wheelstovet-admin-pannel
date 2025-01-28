@@ -1,11 +1,11 @@
 'use client';
 
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+// import { CellAction } from './cell-action';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
 // import { SubscriptionManagement } from '@/constants/subscription-management-data';
-import { Calendar, Check, ChevronDown, X } from 'lucide-react';
+import { Calendar, Check, ChevronDown, Mail, Phone, X } from 'lucide-react';
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
@@ -123,17 +123,34 @@ export const columns: ColumnDef<any>[] = [
     header: 'Frequency'
   },
   {
-    accessorKey: 'AssignedEmp',
-    header: 'Employee Name',
-    cell: ({ row }) => {
-      const Name = row.original?.AssignedEmp?.Name;
-      return `${Name ? Name : 'N/A'}`;
-    },
-  },
-  {
     accessorKey: 'CreatedAt',
     header: 'Date',
     cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+  },
+  {
+    accessorKey: 'UserId',
+    header: 'User Name',
+    cell: ({ row }) => {
+      const firstName = row.original?.UserId?.FirstName || 'N/A';
+      const lastName = row.original?.UserId?.LastName || 'N/A';
+      return `${firstName} ${lastName}`|| 'N/A';
+    },
+  },
+  {
+    accessorKey: 'UserId',
+    header: 'Contact',
+    cell: ({ row }) => (
+      <div className="flex flex-col">
+        <div className="flex items-center mt-1">
+          <Mail className="text-blue-500 mr-2" width={15} height={15} />
+          <span className="text-[12px]">{row.original?.UserId?.Email || 'N/A'}</span>
+        </div>
+        <div className="flex items-center mt-2">
+          <Phone className="text-green-500 mr-2" width={15} height={15} />
+          <span className="text-[12px]">{row.original?.UserId?.MobileNo || 'N/A'}</span>
+        </div>
+      </div>
+    ),
   },
   // {
   //   accessorKey: 'Timeslot',
@@ -179,8 +196,8 @@ export const columns: ColumnDef<any>[] = [
     )
   },
  
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
+//   {
+//     id: 'actions',
+//     cell: ({ row }) => <CellAction data={row.original} />
+//   }
 ];

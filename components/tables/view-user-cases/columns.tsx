@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+// import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format } from 'date-fns';
 
@@ -45,11 +45,11 @@ export const columns: ColumnDef<any>[] = [
     header: 'Current Status'
   },
   {
-    accessorKey: 'EmpId',
+    accessorKey: 'UserId',
     header: 'Assigned Employee',
     cell: ({ row }) => {
-      const firstName = row.original?.EmpId?.FirstName;
-      const lastName = row.original?.EmpId?.LastName;
+      const firstName = row.original?.UserId?.FirstName;
+      const lastName = row.original?.UserId?.LastName;
       return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
     },
   },
@@ -81,9 +81,9 @@ export const columns: ColumnDef<any>[] = [
 //   },
 
   
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
+//   {
+//     id: 'actions',
+//     header: 'Actions',
+//     cell: ({ row }) => <CellAction data={row.original} />
+//   }
 ];
