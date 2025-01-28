@@ -220,7 +220,7 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
 
               <FormField control={control} name="ResolvedAt" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
+                  <FormLabel>ResolvedAt</FormLabel>
                   <FormControl>
                     {/* <Input type="date" placeholder="Enter Date of Birth" {...field} disabled={currentMode === 'view'} /> */}
                     <Input type="date" {...field} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''} disabled={currentMode === 'view'} />

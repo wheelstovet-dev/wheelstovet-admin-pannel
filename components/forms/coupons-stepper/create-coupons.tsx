@@ -186,7 +186,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                       <SelectContent>
                         <SelectItem value="global">Global</SelectItem>
                         <SelectItem value="subscription">Subscription</SelectItem>
-                        <SelectItem value="freeDelivery">Free Delivery</SelectItem>
+                        {/* <SelectItem value="freeDelivery">Free Delivery</SelectItem> */}
                       </SelectContent>
                     </Select>
                   </FormControl>

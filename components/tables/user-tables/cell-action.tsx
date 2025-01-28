@@ -52,12 +52,12 @@ export const CellAction: React.FC<any> = ({ data }) => {
             <Edit className="mr-2 h-4 w-4" /> View Pets
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.userId}`)} //change the url according to action
+            onClick={() => router.push(`/view-user-cases?id=${data._id}`)} //change the url according to action
           >
             <Edit className="mr-2 h-4 w-4" /> View Cases
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.userId}`)} //change the url according to action
+            onClick={() => router.push(`/view-user-subscription?id=${data._id}`)} //change the url according to action
           >
             <Edit className="mr-2 h-4 w-4" /> View Subscription
           </DropdownMenuItem>

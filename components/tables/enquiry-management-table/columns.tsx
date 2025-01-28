@@ -225,26 +225,41 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <span>{row.original.ServiceId?.serviceName}</span>,
   },
   {
-    accessorKey: 'preferredDate',
+    accessorKey: 'PreferredDates',
     header: 'Preferred Date',
-    cell: ({ row }) => new Date(row.original.preferredDate).toLocaleDateString(),
+    cell: ({ row }) => {
+      const preferredDates = row.original.PreferredDates;
+      const expectedTravelDate = row.original.ExpectedTravelDate;
+  
+      if (preferredDates && preferredDates.length > 0) {
+        return preferredDates
+          .map((date: string) => format(new Date(date), 'dd-MMM-yyyy'))
+          .join(', ');
+      }
+  
+      if (expectedTravelDate) {
+        return format(new Date(expectedTravelDate), 'dd-MMM-yyyy');
+      }
+  
+      return 'Not Provided';
+    },
+  },  
+  {
+    accessorKey: 'preferredHours',
+    header: 'Preferred Hours',
+    cell: ({ row }) => {
+      const hours = row.original.PreferredHours || 0; // Default to 0 if no value
+  
+      // Create a date object starting at midnight (00:00:00) and add the hours
+      const time = new Date(0); // Epoch start
+      time.setHours(hours, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds
+  
+      // Format the time in HH:mm:ss
+      const formattedTime = format(time, 'HH:mm:ss');
+  
+      return <span>{formattedTime}</span>;
+    },
   },
-  // {
-  //   accessorKey: 'preferredHours',
-  //   header: 'Preferred Hours',
-  //   cell: ({ row }) => {
-  //     const hours = row.original.PreferredHours || 0; // Default to 0 if no value
-  
-  //     // Create a date object starting at midnight (00:00:00) and add the hours
-  //     const time = new Date(0); // Epoch start
-  //     time.setHours(hours, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds
-  
-  //     // Format the time in HH:mm:ss
-  //     const formattedTime = format(time, 'HH:mm:ss');
-  
-  //     return <span>{formattedTime}</span>;
-  //   },
-  // },
   {
     accessorKey: 'UserId',
     header: 'Contact',

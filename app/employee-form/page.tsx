@@ -25,6 +25,7 @@ export default function Page() {
     setId(empid);
   }, []);
 
+  console.log(id);
   const handleAssignedCases = () => {
     router.push(`/assignedCases/${id}`);
 

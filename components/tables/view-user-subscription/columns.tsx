@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+// import { CellAction } from './cell-action';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
 // import { SubscriptionManagement } from '@/constants/subscription-management-data';
@@ -179,8 +179,8 @@ export const columns: ColumnDef<any>[] = [
     )
   },
  
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
-  }
+//   {
+//     id: 'actions',
+//     cell: ({ row }) => <CellAction data={row.original} />
+//   }
 ];

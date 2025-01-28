@@ -180,6 +180,7 @@ const employeeSlice = createSlice({
       .addCase(getAssignedSubscriptionById.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
         state.loading = false;
         state.assignedSubscription = action.payload.data;
+        console.log("state",state.assignedSubscription);
       })
       .addCase(getAssignedSubscriptionById.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;

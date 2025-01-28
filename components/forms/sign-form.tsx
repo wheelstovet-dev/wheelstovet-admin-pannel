@@ -135,7 +135,7 @@ export default function UserAuthForm({ step,
     try {
       const response = await axios.post('http://15.206.246.97:3001/admin/verifyEmailOtp', {
         Email: email,
-        OTP: data.otp,
+        Otp: data.otp,
       });
       if (response.data.statusCode === 200) {
         setStep('password');
@@ -159,7 +159,7 @@ export default function UserAuthForm({ step,
     try {
       const response = await axios.post('http://15.206.246.97:3001/admin/resetPassword', {
         Email: email,
-        Password: data.password,
+        NewPassword: data.password,
       });
       if (response.data.statusCode === 200) {
         ToastAtTopRight.fire({
