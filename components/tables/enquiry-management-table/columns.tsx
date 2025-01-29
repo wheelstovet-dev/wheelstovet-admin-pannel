@@ -8,6 +8,7 @@ import { Enquiry } from '@/constants/enquiry-data';
 import { format } from 'date-fns';
 import axios from 'axios';
 import { ToastAtTopRight } from '@/lib/sweetalert';
+import apiCall from '@/lib/axios';
 
 
 // // StatusDropdown component
@@ -139,39 +140,40 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   const [status, setStatus] = useState(currentStatus);
   const [isUpdating, setIsUpdating] = useState(false); // Loading state for API call
 
-  const statusOptions = ['pending', 'Addressed'];
+  const statusOptions = ['pending', 'addressed'];
 
   const handleStatusChange = async (newStatus: string) => {
-    if (newStatus === status) return; // Avoid unnecessary API calls
-
+    if (newStatus === status) return newStatus; // Avoid unnecessary API calls
+  
     setIsUpdating(true); // Set loading state
     try {
-      // API call to update status
-      const response = await axios.put(`http://15.206.246.97:3001/admin/updateEnquiry/${rowId}`, {
-        status: newStatus,
-      });
-
-      // Update status on success
-      if (response.status === 200) {
+      const response = await apiCall('PUT', `http://15.206.246.97:3001/admin/updateEnquiry/${rowId}`, { status: newStatus });
+  
+      // Check if status update was successful
+      //console.log("Response",response);
+      
+      if (response) {
         setStatus(newStatus);
         onStatusChange(newStatus); // Notify parent component
+  
+        // Optionally update the local data immediately without waiting for a refresh
         ToastAtTopRight.fire({
           icon: 'success',
-          title: 'Status updated successfully!',
+          title: `Enquiry status updated to ${newStatus}`,
         });
-      } 
-    } catch (error:any) {
+      }
+    } catch (error: any) {
       ToastAtTopRight.fire({
         icon: 'error',
         title: 'Failed to update status',
         text: error.message || 'Failed to update status',
       });
-      // console.error('Error updating status:', error);
     } finally {
       setIsUpdating(false);
       setIsOpen(false);
     }
   };
+  
 
   return (
     <div>
@@ -180,7 +182,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
         onClick={() => !isUpdating && setIsOpen(!isOpen)}
         style={{ borderRadius: '20px', cursor: 'pointer', opacity: isUpdating ? 0.6 : 1 }}
         className={`flex items-center px-2 py-1 ${
-          status === 'Addressed'
+          status === 'addressed'
             ? 'bg-green-400'
             : status === 'pending'
             ? 'bg-yellow-400'
