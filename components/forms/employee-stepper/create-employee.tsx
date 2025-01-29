@@ -14,6 +14,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { AssignedClient } from '@/components/tables/assignedCases-table/client';
+import { AssignedSubscriptionClient } from '@/components/tables/assigned-subscription-table/client';
 
 // Employee form schema for validation
 const employeeFormSchema = z.object({
@@ -45,6 +48,8 @@ interface EmployeeFormProps {
 export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode }) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+  const [role, setRole] = useState();
+
 
   const searchParams = useSearchParams();
   const urlMode = searchParams.get('mode');
@@ -86,6 +91,7 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
         .then((data) => {
           setEmployeeData(data.data);
           form.reset(data.data);
+          setRole(data?.data?.Role);
         })
         .catch((error) => {
           ToastAtTopRight.fire({
@@ -141,6 +147,7 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
   if (loader) return <div>Loading...</div>;
 
   return (
+    <>
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">
         {currentMode === 'create' ? 'Create Employee' : currentMode === 'view' ? 'View Employee' : 'Update Employee'}
@@ -281,5 +288,8 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
         </form>
       </Form>
     </div>
+    <Separator/>
+    {role === 'Pet Taxi' ? <AssignedClient /> : <AssignedSubscriptionClient/>}
+    </>
   );
 };
