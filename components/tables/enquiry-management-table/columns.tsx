@@ -139,7 +139,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   const [status, setStatus] = useState(currentStatus);
   const [isUpdating, setIsUpdating] = useState(false); // Loading state for API call
 
-  const statusOptions = ['pending', 'resolved'];
+  const statusOptions = ['pending', 'Addressed'];
 
   const handleStatusChange = async (newStatus: string) => {
     if (newStatus === status) return; // Avoid unnecessary API calls
@@ -180,7 +180,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
         onClick={() => !isUpdating && setIsOpen(!isOpen)}
         style={{ borderRadius: '20px', cursor: 'pointer', opacity: isUpdating ? 0.6 : 1 }}
         className={`flex items-center px-2 py-1 ${
-          status === 'resolved'
+          status === 'Addressed'
             ? 'bg-green-400'
             : status === 'pending'
             ? 'bg-yellow-400'

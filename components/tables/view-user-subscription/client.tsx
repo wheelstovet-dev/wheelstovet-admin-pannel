@@ -6,21 +6,28 @@ import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { columns } from './columns';
 
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/app/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
 import { setLoading } from '@/app/redux/slices/authslice';
 
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getAllSubscriptions } from '@/app/redux/actions/subscriptionAction';
+import { getUserBookedSubscriptions } from '@/app/redux/actions/userAction';
 
 export const UserSubscriptionClient: React.FC = () => {
   const router = useRouter();
-  const [data, setData] = useState<any>([]);
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
+  const searchParams = useSearchParams();
+  const userId = searchParams?.get('id') || ''; // Extract 'id' from URL
+
+  const { bookedSubscriptions, loading } = useSelector((state: RootState) => state.user); // Accessing `bookedSubscriptions` from user slice
+  console.log("Booked subscriptions:", bookedSubscriptions);
+
+  const [data, setData] = useState(bookedSubscriptions);
 
   const handleSearch = (searchValue: string) => {
     const filteredData = data.filter((item: any) =>
@@ -30,30 +37,41 @@ export const UserSubscriptionClient: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAllSubscriptions();
-  }, []);
-
-  const fetchAllSubscriptions = async () => {
     dispatch(setLoading(true));
-    try {
-      const resultAction: any = await dispatch(getAllSubscriptions({ page: 1, limit: 20 }));
-      
-      if (resultAction.type === 'subscriptions/getAll/fulfilled') {
-        setData(resultAction?.payload?.data);
-        console.log(resultAction);
-        setLoader(false);
-      } else {
-        throw new Error(resultAction.payload?.message || 'Failed to fetch subscriptions');
-      }
-    } catch (error: any) {
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: error.message || 'Failed to get subscriptions',
+    dispatch(getUserBookedSubscriptions(userId))
+      .unwrap()
+      .catch((err: any) => {
+        ToastAtTopRight.fire({
+          icon: 'warning',
+          title: 'No booked subscriptions for this user',
+        });
+      })
+      .finally(() => {
+        dispatch(setLoading(false));
       });
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
+  }, [dispatch, userId]);
+
+  // const fetchAllSubscriptions = async () => {
+  //   dispatch(setLoading(true));
+  //   try {
+  //     const resultAction: any = await dispatch(getAllSubscriptions({ page: 1, limit: 20 }));
+      
+  //     if (resultAction.type === 'subscriptions/getAll/fulfilled') {
+  //       setData(resultAction?.payload?.data);
+  //       console.log(resultAction);
+  //       setLoader(false);
+  //     } else {
+  //       throw new Error(resultAction.payload?.message || 'Failed to fetch subscriptions');
+  //     }
+  //   } catch (error: any) {
+  //     ToastAtTopRight.fire({
+  //       icon: 'error',
+  //       title: error.message || 'Failed to get subscriptions',
+  //     });
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //   }
+  // };
 
   const filters = [
     {
@@ -70,7 +88,7 @@ export const UserSubscriptionClient: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`View User Subscription (${data.length})`}
+          title={`View User Subscription (${bookedSubscriptions?.length})`}
           description="View User Subscription (Client side table functionalities.)"
         />
         {/* Uncomment if you want to add a button for adding subscriptions */}
@@ -82,15 +100,25 @@ export const UserSubscriptionClient: React.FC = () => {
         </Button> */}
       </div>
       <Separator />
-      {loader ? 'Loading...' :
+
+      {loading ? 'Loading...' : (
+              <DataTable
+                searchKeys={['subscriptionPlan']}
+                columns={columns}
+                data={bookedSubscriptions}
+                onSearch={handleSearch}
+              />
+            )}
+
+      {/* {loader ? 'Loading...' :(
       <DataTable
         searchKeys={["subscriptionPlan"]}
         columns={columns}
-        data={data}
+        data={bookedSubscriptions}
         onSearch={handleSearch} 
         filters={filters}
       />
-      }
+      )} */}
     </>
   );
 };

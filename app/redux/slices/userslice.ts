@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { getAllUsers, getPetById } from '../actions/userAction';
+import { getAllUsers, getPetById, getUserBookedCases, getUserBookedSubscriptions } from '../actions/userAction';
 
 interface UserState {
   loading: boolean;
@@ -12,6 +12,8 @@ interface UserState {
   totalPages: number;
   selectedPet: any | null; // State for selected pet details
   pets: any[]; // List of pets for a user
+  bookedCases: any[]; // List of booked cases for a user
+  bookedSubscriptions: any[]; // List of booked subscriptions for a user
 }
 
 const initialState: UserState = {
@@ -24,6 +26,8 @@ const initialState: UserState = {
   totalPages: 0,
   selectedPet: null, // Initialize selected pet
   pets: [], // Initialize pets list
+  bookedCases: [], // Initialize booked cases
+  bookedSubscriptions: [], // Initialize booked subscriptions
 };
 
 const userSlice = createSlice({
@@ -43,10 +47,7 @@ const userSlice = createSlice({
         getAllUsers.fulfilled,
         (state, action: PayloadAction<AxiosResponse<{ total: number; currentPage: number; totalPages: number; users: any[] }>>) => {
           state.loading = false;
-          // console.log(action.payload.data.users);
-          // Accessing data from action.payload.data
           state.users = action.payload.data.users; // Set admin from response
-          // console.log(state.users);
           state.totalUsers = action.payload.data.total; // Total Admin from response
           state.currentPage = action.payload.data.currentPage; // Current page from response
           state.totalPages = action.payload.data.totalPages; // Total pages from response
@@ -54,7 +55,6 @@ const userSlice = createSlice({
       )
       .addCase(getAllUsers.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        // console.log(action.payload.message.message);
         state.error = action.payload.message.message;
       })
 
@@ -67,6 +67,32 @@ const userSlice = createSlice({
         state.selectedPet = action.payload.data; // Set selected pet details
       })
       .addCase(getPetById.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get booked cases for a user
+      .addCase(getUserBookedCases.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserBookedCases.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.bookedCases = action.payload.data; // Set booked cases data
+      })
+      .addCase(getUserBookedCases.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get booked subscriptions for a user
+      .addCase(getUserBookedSubscriptions.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserBookedSubscriptions.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        state.bookedSubscriptions = action.payload.data; // Set booked subscriptions data
+      })
+      .addCase(getUserBookedSubscriptions.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
       });

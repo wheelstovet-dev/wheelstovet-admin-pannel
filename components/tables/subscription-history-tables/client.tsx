@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { columns } from './columns';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,30 +19,31 @@ export const SubscriptionHistoryClient: React.FC = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id'); // Get the id from the URL
 
-  const { walkRecords, loading,error } = useSelector((state: RootState) => state.subscription);
-  // console.log("walkRecords" + walkRecords.length);
+  const { walkRecords, loading, error } = useSelector((state: RootState) => state.subscription);
 
   useEffect(() => {
     if (id) {
       // Fetch the case data by ID
-      dispatch(getWalkRecords({ id, page:1, limit:20 }));
+      dispatch(getWalkRecords({ id, page: 1, limit: 20 }));
     }
   }, [id, dispatch]);
 
   useEffect(() => {
-    // Set data whenever walkRecords changes
     if (walkRecords?.length > 0) {
       setData(walkRecords);
-    }
-    else if(error){
+    } else if (walkRecords?.length === 0) {
+      // Show toast if no walk records are found
+      ToastAtTopRight.fire({
+        icon: 'warning',
+        title: 'No walk records found for this subscription',
+      });
+    } else if (error) {
       ToastAtTopRight.fire({
         icon: 'error',
-        title: error || 'Failed to get walk records',
+        title: 'Failed to get walk records',
       });
     }
-  }, [walkRecords, loading,error]);
-
-  
+  }, [walkRecords, loading, error]);
 
   const handleSearch = (searchValue: string) => {
     const filteredData = data.filter((item: any) =>
@@ -50,33 +51,6 @@ export const SubscriptionHistoryClient: React.FC = () => {
     );
     setData(filteredData);
   };
-
-  // useEffect(() => {
-  //   if (id) {
-  //     fetchWalkRecords(id);
-  //   }
-  // }, [id]);
-
-  // const fetchWalkRecords = async (id: string) => {
-  //   dispatch(setLoading(true));
-  //   try {
-  //     const resultAction: any = await dispatch(getWalkRecords({ id, page: 1, limit: 20 }));
-      
-  //     if (resultAction.type === 'subscriptions/getWalkRecords/fulfilled') {
-  //       setData(resultAction?.payload?.data);
-  //       setLoader(false);
-  //     } else {
-  //       throw new Error(resultAction.payload?.message || 'Failed to fetch walk records');
-  //     }
-  //   } catch (error: any) {
-  //     ToastAtTopRight.fire({
-  //       icon: 'error',
-  //       title: error || 'Failed to get walk records',
-  //     });
-  //   } finally {
-  //     dispatch(setLoading(false));
-  //   }
-  // };
 
   const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
     const sortedData = [...data].sort((a, b) => {
@@ -109,15 +83,13 @@ export const SubscriptionHistoryClient: React.FC = () => {
         />
       </div>
       <Separator />
-      {loader ? 'Loading...' :
-        <DataTable
-          searchKeys={["subscriptionPlan"]}
-          columns={columns}
-          data={data}
-          onSearch={handleSearch} 
-          filters={filters}
-        />
-      }
+      <DataTable
+        searchKeys={['subscriptionPlan']}
+        columns={columns}
+        data={data}
+        onSearch={handleSearch}
+        filters={filters}
+      />
     </>
   );
 };

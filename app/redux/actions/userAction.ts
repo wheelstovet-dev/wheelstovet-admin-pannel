@@ -64,3 +64,45 @@ export const getPetById = createAsyncThunk<
     }
   }
 );
+
+// Action to get booked cases for a user by their ID
+export const getUserBookedCases = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type is the User ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'user/getBookedCases',
+  async (userId, { rejectWithValue }) => {
+    try {
+      // Make API call to fetch booked cases for the user
+      const response = await apiCall('GET', `/admin/userBookedCases/${userId}`);
+      // console.log('API Response for booked cases:', response); // Debugging log
+      return response; // Return the full response
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch user booked cases');
+    }
+  }
+);
+
+
+// Action to get booked subscriptions for a user by their ID
+export const getUserBookedSubscriptions = createAsyncThunk<
+  AxiosResponse<any>, // Return type is the entire Axios response
+  string, // Input type is the User ID as a string
+  { rejectValue: any } // Reject value type
+>(
+  'user/getBookedSubscriptions',
+  async (userId, { rejectWithValue }) => {
+    try {
+      // Make API call to fetch booked subscriptions for the user
+      const response = await apiCall('GET', `/admin/userBookedSubscriptions/${userId}`);
+      return response; // Return the full response
+    } catch (error: any) {
+      // Handle errors and return the error message
+      return rejectWithValue(error || 'Failed to fetch user booked subscriptions');
+    }
+  }
+);
+
+
