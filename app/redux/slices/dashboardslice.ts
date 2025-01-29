@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxiosResponse } from 'axios';
-import { getAllEnquiries, getEnquiryId, getPendingSubscriptions } from '../actions/dashboardAction';
+import { getAllEnquiries, getEnquiryId, getPendingSubscriptions, getUnassignedCases } from '../actions/dashboardAction';
 
 interface DashboardState {
   loading: boolean;
@@ -12,6 +11,10 @@ interface DashboardState {
   pendingSubscriptions: any[];
   selectedPendingSubs: any | null;
   totalPendingSubs: number;
+
+  unassignedCases: any[];
+  selectedUnassignedCase: any | null;
+  totalUnassignedCases: number;
 
   successMessage: string | null;
   error: string | null;
@@ -27,8 +30,12 @@ const initialState: DashboardState = {
   totalEnquiry: 0,
 
   pendingSubscriptions: [],
-  selectedPendingSubs:null,
+  selectedPendingSubs: null,
   totalPendingSubs: 0,
+
+  unassignedCases: [],
+  selectedUnassignedCase: null,
+  totalUnassignedCases: 0,
 
   successMessage: null,
   error: null,
@@ -47,7 +54,7 @@ const dashboardslice = createSlice({
   extraReducers: (builder) => {
     builder
 
-    // -----------ENQUIRY SECTION --------------
+      // -----------ENQUIRY SECTION --------------
 
       // Fetch all enquiries
       .addCase(getAllEnquiries.pending, (state) => {
@@ -82,14 +89,14 @@ const dashboardslice = createSlice({
 
       // -----------PENDING SUBSCRIPTION SECTION --------------
 
-       // Fetch Pending Subscriptions
-       .addCase(getPendingSubscriptions.pending, (state) => {
+      // Fetch Pending Subscriptions
+      .addCase(getPendingSubscriptions.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getPendingSubscriptions.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.pendingSubscriptions = action.payload.data; // Store pending subscriptions
+        state.pendingSubscriptions = action.payload.data;
         state.totalPendingSubs = action.payload.total;
         state.currentPage = action.payload.currentPage;
         state.totalPages = action.payload.totalPages;
@@ -97,9 +104,27 @@ const dashboardslice = createSlice({
       .addCase(getPendingSubscriptions.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
 
-    },
+      // -----------UNASSIGNED CASES SECTION --------------
+
+      // Fetch Unassigned Cases
+      .addCase(getUnassignedCases.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUnassignedCases.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.unassignedCases = action.payload.data;
+        state.totalUnassignedCases = action.payload.total;
+        state.currentPage = action.payload.currentPage;
+        state.totalPages = action.payload.totalPages;
+      })
+      .addCase(getUnassignedCases.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
 export const { setCurrentPage } = dashboardslice.actions;

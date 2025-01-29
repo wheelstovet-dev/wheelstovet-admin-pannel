@@ -60,3 +60,23 @@ export const getPendingSubscriptions = createAsyncThunk<
     );
   }
 });
+
+// -----------UNASSIGNED CASES SECTION--------------
+
+// Action to get Unassigned Cases
+export const getUnassignedCases = createAsyncThunk<
+  any, // Return type: expected API response
+  { page: number; limit: number }, // Input arguments
+  { rejectValue: any } // Reject value type
+>('cases/getUnassigned', async (_, { rejectWithValue }) => {
+  try {
+    // Make API call to fetch unassigned cases
+    const response = await apiCall('GET', `/admin/cases/unassigned`);
+    return response; // Return the response object
+  } catch (error: any) {
+    // Handle errors and reject with meaningful error message
+    return rejectWithValue(
+      error.response?.data || 'Failed to fetch unassigned cases'
+    );
+  }
+});
