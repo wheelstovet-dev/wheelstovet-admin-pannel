@@ -48,8 +48,8 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
   const form = useForm({
     resolver: zodResolver(enquiryFormSchema),
     defaultValues: {
-      enquiryName: `${initialData?.UserId?.FirstName } ${initialData?.UserId?.LastName }`.trim(),
-      preferredDate: initialData?.PreferredDate ? new Date(initialData.PreferredDate) : new Date(),
+      enquiryName: initialData?.ServiceId?.serviceName || '',
+      preferredDate: initialData?.PreferredDates ? new Date(initialData.PreferredDates) : new Date(),
       preferredTime: initialData?.PreferredHours ,
       email: initialData?.UserId?.Email ,
       phoneNo: initialData?.UserId?.MobileNo ,
@@ -64,8 +64,8 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
   useEffect(() => {
     if (initialData) {
       form.reset({
-        enquiryName: `${initialData?.UserId?.FirstName || ''} ${initialData?.UserId?.LastName || ''}`.trim(),
-        preferredDate: initialData?.PreferredDate ? new Date(initialData.PreferredDate) : new Date(),
+        enquiryName: initialData?.ServiceId?.serviceName || '',
+        preferredDate: initialData?.PreferredDates ? new Date(initialData.PreferredDates) : new Date(),
         preferredTime: initialData?.PreferredHours
   ? `${String(initialData.PreferredHours).padStart(2, '0')}:00:00`
   : '',
