@@ -15,24 +15,24 @@ const breadcrumbItems = [{ title: 'Employee', link: '/dashboard/employee' }];
 
 export default function Page() {
 
-  const router = useRouter();
-  const [id, setId] = useState<string | null>(null);
+  // const router = useRouter();
+  // const [id, setId] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Parse the URL to get the 'id' parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const empid = urlParams.get('id');
-    setId(empid);
-  }, []);
+  // useEffect(() => {
+  //   // Parse the URL to get the 'id' parameter
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const empid = urlParams.get('id');
+  //   setId(empid);
+  // }, []);
 
-  console.log(id);
-  const handleAssignedCases = () => {
-    router.push(`/assignedCases/${id}`);
+  // console.log(id);
+  // const handleAssignedCases = () => {
+  //   router.push(`/assignedCases/${id}`);
 
-  };
-  const handleSubscription = () => {
-    router.push(`/assignedSubscription/${id}`);
-  };
+  // };
+  // const handleSubscription = () => {
+  //   router.push(`/assignedSubscription/${id}`);
+  // };
 
 
   // const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -51,7 +51,7 @@ export default function Page() {
             </Suspense>
             {/* Add your routing logic to switch between EmployeeManagementPage and EmployeeForm */}
           </div>
-          <div className="relative mb-4 gap-8 rounded-md border p-4 md:flex md:items-center md:justify-center">
+          {/* <div className="relative mb-4 gap-8 rounded-md border p-4 md:flex md:items-center md:justify-center">
 
             <button
               onClick={handleAssignedCases}
@@ -65,7 +65,7 @@ export default function Page() {
             >
               View Subscription
             </button>
-          </div>
+          </div> */}
         </ScrollArea>
       </MainLayout>
       </ProtectedRoute>
