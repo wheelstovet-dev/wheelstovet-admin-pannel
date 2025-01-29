@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin, Trash2 } from 'lucide-react';
+import { Phone, MapPin, Trash2, Edit } from 'lucide-react';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { createClinic, deleteClinic, getAllClinic, getAllServices, updateService } from '@/app/redux/actions/servicesAction';
@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ProtectedRoute from '@/components/protectedRoute';
+import apiCall from '@/lib/axios';
 
 
 // Zod schema for validation
@@ -32,7 +33,17 @@ const chargeSchema = z.object({
 // Zod schema for new clinic form
 const clinicSchema = z.object({
   clinicName: z.string().min(1, "Clinic name is required"),
-  ContactNo: z.string().length(10, "Contact number must be 10 digits"),
+  ContactNo: z.preprocess(
+    (val) => {
+      if (typeof val === "number") {
+        return val.toString(); // Convert number to string for regex validation
+      }
+      return val;
+    },
+    z.string()
+      .regex(/^\d{10}$/, "Contact number must be exactly 10 digits and numeric")
+      .transform((val) => Number(val)) // Convert back to number after validation
+  ),
   address: z.string().min(1, "Address is required"),
 });
 
@@ -49,7 +60,7 @@ export default function VeterinaryVisitPage() {
     const id = urlParams.get('id');
     setServiceId(id);
   }, []);
-  
+
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { clinics, services, loading } = useSelector((state: RootState) => state.service);
@@ -58,6 +69,9 @@ export default function VeterinaryVisitPage() {
   const [initialChargeValues, setInitialChargeValues] = useState<ChargeFormValues>({} as ChargeFormValues);
   const [isFormVisible, setFormVisible] = useState(false);
 
+  const [editMode, setEditMode] = useState(false);
+  const [editingClinicId, setEditingClinicId] = useState<string | null>(null);
+
   // React Hook Form setup for charges
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargeFormValues>({
     resolver: zodResolver(chargeSchema),
@@ -65,9 +79,9 @@ export default function VeterinaryVisitPage() {
   });
 
   // React Hook Form setup for new clinic
-  const { register: registerClinic, handleSubmit: handleClinicSubmit, formState: { errors: clinicErrors } } = useForm<ClinicFormValues>({
+  const { register: registerClinic, reset, handleSubmit: handleClinicSubmit, formState: { errors: clinicErrors } } = useForm<ClinicFormValues>({
     resolver: zodResolver(clinicSchema),
-    defaultValues: { clinicName: '', ContactNo: '', address: '' },
+    defaultValues: { clinicName: '', ContactNo: undefined, address: '' },
   });
 
   useEffect(() => {
@@ -145,7 +159,7 @@ export default function VeterinaryVisitPage() {
       title: 'Changes have been reset',
     });
   };
-  
+
   const handleDelete = async (clinicId: string) => {
     try {
       await dispatch(deleteClinic(clinicId)).unwrap();
@@ -164,163 +178,93 @@ export default function VeterinaryVisitPage() {
 
   const onSubmitClinic = async (data: ClinicFormValues) => {
     try {
-      // Use unwrap to handle success and failure correctly
-      await dispatch(createClinic(data)).unwrap();
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Clinic created successfully!',
-      });
+      if (editMode && editingClinicId) {
+        await apiCall('PUT', `admin/clinic/${editingClinicId}`, data);
+        ToastAtTopRight.fire({ icon: 'success', title: 'Clinic updated successfully!' });
+      } else {
+        // Use unwrap to handle success and failure correctly
+        await dispatch(createClinic(data)).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Clinic created successfully!',
+        });
+      }
       setFormVisible(false);
+      setEditMode(false);
+      setEditingClinicId(null);
+      reset();
       dispatch(getAllClinic());
-    } catch (error:any) {
+    } catch (error: any) {
       // console.log(error.message.fields.message);
       ToastAtTopRight.fire({
         icon: 'warning',
-        title: error?.message?.fields?.message || 'Failed to create clinic',
+        title: error?.message?.fields?.message || 'Failed to process clinic request',
       });
     }
   };
 
+  
+  const handleEdit = (clinic: any) => {
+    reset({
+      clinicName: clinic.clinicName,
+      ContactNo: clinic.ContactNo,
+      address: clinic.address,
+    });
+    setEditingClinicId(clinic._id);
+    setEditMode(true);
+    setFormVisible(true);
+  };
+
+
+  const handleCancel = () => {
+    setFormVisible(false);
+    setEditMode(false);
+    setEditingClinicId(null);
+    reset();
+  };
+
   return (
     <ProtectedRoute>
-    <MainLayout meta={{ title: 'Veterinary Visit Management' }}>
-      <ScrollArea className="h-full">
-        <div className="container mx-auto p-8">
-          <h1 className="text-3xl font-bold mb-8">Veterinary Visit Management</h1>
-          <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Veterinary Visit Charges</h2>
-            <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <span className="text-gray-500">Loading ...</span>
-                  </div>
-                ) : (
-                  <>
-                    {Object.keys(initialChargeValues).map((key) => (
-                      <div key={key} className="flex items-center">
-                        <label className="block font-bold text-gray-700 w-full">
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </label>
-                        <input
-                          type="number"
-                          {...register(key as keyof ChargeFormValues, { valueAsNumber: true })}
-                          className="mt-1 block w-20 border rounded p-2"
-                        />
-                        <span className="ml-2 font-bold">
-                          {key === "IncludedTime" ? "minutes" : "INR"}
-                        </span>
-                        {errors[key as keyof ChargeFormValues] && (
-                          <p className="text-red-500">{errors[key as keyof ChargeFormValues]?.message}</p>
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </div>
-              <div className="flex justify-start mt-8">
-                <button
-                  type="button"
-                  className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                  onClick={handleCancelCharges}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-yellow-500 text-white py-2 px-4 rounded"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Associated Clinics</h2>
-              <button
-                className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={() => setFormVisible(true)}
-              >
-                + Add New
-              </button>
-            </div>
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-              <thead>
-                <tr className="bg-yellow-500 text-left text-gray-600">
-                  <th className="px-4 py-2 border-b border-r-2">Serial No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
-                  <th className="px-4 py-2 border-b border-r-2">Contact No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Address</th>
-                  <th className="px-4 py-2 border-b border-r-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {clinics.map((clinic, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 border-b text-center">{index + 1}</td>
-                    <td className="px-4 py-6 border-b">{clinic.clinicName}</td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        <Phone className="h-4 w-4 mr-2 text-green-600" />
-                        {clinic.ContactNo}
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-red-600" />
-                        {clinic.address}
-                      </div>
-                    </td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
-                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(clinic._id)} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {isFormVisible && (
-              <form onSubmit={handleClinicSubmit(onSubmitClinic)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Clinic Name <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerClinic("clinicName")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {clinicErrors.clinicName && <p className="text-red-500">{clinicErrors.clinicName.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerClinic("ContactNo")}
-                      className="mt-1 block w-full border rounded p-2"
-                      maxLength={10}
-                    />
-                    {clinicErrors.ContactNo && <p className="text-red-500">{clinicErrors.ContactNo.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerClinic("address")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {clinicErrors.address && <p className="text-red-500">{clinicErrors.address.message}</p>}
-                  </div>
+      <MainLayout meta={{ title: 'Veterinary Visit Management' }}>
+        <ScrollArea className="h-full">
+          <div className="container mx-auto p-8">
+            <h1 className="text-3xl font-bold mb-8">Veterinary Visit Management</h1>
+            <div className="bg-white p-8 rounded-lg shadow-md mb-8">
+              <h2 className="text-3xl font-bold mb-8">Veterinary Visit Charges</h2>
+              <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {loading ? (
+                    <div className="flex justify-center py-8">
+                      <span className="text-gray-500">Loading ...</span>
+                    </div>
+                  ) : (
+                    <>
+                      {Object.keys(initialChargeValues).map((key) => (
+                        <div key={key} className="flex items-center">
+                          <label className="block font-bold text-gray-700 w-full">
+                            {key.replace(/([A-Z])/g, ' $1')}
+                          </label>
+                          <input
+                            type="number"
+                            {...register(key as keyof ChargeFormValues, { valueAsNumber: true })}
+                            className="mt-1 block w-20 border rounded p-2"
+                          />
+                          <span className="ml-2 font-bold">
+                            {key === "IncludedTime" ? "minutes" : "INR"}
+                          </span>
+                          {errors[key as keyof ChargeFormValues] && (
+                            <p className="text-red-500">{errors[key as keyof ChargeFormValues]?.message}</p>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
-                <div className="flex justify-start mt-4">
+                <div className="flex justify-start mt-8">
                   <button
                     type="button"
                     className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                    onClick={() => setFormVisible(false)}
+                    onClick={handleCancelCharges}
                   >
                     Cancel
                   </button>
@@ -328,15 +272,120 @@ export default function VeterinaryVisitPage() {
                     type="submit"
                     className="bg-yellow-500 text-white py-2 px-4 rounded"
                   >
-                    Create
+                    Save Changes
                   </button>
                 </div>
               </form>
-            )}
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold">Associated Clinics</h2>
+                <button
+                  className="bg-yellow-500 text-white py-2 px-4 rounded"
+                  onClick={() => { setFormVisible(true); setEditMode(false); reset(); }}
+                >
+                  + Add New
+                </button>
+              </div>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                <thead>
+                  <tr className="bg-yellow-500 text-left text-gray-600">
+                    <th className="px-4 py-2 border-b border-r-2">Serial No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Clinic Name</th>
+                    <th className="px-4 py-2 border-b border-r-2">Contact No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Address</th>
+                    <th className="px-4 py-2 border-b border-r-2">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clinics.map((clinic, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-4 py-6 border-b text-center">{index + 1}</td>
+                      <td className="px-4 py-6 border-b">{clinic.clinicName}</td>
+                      <td className="px-4 py-6 border-b">
+                        <div className="flex items-center">
+                          <Phone className="h-4 w-4 mr-2 text-green-600" />
+                          {clinic.ContactNo}
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 border-b">
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                          {clinic.address}
+                        </div>
+                      </td>
+                      <td className="px-4 py-6 border-b">
+                        <div className="flex items-center gap-4 justify-center">
+                          {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                          <Edit className="text-yellow-500 cursor-pointer" onClick={() => handleEdit(clinic)} />
+                          <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(clinic._id)} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {isFormVisible && (
+                <form onSubmit={handleClinicSubmit(onSubmitClinic)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Clinic Name <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerClinic("clinicName")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {clinicErrors.clinicName && <p className="text-red-500">{clinicErrors.clinicName.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerClinic("ContactNo")}
+                        className="mt-1 block w-full border rounded p-2"
+                        maxLength={10}
+                      />
+                      {clinicErrors.ContactNo && <p className="text-red-500">{clinicErrors.ContactNo.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerClinic("address")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {clinicErrors.address && <p className="text-red-500">{clinicErrors.address.message}</p>}
+                    </div>
+                  </div>
+                  <div className="flex justify-start mt-4">
+                    <button
+                      type="button"
+                      className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
+                      onClick={() => {
+                        if (editMode) {
+                          handleCancel();
+                        } else {
+                          setFormVisible(false);
+                        }
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-yellow-500 text-white py-2 px-4 rounded"
+                    >
+                     {editMode ? 'Update' : 'Create'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
-      </ScrollArea>
-    </MainLayout>
+        </ScrollArea>
+      </MainLayout>
     </ProtectedRoute>
   );
 }
