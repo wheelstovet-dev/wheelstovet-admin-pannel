@@ -11,6 +11,9 @@ import { format } from 'date-fns';
 import { updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/redux/store';
+import { CellAction } from './cell-actions';
+
+
 const StatusCell = ({ row }: { row: Row<any> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isOpen, setIsOpen] = useState(false);
@@ -116,7 +119,7 @@ export const columns: ColumnDef<any>[] = [
   // },
   {
     accessorKey: 'Plan.Name',
-    header: 'Plan'
+    header: 'Plan',
   },
   {
     accessorKey: 'Plan.Frequency',
@@ -125,8 +128,12 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => {
+      const createdAt = row.original.CreatedAt;
+      return createdAt ? format(new Date(createdAt), 'dd-MMM-yyyy') : 'N/A';
+    },
   },
+  
   {
     accessorKey: 'UserId',
     header: 'User Name',
@@ -196,8 +203,8 @@ export const columns: ColumnDef<any>[] = [
     )
   },
  
-//   {
-//     id: 'actions',
-//     cell: ({ row }) => <CellAction data={row.original} />
-//   }
+  {
+    id: 'actions',
+    cell: ({ row }) => <CellAction data={row.original} />
+  }
 ];

@@ -119,7 +119,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'Plan'
   },
   {
-    accessorKey: 'Plan.Frequency',
+    accessorKey: 'WalkFrequency',
     header: 'Frequency'
   },
   {

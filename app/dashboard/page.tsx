@@ -1,6 +1,6 @@
 'use client'; // Add this directive at the top
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -36,6 +36,8 @@ import { AppDispatch, RootState } from '../redux/store';
 import { getAllEnquiries, getPendingSubscriptions } from '../redux/actions/dashboardAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { PendingSubscriptionClient } from '@/components/tables/pending-subscription-table/client';
+import CaseManagementClient from '@/components/tables/cases-tables/client';
+import UnassignedCasesClient from '@/components/tables/unassigned-cases-dashboard-table/client';
 
 ChartJS.register(
   CategoryScale,
@@ -95,14 +97,16 @@ interface CardComponentProps {
   color: string;
   defaultDropdown: string;
   initialPercentage: number;
+  onClick: () => void; // Add onClick prop
+  
 }
 
-const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, color, defaultDropdown, initialPercentage }) => {
+const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, color, defaultDropdown, initialPercentage,onClick }) => {
   const [dropdownValue, setDropdownValue] = useState(defaultDropdown);
   const [percentage, setPercentage] = useState(initialPercentage);
 
   return (
-    <Card className="w-full md:w-auto">
+    <Card className="w-full md:w-auto cursor-pointer" onClick={onClick}>
       <CardHeader className="flex flex-col space-y-1 pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-sm font-medium text-gray-500 uppercase tracking-wide">
@@ -173,9 +177,28 @@ const options = {
 };
 
 export default function Page() {
+  const [selectedCard, setSelectedCard] = useState(""); // Track selected card
   const [graphData, setGraphData] = useState(initialData);
   const [graphDropdownValue, setGraphDropdownValue] = useState('Monthly');
   const [selectedCase, setSelectedCase] = useState('Dog Walking');
+
+
+  const enquiryRef = useRef<HTMLDivElement>(null);
+const petTaxiRef = useRef<HTMLDivElement>(null);
+const dogWalkingRef=useRef<HTMLDivElement>(null);
+const handleCardClick = (card: string) => {
+  setSelectedCard(card); // Selected card ko update karein
+
+  // Scroll to respective section
+  if (card === "enquiry" && enquiryRef.current) {
+    enquiryRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (card === "petTaxi" && petTaxiRef.current) {
+    petTaxiRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  else if (card === "dogWalking" && dogWalkingRef.current) {
+    dogWalkingRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
 
   const handleGraphChange = (value: string) => {
     setGraphDropdownValue(value);
@@ -328,6 +351,10 @@ export default function Page() {
 
   console.log(pendingSubscriptions);
 
+  // const handleCardClick = (card: string) => {
+  //   setSelectedCard(card); // Update selected card
+  // };
+
   return (
     <ProtectedRoute>
     <MainLayout meta={{ title: 'Dashboard' }}>
@@ -343,16 +370,18 @@ export default function Page() {
                   color="text-red-500"
                   defaultDropdown="Daily"
                   initialPercentage={25}
+                  onClick={() => handleCardClick('dogWalking')}
                 />
                 <CardComponent
                   title="CASE"
-                  subtitle="EMPLOYEE ESCALATED"
+                  subtitle="ENQUIRY"
                   image="/images/Frame (3).png"
                   color="text-green-500"
                   defaultDropdown="Weekly"
                   initialPercentage={50}
+                  onClick={() => handleCardClick('enquiry')}
                 />
-                <CardComponent
+                {/* <CardComponent
                   title="CASE"
                   subtitle="CLIENT ESCALATED"
                   image="/images/Frame (4).png"
@@ -367,7 +396,7 @@ export default function Page() {
                   color="text-purple-500"
                   defaultDropdown="Weekly"
                   initialPercentage={30}
-                />
+                /> */}
                 <CardComponent
                   title="CASE"
                   subtitle="PET TAXI"
@@ -375,15 +404,16 @@ export default function Page() {
                   color="text-red-500"
                   defaultDropdown="Monthly"
                   initialPercentage={40}
+                  onClick={() => handleCardClick('petTaxi')}
                 />
-                 <CardComponent
+                 {/* <CardComponent
                   title="CASE"
                   subtitle="ASSOCIATED SALON"
                   image="/images/salon.png"
                   color="text-red-500"
                   defaultDropdown="Monthly"
                   initialPercentage={40}
-                />
+                /> */}
               </div>
               <div className="grid grid-cols-1 gap-4">
                 <Card className="col-span-1">
@@ -447,7 +477,7 @@ export default function Page() {
   </Card>
 
   {/* Card 2: Unassigned Cases */}
-  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+  {/* <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
     <CardHeader>
       <CardTitle>Unassigned Cases</CardTitle>
       <CardDescription>
@@ -457,15 +487,24 @@ export default function Page() {
     <CardContent>
       <RecentCases cases={unassignedData} />
     </CardContent>
-  </Card>
+  </Card> */}
 
 </div>
 
                 <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
                 <div className="">
-                  <EnquiryClient initialData={Enquiries} loading={loading} />
-                  <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
-                <EmployeeEsclatedClient/>
+                <div ref={petTaxiRef}>
+                  <UnassignedCasesClient />
+                </div>
+                <div ref={enquiryRef}>
+                  <EnquiryClient initialData={Enquiries} loading={loading}/>
+                </div>
+                <div ref={dogWalkingRef}>
+                <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
+                </div>
+
+                  {/* <EnquiryClient initialData={Enquiries} loading={loading}/> */}
+                  <EmployeeEsclatedClient />
 
                 </div>
                  

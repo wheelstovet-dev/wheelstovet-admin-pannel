@@ -14,7 +14,7 @@ interface SubscriptionFormProps {
   mode?: 'view' | 'create';
 }
 
-export const SubscriptionVieForm: React.FC<SubscriptionFormProps> = ({ mode: propMode }) => {
+export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: propMode }) => {
   const dispatch = useDispatch<AppDispatch>();
   const searchParams = useSearchParams();
   const subscriptionId = searchParams.get('id');
@@ -54,12 +54,13 @@ export const SubscriptionVieForm: React.FC<SubscriptionFormProps> = ({ mode: pro
           const subscription = data.data;
 
           // Check if AssignedEmp is null or not before accessing properties
+          const user = subscription.UserId || {};
           const assignedEmp = subscription.AssignedEmp || {};
           setSubscriptionData(subscription);
           form.reset({
-            userName: `${assignedEmp.FirstName || ''} ${assignedEmp.LastName || ''}`,
-            email: `${assignedEmp.Email || ''}`,
-            mobileNumber: assignedEmp.MobileNo || '',
+            userName: `${user.FirstName || ''} ${user.LastName || ''}`,
+            email: user.Email || '',
+            mobileNumber: user.MobileNo || '',
             plan: subscription.Plan.Name || '',
             walkFrequency: subscription.WalkFrequency || '',
             selectedTime: subscription.MorningDuration > 0 ? 'Morning' : 'Evening', // Adjust this based on your use case

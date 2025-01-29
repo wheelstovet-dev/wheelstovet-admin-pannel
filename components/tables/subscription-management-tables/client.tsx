@@ -7,7 +7,7 @@ import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { columns } from './columns';
+// import { columns } from './columns';
 
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/redux/store';
@@ -15,6 +15,7 @@ import { setLoading } from '@/app/redux/slices/authslice';
 
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getAllSubscriptions } from '@/app/redux/actions/subscriptionAction';
+import { columns } from './columns';
 
 export const SubscriptionManagementClient: React.FC = () => {
   const router = useRouter();
