@@ -3,6 +3,7 @@
 import MainLayout from '@/components/layout/main-layout';
 import ProtectedRoute from '@/components/protectedRoute';
 import { CouponsManagementClient } from '@/components/tables/coupons-management-tables/client';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // const breadcrumbItems = [
 //     { title: 'Manage Routes', 
@@ -12,12 +13,14 @@ import { CouponsManagementClient } from '@/components/tables/coupons-management-
 export default function CouponsManagement() {
   return (
     <ProtectedRoute>
-    <MainLayout meta={{ title: 'Manage Coupons' }}>
-      <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
-        {/* <BreadCrumb items={breadcrumbItems} /> */}
-        <CouponsManagementClient/>
+    <MainLayout meta={{ title: 'Coupon Management' }}>
+      <ScrollArea className="h-full">
+      <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">      
+      <CouponsManagementClient/>
       </div>
+      </ScrollArea>
     </MainLayout>
     </ProtectedRoute>
+    
   );
 }

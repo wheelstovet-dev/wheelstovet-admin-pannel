@@ -22,6 +22,9 @@ export const SubscriptionManagementClient: React.FC = () => {
   const [data, setData] = useState<any>([]);
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
+  const [pageNumber,setPageNumber]=useState(1);
+  const [limit,setLimit]=useState(5);
+  const [totalRecords,setTotalRecords]=useState(0);
 
   const handleSearch = (searchValue: string) => {
     const filteredData = data.filter((item: any) =>
@@ -32,16 +35,17 @@ export const SubscriptionManagementClient: React.FC = () => {
 
   useEffect(() => {
     fetchAllSubscriptions();
-  }, []);
+  }, [pageNumber,limit]);
 
   const fetchAllSubscriptions = async () => {
     dispatch(setLoading(true));
     try {
-      const resultAction: any = await dispatch(getAllSubscriptions({ page: 1, limit: 20 }));
+      const resultAction: any = await dispatch(getAllSubscriptions({ page: pageNumber, limit: limit }));
       
       if (resultAction.type === 'subscriptions/getAll/fulfilled') {
         setData(resultAction?.payload?.data);
         console.log(resultAction);
+        setTotalRecords(resultAction?.payload?.pagination?.total)
         setLoader(false);
       } else {
         throw new Error(resultAction.payload?.message || 'Failed to fetch subscriptions');
@@ -67,11 +71,17 @@ export const SubscriptionManagementClient: React.FC = () => {
     },
   ];
 
+  const handlePageChange=(newPage:number)=>{
+    if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
+      setPageNumber(newPage);
+    }
+  }
+
   return (
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Manage Subscription (${data.length})`}
+          title={`Manage Subscription (${totalRecords})`}
           description="Manage Subscription (Client side table functionalities.)"
         />
         {/* Uncomment if you want to add a button for adding subscriptions */}
@@ -92,6 +102,29 @@ export const SubscriptionManagementClient: React.FC = () => {
         filters={filters}
       />
       }
+      <div className="flex justify-end space-x-2 py-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber - 1)}
+            disabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {pageNumber} of {Math.ceil(totalRecords / limit)}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber + 1)}
+            disabled={pageNumber >= Math.ceil(totalRecords / limit)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
   );
 };

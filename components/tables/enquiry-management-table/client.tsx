@@ -30,7 +30,7 @@ export const EnquiryClient: React.FC<EnquiryManagementClientProps> = ({initialDa
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Enquiry`}
+          title={`Enquiry (${data?.length})`}
           description=""
         />
         {/* <Button

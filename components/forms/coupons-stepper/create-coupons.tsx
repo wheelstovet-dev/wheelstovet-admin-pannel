@@ -23,19 +23,34 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 const couponFormSchema = z.object({
-  CouponType: z.enum(['global', 'subscription', 'freeDelivery']),
+  CouponType: z.enum(['petTaxi', 'subscription', 'freeDelivery']),
   CouponCode: z.string().min(1, 'Coupon Code is required'),
   DiscountType: z.enum(['price', 'percentage']),
-  DiscountPercentage: z.number().positive('Discount Percentage must be greater than zero'),
-  StartDate: z.date({
-    required_error: "starting Date is required.",
-  }),
-  EndDate: z.date({
-    required_error: "Ending Date is required.",
-  }),
+  DiscountPercentage: z
+    .number()
+    .positive('Discount Percentage must be greater than zero')
+    .max(100, 'Discount Percentage cannot exceed 100%'),
+  DiscountPrice: z
+    .number()
+    .nonnegative('Discount Price cannot be negative')
+    .positive('Discount Price must be greater than zero').optional(),
+
+    StartDate: z
+    .string()
+    .transform((val) => new Date(val))
+    .pipe(z.date({ required_error: "Starting Date is required." })),
+
+  EndDate: z
+    .string()
+    .transform((val) => new Date(val))
+    .pipe(z.date({ required_error: "Ending Date is required." })),
+
+    
   CouponVisibility: z.enum(['public', 'private']),
-  NoOfTimesCanBeApplied: z.number().positive('Must be greater than zero'),
-  Description: z.string().optional(),
+  NoOfTimesCanBeApplied: z.preprocess(
+    (val) => Number(val), // Convert to number if it's a string
+    z.number().positive('Must be greater than zero') // Validate after conversion
+  ),  Description: z.string().optional(),
   UsageLimit: z.string().optional(),
   UsageCount: z.string().optional(),
   Status: z.enum(['active', 'inactive']),
@@ -50,6 +65,8 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
   const couponId = searchParams.get('id');
   const couponCode = searchParams.get('code');
   const dispatch = useDispatch<AppDispatch>();
+  const [discountType, setDiscountType] = useState<'price' | 'percentage'>('price');
+
 
   const [date, setDate] = React.useState<Date>()
 
@@ -90,10 +107,11 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
           EndDate: selectedCoupons.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
         }
       : {
-          CouponType: 'global',
+          CouponType: 'petTaxi',
           CouponCode: '',
           DiscountType: 'price',
           DiscountPercentage: 0,
+          DiscountPrice:0,
           StartDate: undefined,
           EndDate: undefined,
           CouponVisibility: 'public',
@@ -120,7 +138,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
       StartDate: data.StartDate ? data.StartDate.toISOString() : null,
       EndDate: data.EndDate ? data.EndDate.toISOString() : null,
     };
-  
+    console.log("formattedData",data);
     try {
       if (currentMode === 'create') {
         await dispatch(createCoupon(formattedData)).unwrap();
@@ -184,7 +202,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                         <SelectValue placeholder="Select Coupon Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="global">Global</SelectItem>
+                        <SelectItem value="petTaxi">Pet Taxi</SelectItem>
                         <SelectItem value="subscription">Subscription</SelectItem>
                         {/* <SelectItem value="freeDelivery">Free Delivery</SelectItem> */}
                       </SelectContent>
@@ -220,15 +238,18 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                   <FormControl>
                     <Select
                       disabled={loading || currentMode === 'view'}
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        setDiscountType(value as 'price' | 'percentage');
+                        field.onChange(value);
+                      }}
                       value={field.value}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Discount Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="price">Flat Price</SelectItem>
-                        <SelectItem value="percentage">Flat Percentage</SelectItem>
+                        <SelectItem value="price">Discount Price</SelectItem>
+                        <SelectItem value="percentage">Discount Percentage</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -237,7 +258,8 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
               )}
             />
 
-            {/* Discount Percentage */}
+           {/* Discount Percentage (Only if Discount Type is Percentage) */}
+          {discountType === "percentage" && (
             <FormField
               control={control}
               name="DiscountPercentage"
@@ -257,6 +279,31 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                 </FormItem>
               )}
             />
+          )}
+
+            {/* Discount Price (Only if Discount Type is Price) */}
+            {discountType === "price" && (
+              <FormField
+                control={control}
+                name="DiscountPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Discount Price"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                        disabled={loading || currentMode === 'view'}
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.DiscountPrice?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+            )}
+
 
             {/* Start Date */}
             <FormField

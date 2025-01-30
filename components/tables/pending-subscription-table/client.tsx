@@ -30,7 +30,7 @@ export const PendingSubscriptionClient: React.FC<PendingSubscriptionClientProps>
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title="Pending Subscription" description="" />
+        <Heading title={`Pending Subscription (${data?.length})`} description="" />
       </div>
       <Separator />
       
