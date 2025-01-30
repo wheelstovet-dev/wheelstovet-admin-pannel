@@ -40,7 +40,7 @@ const StatusCell = ({ row }: { row: any }) => {
   }, [row.original.Status]);
 
   return (
-    <div className="flex items-center justify-between p-2">
+    <div className="employee-status flex items-center justify-between p-2">
       <span className="text-base">{status ? "Active" : "Inactive"}</span>
       <Switch checked={status} onCheckedChange={handleToggleStatus} />
     </div>
@@ -100,6 +100,6 @@ export const columns: ColumnDef<any>[] = [
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => (<div className='emp-action'><CellAction data={row.original} /></div>),
   },
 ];

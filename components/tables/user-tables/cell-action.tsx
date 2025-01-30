@@ -41,22 +41,25 @@ export const CellAction: React.FC<any> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => router.push(`/view-user?id=${data._id}`)}
           >
             <Eye className="mr-2 h-4 w-4" /> View
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
+          className='user-action'
             onClick={() => router.push(`/viewPet?id=${data._id}`)} //change the url according to action
           >
             <Edit className="mr-2 h-4 w-4" /> View Pets
           </DropdownMenuItem>
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
+          className='user-action'
             onClick={() => router.push(`/view-user-cases?id=${data._id}`)} //change the url according to action
           >
             <Edit className="mr-2 h-4 w-4" /> View Cases
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
+          className='user-action'
             onClick={() => router.push(`/view-user-subscription?id=${data._id}`)} //change the url according to action
           >
             <Edit className="mr-2 h-4 w-4" /> View Subscription

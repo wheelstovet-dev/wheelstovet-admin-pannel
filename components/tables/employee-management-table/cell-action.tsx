@@ -57,12 +57,12 @@ export const CellAction: React.FC<any> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           
           {/* View Employee Action */}
-          <DropdownMenuItem onClick={viewEmployee}>
+          {/* <DropdownMenuItem onClick={viewEmployee}>
             <Eye className="mr-2 h-4 w-4" /> View Employee
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           {/* Update Employee Action */}
-          <DropdownMenuItem onClick={updateEmployee}>
+          <DropdownMenuItem onClick={updateEmployee} className='emp-action'>
             <UserCheck className="mr-2 h-4 w-4" /> Update Employee
           </DropdownMenuItem>
 

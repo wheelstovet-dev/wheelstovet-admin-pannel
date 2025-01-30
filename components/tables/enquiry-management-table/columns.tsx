@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Mail, Phone } from 'lucide-react';
-import { CellAction } from './cell-action';
+// import { CellAction } from './cell-action';
 import { Enquiry } from '@/constants/enquiry-data';
 import { format } from 'date-fns';
 import axios from 'axios';
@@ -194,7 +194,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef}>
+    <div ref={dropdownRef} className='enquiryStatus-update'>
       {/* Status Display */}
       <div
         onClick={() => !isUpdating && setIsOpen(!isOpen)}
@@ -332,8 +332,8 @@ export const columns: ColumnDef<any>[] = [
   },
   
   
-  {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />,
-  },
+  // {
+  //   id: 'actions',
+  //   cell: ({ row }) => <CellAction data={row.original} />,
+  // },
 ];

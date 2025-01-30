@@ -25,6 +25,14 @@ export const EnquiryClient: React.FC<EnquiryManagementClientProps> = ({initialDa
     setData(initialData || []);
   }, [initialData]);
 
+  
+   // Handle row click and navigate with ID
+   const handleRowClick = (data:any) => {
+    // console.log(data._id);
+    if (data?._id) {
+      router.push(`/query-form/view/${data._id}`); // Redirect to details page with ID
+    }
+  };
 
   return (
     <>
@@ -46,6 +54,8 @@ export const EnquiryClient: React.FC<EnquiryManagementClientProps> = ({initialDa
         // searchKey=" assignedEmployee"
         columns={columns}
         data={data}
+        onRowClick={handleRowClick}
+        stopPropagationSelectors={[".enquiryStatus-update"]} // pass the class name of the column element to prevent event bubbling
       />
       )}
     </>

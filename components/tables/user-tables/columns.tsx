@@ -92,6 +92,6 @@ export const columns: ColumnDef<any>[] = [
     },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => (<div className='user-action'><CellAction data={row.original} /></div>)
   }
 ];

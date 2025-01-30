@@ -13,12 +13,13 @@ import { AppDispatch } from '@/app/redux/store';
 import { setLoading } from '@/app/redux/slices/authslice';
 import { getAllUsers } from '@/app/redux/actions/userAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
+import { useRouter } from 'next/navigation';
 
 // interface ProductsClientProps {
 //   data: User[];
 // }
 export const UserClient: React.FC = () => {
-  // const router = useRouter();
+  const router = useRouter();
 
   const [data, setData] = useState<any>([]);
   const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +54,13 @@ export const UserClient: React.FC = () => {
       dispatch(setLoading(false));
     }
   };
+  // Handle row click and navigate with ID
+  const handleRowClick = (data:any) => {
+    // console.log(data._id);
+    if (data?._id) {
+      router.push(`/view-user?id=${data._id}`) // Redirect to details page with ID
+    }
+  };
 
 
   return (
@@ -73,7 +81,10 @@ export const UserClient: React.FC = () => {
       {loader ? 'Loading...' :
       <DataTable searchKeys={["name"]} 
       columns={columns} 
-      data={data} />
+      data={data} 
+      onRowClick={handleRowClick}
+      stopPropagationSelectors={[".user-action"]} // pass the class name of the column element to prevent event bubbling
+      />
 }
     </>
   );
