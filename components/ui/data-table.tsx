@@ -40,6 +40,8 @@ interface DataTableProps<TData, TValue> {
     updateData: (rowIndex: number, columnId: string, value: any) => void;
     updateColumnData: (columnId: string, value: any) => void;
   };
+  onRowClick?: (rowData: TData) => void;
+  stopPropagationSelectors?: string[]; // Pass elements to ignore row click
 }
 
 export function DataTable<TData, TValue>({
@@ -49,6 +51,8 @@ export function DataTable<TData, TValue>({
   onSearch,
   filters,
   meta,
+  onRowClick,
+  stopPropagationSelectors
 }: DataTableProps<TData, TValue>) {
   const [filterInput, setFilterInput] = useState('');
 
@@ -102,7 +106,7 @@ export function DataTable<TData, TValue>({
             ))}
           </DropdownMenuContent>
         </DropdownMenu> */}
-       
+
       </div>
 
       <ScrollArea className="rounded-md border min-h-[70vh] bg-white">
@@ -123,10 +127,24 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="py-2 px-6 border-b border-gray-200">
+                <TableRow key={row.id}
+                  onClick={() => onRowClick && onRowClick(row.original)} // Call onRowClick with row data
+                  data-state={row.getIsSelected() && 'selected'} className={`py-2 px-6 border-b border-gray-200 ${onRowClick ? 'cursor-pointer hover:bg-gray-100 transition' : ''}`}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-4  ">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {/* <div onClick={(e) => e.stopPropagation()}> */}
+                      <div onClick={(e) => {
+                        if (
+                          stopPropagationSelectors &&
+                          stopPropagationSelectors.some((selector) =>
+                            (e.target as HTMLElement)?.closest(selector) // Ensure proper typing
+                          )
+                        ) {
+                          e.stopPropagation(); // Stop row navigation if the clicked element matches
+                        }
+                      }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </div>
                     </TableCell>
                   ))}
                 </TableRow>
