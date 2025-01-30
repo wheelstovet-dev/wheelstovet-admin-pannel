@@ -113,7 +113,7 @@ const CaseManagementClient: React.FC = () => {
           description="Manage Cases"
         />
         <div className="flex space-x-2 w-full max-w-3xl">
-          <input
+          {/* <input
             type="text"
             placeholder="Search by service name or assigned employee"
             value={searchTerm}
@@ -122,7 +122,7 @@ const CaseManagementClient: React.FC = () => {
           />
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
-          </div>
+          </div> */}
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
               {filterType} <ChevronDown className="ml-1 h-4 w-4" />

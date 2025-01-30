@@ -17,6 +17,7 @@ export const ComplaintManagementClient: React.FC = () => {
   const router = useRouter();
   const initialData: ComplaintManagement[] = ComplaintManagementData;
   const [data, setData] = useState<ComplaintManagement[]>(initialData);
+  
 
   const handleSearch = (searchValue: string) => {
     const filteredData = initialData.filter(item =>

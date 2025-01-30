@@ -13,7 +13,7 @@ export const getAllUsers = createAsyncThunk<
   async ({ page, limit }, { rejectWithValue }) => {
     try {
       const response = await apiCall('GET', `/admin/Users?page=${page}&limit=${limit}`);
-    //   console.log('API Response for all admins:', response);
+      console.log('API Response for all admins:', response);
       return response; // Return full response including admin and pagination data
     } catch (error: any) {
       return rejectWithValue(error || 'Failed to fetch admin');

@@ -60,7 +60,7 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'CreatedAt', // Use the same field as `CreatedAt` to access the time
-    header: 'Time Slot',
+    header: 'Time',
     cell: ({ row }) => format(new Date(row.original.CreatedAt), 'HH:mm:ss'),
   },
 //   {
