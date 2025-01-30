@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin, Trash2 } from 'lucide-react';
+import { Phone, MapPin, Trash2, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/app/redux/store';
@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ProtectedRoute from '@/components/protectedRoute';
+import apiCall from '@/lib/axios';
 
 // Define Zod schema for charge validation
 const chargeSchema = z.object({
@@ -32,7 +33,20 @@ const chargeSchema = z.object({
 // Define Zod schema for the new hostel form validation
 const newHostelSchema = z.object({
   hostelName: z.string().min(1, "Hostel name is required"),
-  ContactNo: z.string().length(10, "Contact number must be in of 10 digits'"),
+  // ContactNo: z.string()
+  //   .trim()
+  //   .regex(/^\d{10}$/, "Contact number must be exactly 10 digits and numeric"),
+  ContactNo: z.preprocess(
+    (val) => {
+      if (typeof val === "number") {
+        return val.toString(); // Convert number to string for regex validation
+      }
+      return val;
+    },
+    z.string()
+      .regex(/^\d{10}$/, "Contact number must be exactly 10 digits and numeric")
+      .transform((val) => Number(val)) // Convert back to number after validation
+  ),
   address: z.string().min(1, "Address is required"),
 });
 
@@ -55,7 +69,10 @@ export default function HostelVisitPage() {
   const { services, hostels, loading } = useSelector((state: RootState) => state.service);
   const [initialChargeValues, setInitialChargeValues] = useState<ChargeFormValues>({} as ChargeFormValues);
   const [isFormVisible, setFormVisible] = useState(false);
- 
+
+  const [editMode, setEditMode] = useState(false);
+  const [editingHostelId, setEditingHostelId] = useState<string | null>(null);
+
 
   // React Hook Form setup for hostel charges
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargeFormValues>({
@@ -64,9 +81,9 @@ export default function HostelVisitPage() {
   });
 
   // React Hook Form setup for new hostel creation
-  const { register: registerHostel, handleSubmit: handleHostelSubmit, formState: { errors: hostelErrors } } = useForm<NewHostelFormValues>({
+  const { register: registerHostel, reset, handleSubmit: handleHostelSubmit, formState: { errors: hostelErrors } } = useForm<NewHostelFormValues>({
     resolver: zodResolver(newHostelSchema),
-    defaultValues: { hostelName: '', ContactNo: '', address: '' },
+    defaultValues: { hostelName: '', ContactNo: undefined, address: '' },
   });
 
   useEffect(() => {
@@ -103,7 +120,7 @@ export default function HostelVisitPage() {
     }
   }, [services, router, setValue]);
 
-  const onSubmitCharges = async(data: ChargeFormValues) => {
+  const onSubmitCharges = async (data: ChargeFormValues) => {
     if (serviceId) {
       try {
         const serviceData = {
@@ -134,7 +151,7 @@ export default function HostelVisitPage() {
     }
   };
 
-  const handleCancel = () => {
+  const handleChargesCancel = () => {
     Object.entries(initialChargeValues).forEach(([key, value]) => setValue(key as keyof ChargeFormValues, value));
     ToastAtTopRight.fire({
       icon: 'info',
@@ -161,152 +178,93 @@ export default function HostelVisitPage() {
 
   const onSubmitHostel = async (data: NewHostelFormValues) => {
     try {
-      console.log(data);
-      await dispatch(createHostel(data)).unwrap();
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Hostel created successfully!',
-      });
+      // console.log(data);
+      if (editMode && editingHostelId) {
+        // await dispatch(updateHostel({ id: editingHostelId, data })).unwrap();
+        await apiCall('PUT', `admin/hostel/${editingHostelId}`,data);
+        ToastAtTopRight.fire({ icon: 'success', title: 'Hostel updated successfully!' });
+      } else {
+        await dispatch(createHostel(data)).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Hostel created successfully!',
+        });
+      }
       setFormVisible(false);
+      setEditMode(false);
+      setEditingHostelId(null);
+      reset();
       dispatch(getAllHostels());
-    } catch (error) {
+    } catch (error: any) {
       ToastAtTopRight.fire({
         icon: 'error',
-        title: 'Failed to create hostel',
+        title: error?.message || 'Failed to process hostel request',
       });
     }
   };
 
+  const handleEdit = (hostel: any) => {
+    reset({
+      hostelName: hostel.hostelName,
+      ContactNo: hostel.ContactNo,
+      address: hostel.address,
+    });
+    setEditingHostelId(hostel._id);
+    setEditMode(true);
+    setFormVisible(true);
+  };
+
+
+  const handleCancel = () => {
+    setFormVisible(false);
+    setEditMode(false);
+    setEditingHostelId(null);
+    reset();
+  };
+
+
   return (
     <ProtectedRoute>
-    <MainLayout meta={{ title: 'Hostel Service Management' }}>
-      <ScrollArea className="h-full">
-        <div className="container mx-auto p-8">
-          <h1 className="text-3xl font-bold mb-8">Hostel Service Management</h1>
-          <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Hostel Visit Charges</h2>
-            <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <span className="text-gray-500">Loading ...</span>
-                  </div>
-                ) : (
-                  <>
-                    {Object.keys(chargeSchema.shape).map((key) => (
-                      <div key={key} className="flex items-center">
-                        <label className="block font-bold text-gray-700 w-full">
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </label>
-                        <input
-                          type="number"
-                          {...register(key as keyof ChargeFormValues, { valueAsNumber: true })}
-                          className="mt-1 block w-20 border rounded p-2"
-                        />
-                        <span className="ml-2 font-bold">
-                          {key === "IncludedTime" ? "minutes" : "INR"}
-                        </span>
-                        {errors[key as keyof ChargeFormValues] && (
-                          <p className="text-red-500">{errors[key as keyof ChargeFormValues]?.message}</p>
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </div>
-              <div className="flex justify-start mt-8">
-                <button
-                  type="button"
-                  className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-yellow-500 text-white py-2 px-4 rounded"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Associated Hostels</h2>
-              <button
-                className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={() => setFormVisible(true)}
-              >
-                + Add New
-              </button>
-            </div>
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-              <thead>
-                <tr className="bg-yellow-500 text-left text-gray-600">
-                  <th className="px-4 py-2 border-b border-r-2">Serial No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Hostel Name</th>
-                  <th className="px-4 py-2 border-b border-r-2">Contact No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Address</th>
-                  <th className="px-4 py-2 border-b border-r-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {hostels.map((hostel, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 border-b text-center">{index + 1}</td>
-                    <td className="px-4 py-6 border-b">{hostel.hostelName}</td>
-                    <td className="px-4 py-6 border-b">{hostel.ContactNo}</td>
-                    <td className="px-4 py-6 border-b">{hostel.address}</td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
-                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(hostel._id)} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {isFormVisible && (
-              <form onSubmit={handleHostelSubmit(onSubmitHostel)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Hostel Name <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerHostel("hostelName")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {hostelErrors.hostelName && <p className="text-red-500">{hostelErrors.hostelName.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerHostel("ContactNo")}
-                      className="mt-1 block w-full border rounded p-2"
-                      maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
-                    />
-                    {hostelErrors.ContactNo && <p className="text-red-500">{hostelErrors.ContactNo.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerHostel("address")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {hostelErrors.address && <p className="text-red-500">{hostelErrors.address.message}</p>}
-                  </div>
+      <MainLayout meta={{ title: 'Hostel Service Management' }}>
+        <ScrollArea className="h-full">
+          <div className="container mx-auto p-8">
+            <h1 className="text-3xl font-bold mb-8">Hostel Service Management</h1>
+            <div className="bg-white p-8 rounded-lg shadow-md mb-8">
+              <h2 className="text-3xl font-bold mb-8">Hostel Visit Charges</h2>
+              <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {loading ? (
+                    <div className="flex justify-center py-8">
+                      <span className="text-gray-500">Loading ...</span>
+                    </div>
+                  ) : (
+                    <>
+                      {Object.keys(chargeSchema.shape).map((key) => (
+                        <div key={key} className="flex items-center">
+                          <label className="block font-bold text-gray-700 w-full">
+                            {key.replace(/([A-Z])/g, ' $1')}
+                          </label>
+                          <input
+                            type="number"
+                            {...register(key as keyof ChargeFormValues, { valueAsNumber: true })}
+                            className="mt-1 block w-20 border rounded p-2"
+                          />
+                          <span className="ml-2 font-bold">
+                            {key === "IncludedTime" ? "minutes" : "INR"}
+                          </span>
+                          {errors[key as keyof ChargeFormValues] && (
+                            <p className="text-red-500">{errors[key as keyof ChargeFormValues]?.message}</p>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
-                <div className="flex justify-start mt-4">
+                <div className="flex justify-start mt-8">
                   <button
                     type="button"
                     className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                    onClick={() => setFormVisible(false)}
+                    onClick={handleChargesCancel}
                   >
                     Cancel
                   </button>
@@ -314,15 +272,110 @@ export default function HostelVisitPage() {
                     type="submit"
                     className="bg-yellow-500 text-white py-2 px-4 rounded"
                   >
-                    Create
+                    Save Changes
                   </button>
                 </div>
               </form>
-            )}
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold">Associated Hostels</h2>
+                <button
+                  className="bg-yellow-500 text-white py-2 px-4 rounded"
+                  onClick={() => { setFormVisible(true); setEditMode(false); reset(); }}
+                >
+                  + Add New
+                </button>
+              </div>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                <thead>
+                  <tr className="bg-yellow-500 text-left text-gray-600">
+                    <th className="px-4 py-2 border-b border-r-2">Serial No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Hostel Name</th>
+                    <th className="px-4 py-2 border-b border-r-2">Contact No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Address</th>
+                    <th className="px-4 py-2 border-b border-r-2">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {hostels.map((hostel, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-4 py-6 border-b text-center">{index + 1}</td>
+                      <td className="px-4 py-6 border-b">{hostel.hostelName}</td>
+                      <td className="px-4 py-6 border-b">{hostel.ContactNo}</td>
+                      <td className="px-4 py-6 border-b">{hostel.address}</td>
+                      <td className="px-4 py-6 border-b">
+                        <div className="flex items-center gap-4 justify-center">
+                          {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                          <Edit className="text-yellow-500 cursor-pointer" onClick={() => handleEdit(hostel)} />
+                          <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(hostel._id)} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {isFormVisible && (
+                <form onSubmit={handleHostelSubmit(onSubmitHostel)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Hostel Name <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerHostel("hostelName")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {hostelErrors.hostelName && <p className="text-red-500">{hostelErrors.hostelName.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerHostel("ContactNo")}
+                        className="mt-1 block w-full border rounded p-2"
+                        maxLength={13} // Assuming the format is '+91 XXXXXXXXXX'
+                      />
+                      {hostelErrors.ContactNo && <p className="text-red-500">{hostelErrors.ContactNo.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerHostel("address")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {hostelErrors.address && <p className="text-red-500">{hostelErrors.address.message}</p>}
+                    </div>
+                  </div>
+                  <div className="flex justify-start mt-4">
+                    <button
+                      type="button"
+                      className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
+                      onClick={() => {
+                        if (editMode) {
+                          handleCancel();
+                        } else {
+                          setFormVisible(false);
+                        }
+                      }}
+                    >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-yellow-500 text-white py-2 px-4 rounded"
+                  >
+                    {editMode ? 'Update' : 'Create'}
+                  </button>
+                </div>
+                </form>
+              )}
           </div>
         </div>
       </ScrollArea>
     </MainLayout>
-    </ProtectedRoute>
+    </ProtectedRoute >
   );
 }

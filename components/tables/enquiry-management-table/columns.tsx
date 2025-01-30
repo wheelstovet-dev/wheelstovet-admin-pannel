@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Mail, Phone } from 'lucide-react';
 import { CellAction } from './cell-action';
 import { Enquiry } from '@/constants/enquiry-data';
@@ -139,6 +139,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState(currentStatus);
   const [isUpdating, setIsUpdating] = useState(false); // Loading state for API call
+  const dropdownRef = useRef<HTMLDivElement>(null); // Reference for detecting outside clicks
 
   const statusOptions = ['pending', 'addressed'];
 
@@ -173,10 +174,27 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
       setIsOpen(false);
     }
   };
-  
+   // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <div>
+    <div ref={dropdownRef}>
       {/* Status Display */}
       <div
         onClick={() => !isUpdating && setIsOpen(!isOpen)}

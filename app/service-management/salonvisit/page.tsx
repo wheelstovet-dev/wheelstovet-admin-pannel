@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Phone, MapPin, Trash2 } from 'lucide-react';
+import { Phone, MapPin, Trash2, Edit } from 'lucide-react';
 import { getAllSalons, getAllServices, createSalon, updateService, deleteSalon } from '@/app/redux/actions/servicesAction';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ProtectedRoute from '@/components/protectedRoute';
+import apiCall from '@/lib/axios';
 
 // Define Zod schema for salon charges validation
 const chargesSchema = z.object({
@@ -31,7 +32,17 @@ const chargesSchema = z.object({
 // Define Zod schema for the new salon form validation
 const newSalonSchema = z.object({
   salonName: z.string().min(1, "Salon name is required"),
-  ContactNo: z.string().length(10, "Contact number must be 10 digits"),
+  ContactNo: z.preprocess(
+    (val) => {
+      if (typeof val === "number") {
+        return val.toString(); // Convert number to string for regex validation
+      }
+      return val;
+    },
+    z.string()
+      .regex(/^\d{10}$/, "Contact number must be exactly 10 digits and numeric")
+      .transform((val) => Number(val)) // Convert back to number after validation
+  ),
   address: z.string().min(1, "Address is required"),
 });
 
@@ -57,6 +68,9 @@ export default function SalonVisitPage() {
   const [initialCharges, setInitialCharges] = useState<ChargesFormValues>({} as ChargesFormValues);
   const [isFormVisible, setFormVisible] = useState(false);
 
+  const [editMode, setEditMode] = useState(false);
+  const [editingSalonId, setEditingSalonId] = useState<string | null>(null);
+
   // React Hook Form setup for salon charges
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<ChargesFormValues>({
     resolver: zodResolver(chargesSchema),
@@ -64,9 +78,9 @@ export default function SalonVisitPage() {
   });
 
   // React Hook Form setup for new salon creation
-  const { register: registerSalon, handleSubmit: handleSalonSubmit, formState: { errors: salonErrors } } = useForm<NewSalonFormValues>({
+  const { register: registerSalon,reset, handleSubmit: handleSalonSubmit, formState: { errors: salonErrors } } = useForm<NewSalonFormValues>({
     resolver: zodResolver(newSalonSchema),
-    defaultValues: { salonName: '', ContactNo: '', address: '' },
+    defaultValues: { salonName: '', ContactNo: undefined, address: '' },
   });
 
   useEffect(() => {
@@ -103,7 +117,7 @@ export default function SalonVisitPage() {
     }
   }, [services, router, setValue]);
 
-  const onSubmitCharges = async(data: ChargesFormValues) => {
+  const onSubmitCharges = async (data: ChargesFormValues) => {
     if (serviceId) {
       try {
         const serviceData = {
@@ -137,7 +151,7 @@ export default function SalonVisitPage() {
     }
   };
 
-  const handleCancel = () => {
+  const handleChargesCancel = () => {
     Object.entries(initialCharges).forEach(([key, value]) => setValue(key as keyof ChargesFormValues, value));
     ToastAtTopRight.fire({
       icon: 'info',
@@ -163,151 +177,91 @@ export default function SalonVisitPage() {
 
   const onSubmitSalon = async (data: NewSalonFormValues) => {
     try {
-      await dispatch(createSalon(data));
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Salon created successfully!',
-      });
+      if (editMode && editingSalonId) {
+        // await dispatch(updateHostel({ id: editingHostelId, data })).unwrap();
+        await apiCall('PUT', `admin/salon/${editingSalonId}`, data);
+        ToastAtTopRight.fire({ icon: 'success', title: 'Salon updated successfully!' });
+      } else {
+        await dispatch(createSalon(data));
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Salon created successfully!',
+        });
+      }
       setFormVisible(false);
+      setEditMode(false);
+      setEditingSalonId(null);
+      reset();
       dispatch(getAllSalons());
     } catch (error) {
       ToastAtTopRight.fire({
         icon: 'warning',
-        title: 'Failed to create salon',
+        title: 'Failed to process salon request',
       });
     }
   };
 
+  const handleEdit = (salon: any) => {
+    reset({
+      salonName: salon.salonName,
+      ContactNo: salon.ContactNo,
+      address: salon.address,
+    });
+    setEditingSalonId(salon._id);
+    setEditMode(true);
+    setFormVisible(true);
+  };
+
+
+  const handleCancel = () => {
+    setFormVisible(false);
+    setEditMode(false);
+    setEditingSalonId(null);
+    reset();
+  };
+
   return (
     <ProtectedRoute>
-    <MainLayout meta={{ title: 'Service Management' }}>
-      <ScrollArea className="h-full">
-        <div className="container mx-auto p-8">
-          <h1 className="text-3xl font-bold mb-8">Service Management</h1>
-          <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Salon Visit Charges</h2>
-            <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <span className="text-gray-500">Loading ...</span>
-                  </div>
-                ) : (
-                  <>
-                    {Object.keys(initialCharges).map((key) => (
-                      <div key={key} className="flex items-center">
-                        <label className="block font-bold text-gray-700 w-full">
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </label>
-                        <input
-                          type="number"
-                          {...register(key as keyof ChargesFormValues, { valueAsNumber: true })}
-                          className="mt-1 block w-20 border rounded p-2"
-                        />
-                        <span className="ml-2 font-bold">
-                          {key === "IncludedTime" ? "minutes" : "INR"}
-                        </span>
-                        {errors[key as keyof ChargesFormValues] && (
-                          <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </div>
-              <div className="flex justify-start mt-8">
-                <button
-                  type="button"
-                  className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-yellow-500 text-white py-2 px-4 rounded"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Associated Salon</h2>
-              <button
-                className="bg-yellow-500 text-white py-2 px-4 rounded"
-                onClick={() => setFormVisible(true)}
-              >
-                + Add New
-              </button>
-            </div>
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-              <thead>
-                <tr className="bg-yellow-500 text-left text-gray-600">
-                  <th className="px-4 py-2 border-b border-r-2">Serial No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Salon Name</th>
-                  <th className="px-4 py-2 border-b border-r-2">Contact No</th>
-                  <th className="px-4 py-2 border-b border-r-2">Address</th>
-                  <th className="px-4 py-2 border-b border-r-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {salons.map((salon, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-6 border-b text-center">{index + 1}</td>
-                    <td className="px-4 py-6 border-b">{salon.salonName}</td>
-                    <td className="px-4 py-6 border-b">{salon.ContactNo}</td>
-                    <td className="px-4 py-6 border-b">{salon.address}</td>
-                    <td className="px-4 py-6 border-b">
-                      <div className="flex items-center">
-                        {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
-                        <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(salon._id)} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {isFormVisible && (
-              <form onSubmit={handleSalonSubmit(onSubmitSalon)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Salon Name <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerSalon("salonName")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {salonErrors.salonName && <p className="text-red-500">{salonErrors.salonName.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerSalon("ContactNo")}
-                      className="mt-1 block w-full border rounded p-2"
-                      maxLength={10}
-                    />
-                    {salonErrors.ContactNo && <p className="text-red-500">{salonErrors.ContactNo.message}</p>}
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      {...registerSalon("address")}
-                      className="mt-1 block w-full border rounded p-2"
-                    />
-                    {salonErrors.address && <p className="text-red-500">{salonErrors.address.message}</p>}
-                  </div>
+      <MainLayout meta={{ title: 'Service Management' }}>
+        <ScrollArea className="h-full">
+          <div className="container mx-auto p-8">
+            <h1 className="text-3xl font-bold mb-8">Service Management</h1>
+            <div className="bg-white p-8 rounded-lg shadow-md mb-8">
+              <h2 className="text-3xl font-bold mb-8">Salon Visit Charges</h2>
+              <form onSubmit={handleSubmit(onSubmitCharges)} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {loading ? (
+                    <div className="flex justify-center py-8">
+                      <span className="text-gray-500">Loading ...</span>
+                    </div>
+                  ) : (
+                    <>
+                      {Object.keys(initialCharges).map((key) => (
+                        <div key={key} className="flex items-center">
+                          <label className="block font-bold text-gray-700 w-full">
+                            {key.replace(/([A-Z])/g, ' $1')}
+                          </label>
+                          <input
+                            type="number"
+                            {...register(key as keyof ChargesFormValues, { valueAsNumber: true })}
+                            className="mt-1 block w-20 border rounded p-2"
+                          />
+                          <span className="ml-2 font-bold">
+                            {key === "IncludedTime" ? "minutes" : "INR"}
+                          </span>
+                          {errors[key as keyof ChargesFormValues] && (
+                            <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
-                <div className="flex justify-start mt-4">
+                <div className="flex justify-start mt-8">
                   <button
                     type="button"
                     className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
-                    onClick={() => setFormVisible(false)}
+                    onClick={handleChargesCancel}
                   >
                     Cancel
                   </button>
@@ -315,15 +269,110 @@ export default function SalonVisitPage() {
                     type="submit"
                     className="bg-yellow-500 text-white py-2 px-4 rounded"
                   >
-                    Create
+                    Save Changes
                   </button>
                 </div>
               </form>
-            )}
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold">Associated Salon</h2>
+                <button
+                  className="bg-yellow-500 text-white py-2 px-4 rounded"
+                  onClick={() => { setFormVisible(true); setEditMode(false); reset(); }}
+                >
+                  + Add New
+                </button>
+              </div>
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                <thead>
+                  <tr className="bg-yellow-500 text-left text-gray-600">
+                    <th className="px-4 py-2 border-b border-r-2">Serial No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Salon Name</th>
+                    <th className="px-4 py-2 border-b border-r-2">Contact No</th>
+                    <th className="px-4 py-2 border-b border-r-2">Address</th>
+                    <th className="px-4 py-2 border-b border-r-2">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {salons.map((salon, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-4 py-6 border-b text-center">{index + 1}</td>
+                      <td className="px-4 py-6 border-b">{salon.salonName}</td>
+                      <td className="px-4 py-6 border-b">{salon.ContactNo}</td>
+                      <td className="px-4 py-6 border-b">{salon.address}</td>
+                      <td className="px-4 py-6 border-b">
+                        <div className="flex items-center gap-4 justify-center">
+                          {/* <TrashIcon className="h-4 w-4 mr-2 text-red-600"/> */}
+                          <Edit className="text-yellow-500 cursor-pointer" onClick={() => handleEdit(salon)} />
+                          <Trash2 className=" mr-2 text-red-600 cursor-pointer" onClick={() => handleDelete(salon._id)} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {isFormVisible && (
+                <form onSubmit={handleSalonSubmit(onSubmitSalon)} className="mt-8 bg-gray-100 p-4 rounded-lg shadow-md">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Salon Name <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerSalon("salonName")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {salonErrors.salonName && <p className="text-red-500">{salonErrors.salonName.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Contact No <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerSalon("ContactNo")}
+                        className="mt-1 block w-full border rounded p-2"
+                        maxLength={10}
+                      />
+                      {salonErrors.ContactNo && <p className="text-red-500">{salonErrors.ContactNo.message}</p>}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="block font-bold text-gray-700">Address <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        {...registerSalon("address")}
+                        className="mt-1 block w-full border rounded p-2"
+                      />
+                      {salonErrors.address && <p className="text-red-500">{salonErrors.address.message}</p>}
+                    </div>
+                  </div>
+                  <div className="flex justify-start mt-4">
+                    <button
+                      type="button"
+                      className="bg-gray-200 text-gray-800 py-2 px-4 rounded mr-4"
+                      onClick={() => {
+                        if (editMode) {
+                          handleCancel();
+                        } else {
+                          setFormVisible(false);
+                        }
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-yellow-500 text-white py-2 px-4 rounded"
+                    >
+                     {editMode ? 'Update' : 'Create'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
-      </ScrollArea>
-    </MainLayout>
+        </ScrollArea>
+      </MainLayout>
     </ProtectedRoute>
   );
 }
