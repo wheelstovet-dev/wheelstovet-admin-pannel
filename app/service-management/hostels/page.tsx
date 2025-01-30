@@ -19,15 +19,17 @@ import apiCall from '@/lib/axios';
 const chargeSchema = z.object({
   FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
   AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
-  PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
+  AdditionalDistanceCharge: z.number().nonnegative().min(0, "Additional distance charge must be non-negative"),
+  // PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
   HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
-  VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
-  MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
-  AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
-  FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
-  TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
-  TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
-  IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
+  // VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
+  // MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
+  // AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
+  // FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
+  // TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
+  // TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
+  // IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
+  IncludedDistance: z.number().nonnegative().min(0, "Included distance must be non-negative"),
 });
 
 // Define Zod schema for the new hostel form validation
@@ -98,15 +100,17 @@ export default function HostelVisitPage() {
         const initialCharges: ChargeFormValues = {
           FixedCharges: HostelService.fixedCharge || 0,
           AdditionalPetCharge: HostelService.additionalPetCharge || 0,
-          PetHandlerCharge: HostelService.petHandlerCharge || 0,
+          AdditionalDistanceCharge: HostelService.AdditionalDistanceCharge || 0,
+          // PetHandlerCharge: HostelService.petHandlerCharge || 0,
           HandlingAddOnCharge: HostelService.handlingAddOnCharge || 0,
-          VetVisitAddOnCharge: HostelService.vetVisitAddOnCharge || 0,
-          MinimumChargeIfNotFound: HostelService.minimumChargeIfNotFound || 0,
-          AdditionalTimeCost: HostelService.additionalTimeCharge || 0,
-          FourHourCharge: HostelService.fourHourCharge || 0,
-          TwelveHourCharge: HostelService.twelveHourCharge || 0,
-          TwentyFourHourCharge: HostelService.twentyFourHourCharge || 0,
-          IncludedTime: HostelService.includedTime || 0,
+          // VetVisitAddOnCharge: HostelService.vetVisitAddOnCharge || 0,
+          // MinimumChargeIfNotFound: HostelService.minimumChargeIfNotFound || 0,
+          // AdditionalTimeCost: HostelService.additionalTimeCharge || 0,
+          // FourHourCharge: HostelService.fourHourCharge || 0,
+          // TwelveHourCharge: HostelService.twelveHourCharge || 0,
+          // TwentyFourHourCharge: HostelService.twentyFourHourCharge || 0,
+          // IncludedTime: HostelService.includedTime || 0,
+          IncludedDistance: HostelService.includedDistance || 0,
         };
         setInitialChargeValues(initialCharges);
         Object.entries(initialCharges).forEach(([key, value]) => setValue(key as keyof ChargeFormValues, value));
@@ -126,15 +130,17 @@ export default function HostelVisitPage() {
         const serviceData = {
           fixedCharge: data.FixedCharges,
           additionalPetCharge: data.AdditionalPetCharge,
-          petHandlerCharge: data.PetHandlerCharge,
+          AdditionalDistanceCharge: data.AdditionalDistanceCharge,
+          // petHandlerCharge: data.PetHandlerCharge,
           handlingAddOnCharge: data.HandlingAddOnCharge,
-          vetVisitAddOnCharge: data.VetVisitAddOnCharge,
-          minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
-          additionalTimeCharge: data.AdditionalTimeCost,
-          fourHourCharge: data.FourHourCharge,
-          twelveHourCharge: data.TwelveHourCharge,
-          twentyFourHourCharge: data.TwentyFourHourCharge,
-          includedTime: data.IncludedTime,
+          // vetVisitAddOnCharge: data.VetVisitAddOnCharge,
+          // minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
+          // additionalTimeCharge: data.AdditionalTimeCost,
+          // fourHourCharge: data.FourHourCharge,
+          // twelveHourCharge: data.TwelveHourCharge,
+          // twentyFourHourCharge: data.TwentyFourHourCharge,
+          // includedTime: data.IncludedTime,
+          IncludedDistance: data.IncludedDistance,
         };
 
         await dispatch(updateService({ id: serviceId, serviceData })).unwrap();

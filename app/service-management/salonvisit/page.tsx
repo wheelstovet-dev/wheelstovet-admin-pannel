@@ -18,14 +18,14 @@ import apiCall from '@/lib/axios';
 const chargesSchema = z.object({
   FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
   AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
-  PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
+  // PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
   HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
-  VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
-  MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
+  // VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
+  // MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
   AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
-  FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
-  TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
-  TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
+  // FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
+  // TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
+  // TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
   IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
 });
 
@@ -95,14 +95,14 @@ export default function SalonVisitPage() {
         const fetchedCharges: ChargesFormValues = {
           FixedCharges: salonService.fixedCharge || 0,
           AdditionalPetCharge: salonService.additionalPetCharge || 0,
-          PetHandlerCharge: salonService.petHandlerCharge || 0,
+          // PetHandlerCharge: salonService.petHandlerCharge || 0,
           HandlingAddOnCharge: salonService.handlingAddOnCharge || 0,
-          VetVisitAddOnCharge: salonService.vetVisitAddOnCharge || 0,
-          MinimumChargeIfNotFound: salonService.minimumChargeIfNotFound || 0,
+          // VetVisitAddOnCharge: salonService.vetVisitAddOnCharge || 0,
+          // MinimumChargeIfNotFound: salonService.minimumChargeIfNotFound || 0,
           AdditionalTimeCost: salonService.additionalTimeCharge || 0,
-          FourHourCharge: salonService.fourHourCharge || 0,
-          TwelveHourCharge: salonService.twelveHourCharge || 0,
-          TwentyFourHourCharge: salonService.twentyFourHourCharge || 0,
+          // FourHourCharge: salonService.fourHourCharge || 0,
+          // TwelveHourCharge: salonService.twelveHourCharge || 0,
+          // TwentyFourHourCharge: salonService.twentyFourHourCharge || 0,
           IncludedTime: salonService.includedTime || 0,
         };
         setInitialCharges(fetchedCharges);
@@ -123,14 +123,14 @@ export default function SalonVisitPage() {
         const serviceData = {
           fixedCharge: data.FixedCharges,
           additionalPetCharge: data.AdditionalPetCharge,
-          petHandlerCharge: data.PetHandlerCharge,
+          // petHandlerCharge: data.PetHandlerCharge,
           handlingAddOnCharge: data.HandlingAddOnCharge,
-          vetVisitAddOnCharge: data.VetVisitAddOnCharge,
-          minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
+          // vetVisitAddOnCharge: data.VetVisitAddOnCharge,
+          // minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
           additionalTimeCharge: data.AdditionalTimeCost,
-          fourHourCharge: data.FourHourCharge,
-          twelveHourCharge: data.TwelveHourCharge,
-          twentyFourHourCharge: data.TwentyFourHourCharge,
+          // fourHourCharge: data.FourHourCharge,
+          // twelveHourCharge: data.TwelveHourCharge,
+          // twentyFourHourCharge: data.TwentyFourHourCharge,
           includedTime: data.IncludedTime,
         };
 
@@ -239,16 +239,18 @@ export default function SalonVisitPage() {
                       {Object.keys(initialCharges).map((key) => (
                         <div key={key} className="flex items-center">
                           <label className="block font-bold text-gray-700 w-full">
-                            {key.replace(/([A-Z])/g, ' $1')}
+                            {key.replace(/([A-Z])/g, ' $1')} (  <span className="ml-2 font-bold">
+                            {key === "IncludedTime" ? "minutes" : "INR"}
+                          </span> )
                           </label>
                           <input
                             type="number"
                             {...register(key as keyof ChargesFormValues, { valueAsNumber: true })}
                             className="mt-1 block w-20 border rounded p-2"
                           />
-                          <span className="ml-2 font-bold">
+                          {/* <span className="ml-2 font-bold">
                             {key === "IncludedTime" ? "minutes" : "INR"}
-                          </span>
+                          </span> */}
                           {errors[key as keyof ChargesFormValues] && (
                             <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
                           )}

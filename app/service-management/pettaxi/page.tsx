@@ -16,6 +16,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 const chargesSchema = z.object({
   FixedCharges: z.number().nonnegative().min(0, 'Fixed charge must be non-negative'),
   HandlingAddOnCharge: z.number().nonnegative().min(0, 'Handling Add-On charge must be non-negative'),
+  AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
+  AdditionalDistanceCharge: z.number().nonnegative().min(0, "Additional distance charge must be non-negative"),
+  IncludedDistance: z.number().nonnegative().min(0, "Included distance must be non-negative"),
 });
 
 type ChargesFormValues = z.infer<typeof chargesSchema>;
@@ -53,6 +56,9 @@ export default function PetTaxiPage() {
         const fetchedCharges: ChargesFormValues = {
           FixedCharges: PetTaxiService.fixedCharge || 0,
           HandlingAddOnCharge: PetTaxiService.handlingAddOnCharge || 0,
+          AdditionalPetCharge: PetTaxiService.additionalPetCharge || 0,
+          AdditionalDistanceCharge: PetTaxiService.AdditionalDistanceCharge || 0,
+          IncludedDistance: PetTaxiService.includedDistance || 0,
         };
 
         setInitialCharges(fetchedCharges);
@@ -165,7 +171,7 @@ export default function PetTaxiPage() {
                           )}
                         </div>
                       ))}
-                      <div className="flex items-center">
+                      {/* <div className="flex items-center">
                         <label className="block font-bold text-gray-700 w-full">Distance (KM)</label>
                         <input
                           type="number"
@@ -184,7 +190,7 @@ export default function PetTaxiPage() {
                           className="mt-1 block w-20 border rounded p-2"
                         />
                         <span className="ml-2 font-bold">Minutes</span>
-                      </div>
+                      </div> */}
 
                     </>
                   )}
@@ -192,11 +198,11 @@ export default function PetTaxiPage() {
               </div>
 
               {/* Display Total Charges */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-2xl font-bold">
                   Total Charges: <span className="text-yellow-500">{totalCost} INR</span>
                 </h3>
-              </div>
+              </div> */}
 
               <div className="flex justify-start mt-8">
                 <button

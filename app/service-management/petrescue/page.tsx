@@ -167,11 +167,11 @@ export default function PetRescuePage() {
               </div>
 
               {/* Display Total Charges */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-2xl font-bold">
-                  Total Charges: <span className="text-yellow-500">{totalCharges} INR</span> {/* Display total charges dynamically */}
+                  Total Charges: <span className="text-yellow-500">{totalCharges} INR</span> 
                 </h3>
-              </div>
+              </div> */}
 
               <div className="flex justify-start mt-8">
                 <button
