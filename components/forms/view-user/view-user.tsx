@@ -12,6 +12,7 @@ import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getUserById } from '@/app/redux/actions/userAction';
 import { AppDispatch } from '@/app/redux/store';
 import { useSearchParams } from 'next/navigation';
+import UserCasesClient from '@/components/tables/view-user-cases/client';
 
 // User form schema for validation (adjust fields as needed)
 const userFormSchema = z.object({
@@ -77,6 +78,7 @@ export const ViewUser: React.FC<any> = () => {
     if (loading) return <div>Loading...</div>; // Display loading indicator
 
     return (
+        <>
         <div className="container mx-auto p-4">
             <Separator />
 
@@ -228,5 +230,9 @@ export const ViewUser: React.FC<any> = () => {
                 </form>
             </Form>
         </div>
+        <Separator/>
+            {/* <AssignedClient /> */}
+            <UserCasesClient/>
+            </>
     );
 };
