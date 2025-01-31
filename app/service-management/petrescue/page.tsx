@@ -148,7 +148,10 @@ export default function PetRescuePage() {
                       {Object.keys(initialCharges).map((key) => (
                         <div key={key} className="flex items-center">
                           <label className="block font-bold text-gray-700 w-full">
-                            {key.replace(/([A-Z])/g, ' $1')} {/* Format camelCase to readable text */}
+                            {key.replace(/([A-Z])/g, ' $1')} (<span className="ml-2 font-bold">
+                              {key === "IncludedTime" ? "minutes" : key === "IncludedDistance" ? "KM" : "INR"}
+
+                          </span> )
                           </label>
                           <Input
                             type="number"

@@ -15,23 +15,24 @@ import ProtectedRoute from '@/components/protectedRoute';
 
 // Define Zod schema for charges validation
 const chargesSchema = z.object({
-  // FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
+  FixedCharges: z.number().nonnegative().min(0, "Fixed charge must be non-negative"),
   // AdditionalPetCharge: z.number().nonnegative().min(0, "Additional pet charge must be non-negative"),
   // PetHandlerCharge: z.number().nonnegative().min(0, "Pet handler charge must be non-negative"),
   // HandlingAddOnCharge: z.number().nonnegative().min(0, "Handling add-on charge must be non-negative"),
   // VetVisitAddOnCharge: z.number().nonnegative().min(0, "Vet visit add-on charge must be non-negative"),
   // MinimumChargeIfNotFound: z.number().nonnegative().min(0, "Minimum charge if not found must be non-negative"),
   // AdditionalTimeCost: z.number().nonnegative().min(0, "Additional time cost must be non-negative"),
-  FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
-  TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
-  TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
+  AdditionalDistanceCharge: z.number().nonnegative().min(0, "Additional distance charge must be non-negative"),
+  //FourHourCharge: z.number().nonnegative().min(0, "Four-hour charge must be non-negative"),
+  //TwelveHourCharge: z.number().nonnegative().min(0, "Twelve-hour charge must be non-negative"),
+  //TwentyFourHourCharge: z.number().nonnegative().min(0, "Twenty-four-hour charge must be non-negative"),
   // IncludedTime: z.number().nonnegative().min(0, "Included time must be non-negative"),
 });
 
 // Create a TypeScript type based on the Zod schema
 type ChargesFormValues = z.infer<typeof chargesSchema>;
 
-export default function PetHandlingPage() {
+export default function PetRelocationPage() {
   const [serviceId, setServiceId] = useState<string | null>(null);
   // console.log(serviceId);
   const [totalCharges, setTotalCharges] = useState<number>(0); // State to track total charges
@@ -63,19 +64,20 @@ export default function PetHandlingPage() {
 
   useEffect(() => {
     if (services.length) {
-      const PetHandlingService = services.find(service => service.serviceName === "Pet Handling");
+      const PetHandlingService = services.find(service => service.serviceName === "Pet Relocation");
       if (PetHandlingService) {
         const fetchedCharges: ChargesFormValues = {
-          // FixedCharges: PetHandlingService.fixedCharge || 0,
+           FixedCharges: PetHandlingService.fixedCharge || 0,
           // AdditionalPetCharge: PetHandlingService.additionalPetCharge || 0,
           // PetHandlerCharge: PetHandlingService.petHandlerCharge || 0,
           // HandlingAddOnCharge: PetHandlingService.handlingAddOnCharge || 0,
           // VetVisitAddOnCharge: PetHandlingService.vetVisitAddOnCharge || 0,
           // MinimumChargeIfNotFound: PetHandlingService.minimumChargeIfNotFound || 0,
           // AdditionalTimeCost: PetHandlingService.additionalTimeCharge || 0,
-          FourHourCharge: PetHandlingService.fourHourCharge || 0,
-          TwelveHourCharge: PetHandlingService.twelveHourCharge || 0,
-          TwentyFourHourCharge: PetHandlingService.twentyFourHourCharge || 0,
+          AdditionalDistanceCharge: PetHandlingService.additionalDistanceCharge || 0,
+          //FourHourCharge: PetHandlingService.fourHourCharge || 0,
+          //TwelveHourCharge: PetHandlingService.twelveHourCharge || 0,
+          //TwentyFourHourCharge: PetHandlingService.twentyFourHourCharge || 0,
           // IncludedTime: PetHandlingService.includedTime || 0,
         };
 
@@ -85,7 +87,7 @@ export default function PetHandlingPage() {
       } else {
         ToastAtTopRight.fire({
           icon: 'error',
-          title: 'Failed to fetch Pet Handling service',
+          title: 'Failed to fetch Pet relocation service',
         });
         router.push('/service-management/');
       }
@@ -109,16 +111,17 @@ export default function PetHandlingPage() {
     if (serviceId) {
       try {
         const serviceData = {
-          // fixedCharge: data.FixedCharges,
+           fixedCharge: data.FixedCharges,
           // additionalPetCharge: data.AdditionalPetCharge,
           // petHandlerCharge: data.PetHandlerCharge,
           // handlingAddOnCharge: data.HandlingAddOnCharge,
           // vetVisitAddOnCharge: data.VetVisitAddOnCharge,
           // minimumChargeIfNotFound: data.MinimumChargeIfNotFound,
           // additionalTimeCharge: data.AdditionalTimeCost,
-          fourHourCharge: data.FourHourCharge,
-          twelveHourCharge: data.TwelveHourCharge,
-          twentyFourHourCharge: data.TwentyFourHourCharge,
+          //fourHourCharge: data.FourHourCharge,
+          //twelveHourCharge: data.TwelveHourCharge,
+          //twentyFourHourCharge: data.TwentyFourHourCharge,
+          additionalDistanceCharge: data.AdditionalDistanceCharge,
           // includedTime: data.IncludedTime,
         };
 
@@ -155,7 +158,7 @@ export default function PetHandlingPage() {
         <div className="container mx-auto p-8">
           <h1 className="text-3xl font-bold mb-8">Service Management</h1>
           <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-3xl font-bold mb-8">Pet Handling</h2>
+            <h2 className="text-3xl font-bold mb-8">Pet Relocation</h2>
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 {loading ? (
@@ -168,7 +171,8 @@ export default function PetHandlingPage() {
                       <div key={key} className="flex items-center">
                         <label className="block font-bold text-gray-700 w-full">
                             {key.replace(/([A-Z])/g, ' $1')} (<span className="ml-2 font-bold">
-                            {key === "IncludedTime" ? "minutes" : "INR"}
+                              {key === "IncludedTime" ? "minutes" : key === "IncludedDistance" ? "KM" : "INR"}
+
                           </span> )
                           </label>
                         <Input

@@ -112,22 +112,12 @@ const CaseManagementClient: React.FC = () => {
           title={`All Cases (${filteredData?.length})`}
           description="Manage Cases"
         />
-        <div className="flex space-x-2 w-full max-w-3xl">
-          {/* <input
-            type="text"
-            placeholder="Search by service name or assigned employee"
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
-          />
-          <div className="hidden items-center space-x-2 md:flex">
-            <CalendarDateRangePicker />
-          </div> */}
+        <div className="flex space-x-2 w-full max-w-3xl ml-auto justify-end"> {/* Added ml-auto */}
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
               {filterType} <ChevronDown className="ml-1 h-4 w-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align="end"> {/* Aligning dropdown to the right */}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="flex items-center text-gray-600 px-4 py-2">
                   Sort by Service
@@ -157,6 +147,7 @@ const CaseManagementClient: React.FC = () => {
           </DropdownMenu>
         </div>
       </div>
+
 
       <Separator />
 

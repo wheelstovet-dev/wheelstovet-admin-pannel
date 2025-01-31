@@ -23,7 +23,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 const couponFormSchema = z.object({
-  CouponType: z.enum(['petTaxi', 'subscription', 'freeDelivery']),
+  CouponType: z.enum(['petTaxi', 'subscription']).optional(),
   CouponCode: z.string().min(1, 'Coupon Code is required'),
   DiscountType: z.enum(['price', 'percentage']),
   DiscountPercentage: z
@@ -107,7 +107,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
           EndDate: selectedCoupons.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
         }
       : {
-          CouponType: 'petTaxi',
+          CouponType: undefined,
           CouponCode: '',
           DiscountType: 'price',
           DiscountPercentage: 0,
@@ -193,11 +193,12 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                 <FormItem>
                   <FormLabel>Coupon Type</FormLabel>
                   <FormControl>
-                    <Select
-                      disabled={loading || currentMode === 'view'}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                  <Select
+                    disabled={loading || currentMode === 'view'}
+                    onValueChange={(value) => field.onChange(value || undefined)}
+                    value={field.value ?? undefined}
+                  >
+
                       <SelectTrigger>
                         <SelectValue placeholder="Select Coupon Type" />
                       </SelectTrigger>

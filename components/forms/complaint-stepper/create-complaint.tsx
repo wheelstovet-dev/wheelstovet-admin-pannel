@@ -1,6 +1,4 @@
-'use client';
-
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useDispatch } from 'react-redux';
@@ -15,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { getComplaintById, updateComplaint } from '@/app/redux/actions/complaintAction';
 import { TextBox } from '@/components/ui/textbox';
 
-// Complaint form schema for validation
+// Define the form schema
 const complaintFormSchema = z.object({
   ComplaintType: z.string().min(1, 'Complaint Type is required'),
   ComplaintBy: z.string().min(1, 'Complaint By is required'),
@@ -26,6 +24,8 @@ const complaintFormSchema = z.object({
   ResolvedAt: z.string().optional(),
 });
 
+type ComplaintFormData = z.infer<typeof complaintFormSchema>;
+
 interface ComplaintFormProps {
   mode?: 'view' | 'update';
 }
@@ -33,17 +33,12 @@ interface ComplaintFormProps {
 export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const urlMode = searchParams.get('mode');
   const complaintId: any = searchParams.get('id');
 
-  // const urlParams = new URLSearchParams(window.location.search);
-  //   const complaintId:any = urlParams.get('id');
-  //   const urlMode = urlParams.get('mode');
-
   const [currentMode, setCurrentMode] = useState<'view' | 'update'>(propMode || (urlMode as 'view' | 'update') || 'view');
-  const [complaintData, setComplaintData] = useState();
+  const [complaintData, setComplaintData] = useState<ComplaintFormData | undefined>(undefined);
   const [loader, setLoader] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +49,7 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
     }
   }, [urlMode, propMode]);
 
-  const form = useForm({
+  const form = useForm<ComplaintFormData>({
     resolver: zodResolver(complaintFormSchema),
     defaultValues: complaintData || {
       ComplaintType: '',
@@ -75,6 +70,7 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
         .then((data: any) => {
           setComplaintData(data.data);
           form.reset(data.data);
+          console.log("Fetched complaint data:", data.data);
         })
         .catch((error: any) => {
           ToastAtTopRight.fire({
@@ -89,19 +85,19 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
 
   const { control, handleSubmit, formState: { errors } } = form;
 
-  const onSubmit: SubmitHandler<any> = async (data: any) => {
+  const onSubmit: SubmitHandler<ComplaintFormData> = async (data) => {
+    console.log("Form submitted with data:", data); // Check if this gets logged
     try {
-      setLoader(true); // Optional loader to indicate submission in progress
+      setLoader(true);
       const response = await dispatch(updateComplaint({ id: complaintId, complaintData: data })).unwrap();
-
+      console.log("Response:", response); // Check if the response is received
       ToastAtTopRight.fire({
         icon: 'success',
         title: 'Complaint updated successfully!',
       });
-
-      // Optionally redirect or update the form state
-      router.push('/complaints'); // Adjust the path as needed
+      router.push('/complaints');
     } catch (error: any) {
+      console.log("Error:", error); // Check if this gets triggered
       ToastAtTopRight.fire({
         icon: 'error',
         title: 'Error updating complaint',
@@ -111,7 +107,7 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
       setLoader(false);
     }
   };
-
+  
 
   const renderErrorMessage = (error: any) => {
     if (!error) return null;
@@ -202,38 +198,23 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
               <FormItem>
                 <FormLabel>Resolution</FormLabel>
                 <FormControl>
-                  {/* <Input type="textbox" placeholder="Enter Resolution" {...field} disabled={currentMode === 'view'} /> */}
-                <TextBox placeholder="Enter Resolution" {...field} disabled={currentMode === 'view'} />
+                  <TextBox placeholder="Enter Resolution" {...field} disabled={currentMode === 'view'} />
                 </FormControl>
                 <FormMessage>{renderErrorMessage(errors.Resolution)}</FormMessage>
               </FormItem>
             )} />
 
-            {currentMode === 'view' && (
-              // <FormField control={control} name="ResolvedAt" render={({ field }) => (
-              //   <FormItem>
-              //     <FormLabel>Resolved At</FormLabel>
-              //     <FormControl>
-              //       <Input type="calendar"  disabled />
-              //     </FormControl>
-              //   </FormItem>
-
-              <FormField control={control} name="ResolvedAt" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ResolvedAt</FormLabel>
-                  <FormControl>
-                    {/* <Input type="date" placeholder="Enter Date of Birth" {...field} disabled={currentMode === 'view'} /> */}
-                    <Input type="date" {...field} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''} disabled={currentMode === 'view'} />
-                  </FormControl>
-                  <FormMessage>{renderErrorMessage(errors.ResolvedAt)}</FormMessage>
-                </FormItem>
-              )} />
-            )}
           </div>
-
+            
           {currentMode === 'update' && (
             <Button type="submit" disabled={form.formState.isSubmitting}>
               Update Complaint
+            </Button>
+          )}
+
+          {currentMode === 'view' && (
+            <Button type="button" disabled>
+              View Complaint
             </Button>
           )}
         </form>
@@ -241,4 +222,3 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
     </div>
   );
 };
-

@@ -7,7 +7,8 @@ import MainLayout from '@/components/layout/main-layout';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ProtectedRoute from '@/components/protectedRoute';
 
-const breadcrumbItems = [{ title: 'Case', link: '/dashboard/case' }];
+const breadcrumbItems = [{ title: 'Case-Management', link: '/case-management' },
+  { title: 'Case-details', link: '/caseManagement-form/view' }];
 
 export default function CaseForm() {
   // const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +28,7 @@ export default function CaseForm() {
 
   return (
     <ProtectedRoute>
-    <MainLayout meta={{ title: 'Subscription' }}>
+    <MainLayout meta={{ title: 'Case Management' }}>
       <ScrollArea className="h-full">
         <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">
           <BreadCrumb items={breadcrumbItems} />

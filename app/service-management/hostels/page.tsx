@@ -100,7 +100,7 @@ export default function HostelVisitPage() {
         const initialCharges: ChargeFormValues = {
           FixedCharges: HostelService.fixedCharge || 0,
           AdditionalPetCharge: HostelService.additionalPetCharge || 0,
-          AdditionalDistanceCharge: HostelService.AdditionalDistanceCharge || 0,
+          AdditionalDistanceCharge: HostelService.additionalDistanceCharge || 0,
           // PetHandlerCharge: HostelService.petHandlerCharge || 0,
           HandlingAddOnCharge: HostelService.handlingAddOnCharge || 0,
           // VetVisitAddOnCharge: HostelService.vetVisitAddOnCharge || 0,
@@ -130,7 +130,7 @@ export default function HostelVisitPage() {
         const serviceData = {
           fixedCharge: data.FixedCharges,
           additionalPetCharge: data.AdditionalPetCharge,
-          AdditionalDistanceCharge: data.AdditionalDistanceCharge,
+          additionalDistanceCharge: data.AdditionalDistanceCharge,
           // petHandlerCharge: data.PetHandlerCharge,
           handlingAddOnCharge: data.HandlingAddOnCharge,
           // vetVisitAddOnCharge: data.VetVisitAddOnCharge,
@@ -140,7 +140,7 @@ export default function HostelVisitPage() {
           // twelveHourCharge: data.TwelveHourCharge,
           // twentyFourHourCharge: data.TwentyFourHourCharge,
           // includedTime: data.IncludedTime,
-          IncludedDistance: data.IncludedDistance,
+          includedDistance: data.IncludedDistance,
         };
 
         await dispatch(updateService({ id: serviceId, serviceData })).unwrap();
@@ -248,16 +248,17 @@ export default function HostelVisitPage() {
                       {Object.keys(chargeSchema.shape).map((key) => (
                         <div key={key} className="flex items-center">
                           <label className="block font-bold text-gray-700 w-full">
-                            {key.replace(/([A-Z])/g, ' $1')}
+                            {key.replace(/([A-Z])/g, ' $1')} (<span className="ml-2 font-bold">
+                              {key === "IncludedTime" ? "minutes" : key === "IncludedDistance" ? "KM" : "INR"}
+
+                          </span> )
                           </label>
                           <input
                             type="number"
                             {...register(key as keyof ChargeFormValues, { valueAsNumber: true })}
                             className="mt-1 block w-20 border rounded p-2"
                           />
-                          <span className="ml-2 font-bold">
-                            {key === "IncludedTime" ? "minutes" : "INR"}
-                          </span>
+                
                           {errors[key as keyof ChargeFormValues] && (
                             <p className="text-red-500">{errors[key as keyof ChargeFormValues]?.message}</p>
                           )}
