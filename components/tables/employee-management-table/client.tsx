@@ -95,6 +95,14 @@ export const EmployeeManagementClient: React.FC = () => {
     }
   };
 
+  // Handle row click and navigate with ID
+  const handleRowClick = (data:any) => {
+    // console.log(data._id);
+    if (data?._id) {
+      router.push(`/employee-form?mode=view&id=${data._id}`); // Redirect to details page with ID
+    }
+  };
+
   const handlePageChange=(newPage:number)=>{
     if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
       setPageNumber(newPage);
@@ -156,6 +164,8 @@ export const EmployeeManagementClient: React.FC = () => {
               : []),
           ]}
           data={data}
+          onRowClick={handleRowClick}
+          stopPropagationSelectors={[".employee-status", ".emp-action"]} // pass the class name of the column element to prevent event bubbling
         />
       )}
       <div className="flex justify-end space-x-2 py-2">
