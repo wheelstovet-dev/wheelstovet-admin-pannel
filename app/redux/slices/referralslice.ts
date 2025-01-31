@@ -1,38 +1,35 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
-import { getAllReferrals, getReferralByUserId, getReferralDetails } from '../actions/referralAction';
+import { 
+  getAllReferrals, 
+  getReferralByUserId, 
+  getReferralDetails, 
+  updateReferralPercentage 
+} from '../actions/referralAction';
 
 interface ReferralState {
   loading: boolean;
-
   Referral: any[];
   selectedReferral: any | null;
   totalReferrals: number;
-
-  ReferralDetails:any|null;
+  ReferralDetails: any | null;
   totalReferralDetails: number;
-  
   successMessage: string | null;
   error: string | null;
   currentPage: number;
-  
   totalPages: number;
 }
 
 const initialState: ReferralState = {
   loading: false,
-
   Referral: [],
   selectedReferral: null,
   totalReferrals: 0,
-
   ReferralDetails: null,
   totalReferralDetails: 0,
-
   successMessage: null,
   error: null,
   currentPage: 1,
-  
   totalPages: 0,
 };
 
@@ -46,7 +43,6 @@ const referralslice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
       // Fetch all referrals
       .addCase(getAllReferrals.pending, (state) => {
         state.loading = true;
@@ -95,31 +91,36 @@ const referralslice = createSlice({
         state.error = action.payload;
       })
 
-    //   //update  referral by id
-    //   .addCase(updateReferrral.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(updateReferrral.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
-    //     state.loading = false;
-    //     const updatedReferral = action.payload?.data;
-      
-    //     if (updatedReferral && Array.isArray(state.Referral)) {
-    //       state.Referral = state.Referral.map(referral =>
-    //         referral?._id === updatedReferral._id ? { ...referral, ...updatedReferral } : referral
-    //       );
-    //     }
-      
-    //     if (updatedReferral && state.selectedReferral && state.selectedReferral._id === updatedReferral._id) {
-    //       state.selectedReferral = { ...state.selectedReferral, ...updatedReferral };
-    //     }
-    //   })
-      
-    //   .addCase(updateReferrral.rejected, (state, action: PayloadAction<any>) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   });
+      // Update Referral Percentage
+      .addCase(updateReferralPercentage.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(updateReferralPercentage.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        const updatedReferral = action.payload?.data;
+        
+        if (updatedReferral) {
+          // Update the list of referrals
+          state.Referral = state.Referral.map(referral =>
+            referral._id === updatedReferral._id ? { ...referral, ...updatedReferral } : referral
+          );
 
-    },
+          // Update the selected referral if it matches
+          if (state.selectedReferral && state.selectedReferral._id === updatedReferral._id) {
+            state.selectedReferral = { ...state.selectedReferral, ...updatedReferral };
+          }
+
+          // Show success message
+          state.successMessage = 'Referral percentage updated successfully';
+        }
+      })
+      .addCase(updateReferralPercentage.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update referral percentage';
+      });
+  },
 });
 
 export const { setCurrentPage } = referralslice.actions;

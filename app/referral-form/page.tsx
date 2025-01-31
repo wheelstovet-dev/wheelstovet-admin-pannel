@@ -8,10 +8,11 @@ import { useRouter } from 'next/navigation';
 import { RootState } from '../redux/store';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from '@/components/protectedRoute';
+import { UpdateReferralForm } from '@/components/forms/update-referral-form';
 // import WithAuth from '@/hoc/WithAuth';
 
 
-const breadcrumbItems = [{ title: 'Employee-Management', link: '/employee-management' },
+const breadcrumbItems = [{ title: 'Referral', link: '/referral' },
   { title: '', link: '' }];
 
 export default function Page() {
@@ -43,12 +44,12 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <MainLayout meta={{ title: 'Employees' }}>
+      <MainLayout meta={{ title: 'Referal Update' }}>
         <ScrollArea className="h-full">
           <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
             <BreadCrumb items={breadcrumbItems} />
             <Suspense fallback={<div>Loading...</div>}>
-              <CreateEmployeeForm />
+              <UpdateReferralForm/>
             </Suspense>
             {/* Add your routing logic to switch between EmployeeManagementPage and EmployeeForm */}
           </div>

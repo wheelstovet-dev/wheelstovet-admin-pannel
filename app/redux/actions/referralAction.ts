@@ -59,21 +59,23 @@ export const getReferralDetails = createAsyncThunk<
 });
 
 
-// // Action to update an existing referral
-// export const updateReferrral = createAsyncThunk<
-//   AxiosResponse<any>,
-//   { id: string; referralData: any }, // Input type includes referral ID and data
-//   { rejectValue: any }
-// >('referral/update', async ({ id, referralData }, { rejectWithValue }) => {
-//   try {
-//     const response = await apiCall<any>(
-//       'PUT',
-//       `/admin/referrals/${id}`,
-//       referralData
-//     );
-//     // console.log('API Response:', response);
-//     return response;
-//   } catch (error: any) {
-//     return rejectWithValue(error || 'Failed to update referral');
-//   }
-// });
+// Action to update referral percentage
+export const updateReferralPercentage = createAsyncThunk<
+  AxiosResponse<any>,
+  { id: string; referralData: any }, // Accepts referral ID and updated data
+  { rejectValue: any }
+>(
+  'referral/updatePercentage',
+  async ({ id, referralData }, { rejectWithValue }) => {
+    try {
+      const response = await apiCall<any>(
+        'PATCH',
+        `/admin/ReferralPercentage/${id}`,
+        referralData
+      );
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to update referral percentage');
+    }
+  }
+);

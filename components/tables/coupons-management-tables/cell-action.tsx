@@ -78,9 +78,9 @@ export const CellAction: React.FC<any> = ({ data }) => {
           <DropdownMenuItem onClick={handleUpdateCoupon}>
             <Edit className="mr-2 h-4 w-4" /> Update Coupon Details
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleAssignCoupon}>
+          {/* <DropdownMenuItem onClick={handleAssignCoupon}>
             <Edit className="mr-2 h-4 w-4" /> Assign Customers
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           {/* <DropdownMenuItem onClick={updateCouponVisibility}>
             <UserCheck className="mr-2 h-4 w-4" /> Update Coupon Visibility
           </DropdownMenuItem> */}

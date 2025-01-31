@@ -20,6 +20,7 @@ export const ReferralManagementClient: React.FC<ReferralManagementClientProps> =
   
   // const initialData: ReferralManagement[] = ReferralManagementData;
   const [data, setData] = useState<any>(initialData || []);
+  console.log("data kyu nahi aa rha ",data);
 
   useEffect(() => {
     setData(initialData || []);

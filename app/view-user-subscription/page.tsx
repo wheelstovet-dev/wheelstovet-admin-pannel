@@ -5,8 +5,9 @@ import ProtectedRoute from '@/components/protectedRoute';
 import { UserSubscriptionClient } from '@/components/tables/view-user-subscription/client';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const breadcrumbItems = [{ title: 'View Subscription', link: '/user-management' }];
-
+const breadcrumbItems = [{ title: 'User-Management', link: '/user-management/' },
+  { title: 'View Details', link: '' }];
+  
 export default function SubscriptionManagementPage() {
   return (
     <ProtectedRoute>

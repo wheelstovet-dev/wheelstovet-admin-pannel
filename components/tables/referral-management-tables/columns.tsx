@@ -86,6 +86,11 @@ export const columns: ColumnDef<any>[] = [
   //     </div>
   //   )
   // },
+  // {
+  //     id: 'actions',
+  //     header: 'Actions',
+  //     cell: ({ row }) => (<div className='emp-action'><CellAction data={row.original} /></div>),
+  //   },
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />

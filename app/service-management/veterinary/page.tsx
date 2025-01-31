@@ -100,7 +100,7 @@ export default function VeterinaryVisitPage() {
           HandlingAddOnCharge: clinicService.handlingAddOnCharge || 0,
           // VetVisitAddOnCharge: clinicService.vetVisitAddOnCharge || 0,
           // MinimumChargeIfNotFound: clinicService.minimumChargeIfNotFound || 0,
-          AdditionalTimeCharge: clinicService.AdditionalTimeCost || 0,
+          AdditionalTimeCharge: clinicService.additionalTimeCharge || 0,
           // FourHourCharge: clinicService.fourHourCharge || 0,
           // TwelveHourCharge: clinicService.twelveHourCharge || 0,
           // TwentyFourHourCharge: clinicService.twentyFourHourCharge || 0,

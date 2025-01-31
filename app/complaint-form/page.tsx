@@ -12,7 +12,9 @@ import { ComplaintForm } from '@/components/forms/complaint-stepper/create-compl
 // import WithAuth from '@/hoc/WithAuth';
 
 
-const breadcrumbItems = [{ title: 'Employee', link: '/dashboard/employee' }];
+const breadcrumbItems = [{ title: 'Complaint Management', link: '/dashboard/complaint-management' },
+  { title: 'View Details', link: '' }
+];
 
 export default function Page() {
 

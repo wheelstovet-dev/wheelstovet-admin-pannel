@@ -152,7 +152,7 @@ export const EmployeeManagementClient: React.FC = () => {
                     accessorKey: 'actions',
                     cell: ({ row }: { row: Row<any> }) => (
                       <Button
-                        className={`text-xs ${selectedEmployeeId === row.original._id ? 'bg-blue-500' : 'bg-green-500'}`}
+                        className={`text-xs select-button ${selectedEmployeeId === row.original._id ? 'bg-blue-500' : 'bg-green-500'}`}
                         onClick={() => setSelectedEmployeeId(row.original._id)} // Set selected employee ID
                       >
                         Select
@@ -165,7 +165,7 @@ export const EmployeeManagementClient: React.FC = () => {
           ]}
           data={data}
           onRowClick={handleRowClick}
-          stopPropagationSelectors={[".employee-status", ".emp-action"]} // pass the class name of the column element to prevent event bubbling
+          stopPropagationSelectors={[".employee-status", ".emp-action",".select-button"]} // pass the class name of the column element to prevent event bubbling
         />
       )}
       <div className="flex justify-end space-x-2 py-2">

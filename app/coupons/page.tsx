@@ -6,10 +6,8 @@ import ProtectedRoute from '@/components/protectedRoute';
 import { Suspense } from 'react';
 import { CreateCoupons } from '@/components/forms/coupons-stepper/create-coupons';
 
-const breadcrumbItems = [
-    { title: 'Manage Routes', 
-        link: '/routes-management/'},
-    ];
+const breadcrumbItems = [{ title: 'Coupon-Management', link: '/coupons-management/' },
+  { title: 'View Details', link: '' }];
 
 export default function CouponsManagement() {
   return (

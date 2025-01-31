@@ -9,16 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { ReferralManagement } from '@/constants/referral-management-data';
 import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-interface CellActionProps {
-  data: ReferralManagement;
-}
-
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -32,7 +27,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const editReferral = () => {
-    router.push(`/referral-management/edit/${data.id}`); 
+    router.push(`/referral-form?id=${data?._id}`); 
   };
 
   const viewReferral = () => {
@@ -61,21 +56,30 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
+          {/* Create New Referral Action */}
           {/* <DropdownMenuItem onClick={handleCreateNewReferral}>
             <UserPlus className="mr-2 h-4 w-4" /> Create New Referral
           </DropdownMenuItem> */}
+          
+          {/* Edit Referral Action */}
           <DropdownMenuItem onClick={editReferral}>
-            <Edit className="mr-2 h-4 w-4" /> Edit Coupon
+            <Edit className="mr-2 h-4 w-4" /> Edit Referral
           </DropdownMenuItem>
+
+          
           {/* <DropdownMenuItem onClick={viewReferral}>
             <Eye className="mr-2 h-4 w-4" /> View Referral
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
+
+          
           <DropdownMenuItem onClick={updateReferralStatus}>
             <UserCheck className="mr-2 h-4 w-4" /> Toggle Status
           </DropdownMenuItem>
+
+          
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete Coupon
-          </DropdownMenuItem>
+            <Trash className="mr-2 h-4 w-4" /> Delete Referral
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

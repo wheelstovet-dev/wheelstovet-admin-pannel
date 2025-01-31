@@ -9,7 +9,8 @@ import ProtectedRoute from '@/components/protectedRoute';
 
 
 
-const breadcrumbItems = [{ title: 'View', link: '/user-management/page.tsx' }];
+const breadcrumbItems = [{ title: 'User-Management', link: '/user-management/' },
+  { title: 'View Details', link: '' }];
 
 export default function View() {
   return (

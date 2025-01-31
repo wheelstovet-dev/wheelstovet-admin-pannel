@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-// import { CellAction } from './cell-action';
+ import { CellAction } from './cell-action';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format } from 'date-fns';
 
@@ -59,9 +59,9 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
   },
   {
-    accessorKey: 'CreatedAt', // Use the same field as `CreatedAt` to access the time
+    accessorKey: 'TimeSlot', // Use 'TimeSlot' instead of 'CreatedAt'
     header: 'Time Slot',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'HH:mm:ss'),
+    cell: ({ row }) => row.original.TimeSlot, // Directly access 'TimeSlot' from the data
   },
 //   {
 //     accessorKey: 'status',
@@ -81,9 +81,9 @@ export const columns: ColumnDef<any>[] = [
 //   },
 
   
-//   {
-//     id: 'actions',
-//     header: 'Actions',
-//     cell: ({ row }) => <CellAction data={row.original} />
-//   }
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => <CellAction data={row.original} />
+  }
 ];

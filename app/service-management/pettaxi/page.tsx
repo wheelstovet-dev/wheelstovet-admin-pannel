@@ -57,7 +57,7 @@ export default function PetTaxiPage() {
           FixedCharges: PetTaxiService.fixedCharge || 0,
           HandlingAddOnCharge: PetTaxiService.handlingAddOnCharge || 0,
           AdditionalPetCharge: PetTaxiService.additionalPetCharge || 0,
-          AdditionalDistanceCharge: PetTaxiService.AdditionalDistanceCharge || 0,
+          AdditionalDistanceCharge: PetTaxiService.additionalDistanceCharge || 0,
           IncludedDistance: PetTaxiService.includedDistance || 0,
         };
 
@@ -158,14 +158,17 @@ export default function PetTaxiPage() {
                       {Object.keys(initialCharges).map(key => (
                         <div key={key} className="flex items-center">
                           <label className="block font-bold text-gray-700 w-full">
-                            {key.replace(/([A-Z])/g, ' $1')}
+                            {key.replace(/([A-Z])/g, ' $1')} (<span className="ml-2 font-bold">
+                              {key === "IncludedTime" ? "minutes" : key === "IncludedDistance" ? "KM" : "INR"}
+
+                          </span> )
                           </label>
                           <input
                             type="number"
                             {...register(key as keyof ChargesFormValues, { valueAsNumber: true })}
                             className="mt-1 block w-20 border rounded p-2"
                           />
-                          <span className="ml-2 font-bold">INR</span>
+                          
                           {errors[key as keyof ChargesFormValues] && (
                             <p className="text-red-500">{errors[key as keyof ChargesFormValues]?.message}</p>
                           )}
