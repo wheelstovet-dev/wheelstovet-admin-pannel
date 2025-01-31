@@ -19,6 +19,10 @@ export const CouponsManagementClient: React.FC = () => {
   const router = useRouter();
   // const initialData: CouponManagement[] = CouponManagementData;
   // const [data, setData] = useState<CouponManagement[]>(initialData);
+  const [pageNumber,setPageNumber]=useState(1);
+  const [limit,setLimit]=useState(5);
+  const [totalRecords,setTotalRecords]=useState(0);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
 
@@ -31,22 +35,43 @@ export const CouponsManagementClient: React.FC = () => {
 
   const [data, setData] = useState(Coupons);
 
-  useEffect(() => {
-    dispatch(getAllCoupons({ page: 1, limit: 20 }))
-      .unwrap()
-      .catch((err: any) => {
-        const errorMessage = err.message || 'Failed to fetch coupons';
-        ToastAtTopRight.fire({
-          icon: 'error',
-          title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
-        });
+  const getAllCouponsData = async () => {
+    // dispatch(setLoading(true)); // Assuming you have a loading state setter
+  
+    try {
+      const resultAction: any = await dispatch(getAllCoupons({ page: pageNumber, limit: limit }));
+  
+      if (resultAction.type === 'coupons/getAll/fulfilled') {
+        setData(resultAction?.payload?.data); // Update state with fetched data
+        setTotalRecords(resultAction?.payload?.pagination?.total);
+      } else {
+        throw new Error(resultAction.payload?.message?.message || 'Failed to fetch coupons');
+      }
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to fetch coupons',
       });
-  }, [dispatch]);
+    } finally {
+      // dispatch(setLoading(false));
+    }
+  };
+  
+  useEffect(() => {
+    getAllCouponsData();
+  }, [pageNumber, limit]); // Runs when pageNumber or limit changes
+  
 
   useEffect(() => {
     setData(Coupons);
+    
   }, [Coupons]);
 
+  const handlePageChange=(newPage:number)=>{
+    if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
+      setPageNumber(newPage);
+    }
+  }
 //  ----------
 
   const handleSearch = (searchValue: string) => {
@@ -82,7 +107,7 @@ export const CouponsManagementClient: React.FC = () => {
         </Button>
       </div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Coupons</h2>
+        <h2 className="text-2xl font-bold">Coupons {`(${totalRecords})`}</h2>
         <div className="flex space-x-2 w-full max-w-3xl">
           <input
             type="text"
@@ -113,6 +138,29 @@ export const CouponsManagementClient: React.FC = () => {
         onSearch={handleSearch}
       />
       )}
+      <div className="flex justify-end space-x-2 py-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber - 1)}
+            disabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {pageNumber} of {Math.ceil(totalRecords / limit)}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber + 1)}
+            disabled={pageNumber >= Math.ceil(totalRecords / limit)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
   );
 };

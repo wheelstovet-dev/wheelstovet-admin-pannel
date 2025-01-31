@@ -14,6 +14,7 @@ import { setLoading } from '@/app/redux/slices/authslice';
 import { getAllUsers } from '@/app/redux/actions/userAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 // interface ProductsClientProps {
 //   data: User[];
@@ -24,22 +25,24 @@ export const UserClient: React.FC = () => {
   const [data, setData] = useState<any>([]);
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
+  const [pageNumber,setPageNumber]=useState(1);
+  const [limit,setLimit]=useState(5);
+  const [totalRecords,setTotalRecords]=useState(0);
 
 
-  useEffect(() => {
-    getallusers();
-  }, [])
+  
 
   const getallusers = async () => {
     dispatch(setLoading(true));
     try {
-      const resultAction: any = await dispatch(getAllUsers({ page: 1, limit: 10 })); // Dispatch the getAllAdmin action
+      const resultAction: any = await dispatch(getAllUsers({ page: pageNumber, limit: limit })); // Dispatch the getAllAdmin action
       // console.log(resultAction); 
   
       if (resultAction.type==='users/getAll/fulfilled') {
         
         setData(resultAction?.payload?.data)
         setLoader(false);
+        setTotalRecords(resultAction?.payload?.pagination?.total)
         // console.log(resultAction.payload.data); 
         
       } else {
@@ -62,12 +65,21 @@ export const UserClient: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    getallusers();
+  }, [pageNumber,limit])
+  
+  const handlePageChange=(newPage:number)=>{
+    if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
+      setPageNumber(newPage);
+    }
+  }
 
   return (
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Users (${data.length})`}
+          title={`Users (${totalRecords})`}
           description="Manage users "
         />
         {/* <Button
@@ -85,7 +97,32 @@ export const UserClient: React.FC = () => {
       onRowClick={handleRowClick}
       stopPropagationSelectors={[".user-action"]} // pass the class name of the column element to prevent event bubbling
       />
+      
 }
+<div className="flex justify-end space-x-2 py-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber - 1)}
+            disabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {pageNumber} of {Math.ceil(totalRecords / limit)}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber + 1)}
+            disabled={pageNumber >= Math.ceil(totalRecords / limit)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
+    
   );
 };

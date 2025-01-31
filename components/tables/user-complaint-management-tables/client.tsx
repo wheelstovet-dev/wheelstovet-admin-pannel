@@ -19,6 +19,7 @@ import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { columns } from './columns';
 import { getAllComplaints } from '@/app/redux/actions/complaintAction';
+import { Button } from '@/components/ui/button';
 
 const ComplaintManagementUserPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,19 +33,38 @@ const ComplaintManagementUserPage: React.FC = () => {
   const [filterType, setFilterType] = useState('By type');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState(complaints);
+  const [pageNumber,setPageNumber]=useState(1);
+  const [limit,setLimit]=useState(5);
+  const [totalRecords,setTotalRecords]=useState(0);
 
-  useEffect(() => {
-    dispatch(getAllComplaints({ page: 1, limit: 20 }))
-      .unwrap()
-      .catch((err: any) => {
-        const errorMessage = err.message || 'Failed to fetch complaints';
-        ToastAtTopRight.fire({
-          icon: 'error',
-          title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
-        });
+  const getAllComplaintsData = async () => {
+    // dispatch(setLoading(true)); // Assuming you have a loading state setter
+  
+    try {
+      const resultAction: any = await dispatch(getAllComplaints({ page: pageNumber, limit: limit }));
+  
+      if (resultAction.type === 'complaints/getAll/fulfilled') {
+        setFilteredData(resultAction?.payload?.data); // Update state with fetched data
+        setTotalRecords(resultAction?.payload?.pagination?.total);
+      } else {
+        throw new Error(resultAction.payload?.message?.message || 'Failed to fetch complaints');
+      }
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Failed to fetch complaints',
       });
-  }, [dispatch]);
+    } finally {
+      // dispatch(setLoading(false));
+    }
+  };
+  
+  useEffect(() => {
+    getAllComplaintsData();
+  }, [pageNumber, limit]); // Runs when page or limit changes
+  
 
+  
   useEffect(() => {
     setFilteredData(complaints);
   }, [complaints]);
@@ -83,10 +103,15 @@ const ComplaintManagementUserPage: React.FC = () => {
     },
   ];
 
+  const handlePageChange=(newPage:number)=>{
+    if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
+      setPageNumber(newPage);
+    }
+  }
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`All Complaints (${filteredData?.length})`} description="Manage Complaints" />
+        <Heading title={`All Complaints (${totalRecords})`} description="Manage Complaints" />
       </div>
       <div className="flex justify-between items-center mb-1">
         <input
@@ -136,6 +161,29 @@ const ComplaintManagementUserPage: React.FC = () => {
           onSearch={handleSearch}
         />
       )}
+      <div className="flex justify-end space-x-2 py-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber - 1)}
+            disabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {pageNumber} of {Math.ceil(totalRecords / limit)}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber + 1)}
+            disabled={pageNumber >= Math.ceil(totalRecords / limit)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
   );
 };
