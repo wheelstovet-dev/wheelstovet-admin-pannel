@@ -18,6 +18,11 @@ export const columns: ColumnDef<EmplpoyeeEsclated>[] = [
 //     header: 'Emp ID',
 //     cell: ({ row }) => <span>{row.original.empId}</span>,
 //   },
+{
+  accessorKey: 'sno',
+  header: 'S.no',
+  cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+},
   {
     accessorKey: 'userName',
     header: 'User Name',

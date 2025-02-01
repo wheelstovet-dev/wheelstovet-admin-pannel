@@ -34,7 +34,11 @@ export const columns: ColumnDef<any>[] = [
   //     return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
   //   },
   // },
-
+  {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
   {
     accessorKey: 'AssignedEmp',
     header: 'Employee Name',

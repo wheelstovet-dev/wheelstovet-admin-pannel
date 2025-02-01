@@ -416,7 +416,51 @@ const handleCardClick = (card: string) => {
                   initialPercentage={40}
                 /> */}
               </div>
-              <div className="grid grid-cols-1 gap-4">
+              
+              <div className="flex flex-wrap my-2 justify-between mx-3">
+                {/* Card 1: Cases for Today */}
+                <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+                  {/*  */}
+                  <CardContent>
+                    <RecentCases/>
+                  </CardContent>
+                </Card>
+
+                {/* Card 2: Unassigned Cases */}
+                {/* <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+                  <CardHeader>
+                    <CardTitle>Unassigned Cases</CardTitle>
+                    <CardDescription>
+                      You have 26 Unassigned Cases.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <RecentCases cases={unassignedData} />
+                  </CardContent>
+                </Card> */}
+
+              </div>
+
+                <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
+                <div className="">
+                <div ref={petTaxiRef}>
+                  <UnassignedCasesClient />
+                </div>
+                <div ref={enquiryRef}>
+                  <EnquiryClient initialData={Enquiries} loading={loading}/>
+                </div>
+                <div ref={dogWalkingRef}>
+                <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
+                </div>
+
+                  {/* <EnquiryClient initialData={Enquiries} loading={loading}/> */}
+                  <EmployeeEsclatedClient />
+
+                </div>
+                 
+                  
+                </div>
+                <div className="grid grid-cols-1 gap-4">
                 <Card className="col-span-1">
                   <CardHeader>
                     <div className="flex justify-between items-center w-full">
@@ -463,49 +507,6 @@ const handleCardClick = (card: string) => {
                   </CardContent>
                 </Card>
               </div>
-              <div className="flex flex-wrap my-2 justify-between mx-3">
-  {/* Card 1: Cases for Today */}
-  <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
-    {/*  */}
-    <CardContent>
-      <RecentCases/>
-    </CardContent>
-  </Card>
-
-  {/* Card 2: Unassigned Cases */}
-  {/* <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
-    <CardHeader>
-      <CardTitle>Unassigned Cases</CardTitle>
-      <CardDescription>
-        You have 26 Unassigned Cases.
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      <RecentCases cases={unassignedData} />
-    </CardContent>
-  </Card> */}
-
-</div>
-
-                <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
-                <div className="">
-                <div ref={petTaxiRef}>
-                  <UnassignedCasesClient />
-                </div>
-                <div ref={enquiryRef}>
-                  <EnquiryClient initialData={Enquiries} loading={loading}/>
-                </div>
-                <div ref={dogWalkingRef}>
-                <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
-                </div>
-
-                  {/* <EnquiryClient initialData={Enquiries} loading={loading}/> */}
-                  <EmployeeEsclatedClient />
-
-                </div>
-                 
-                  
-                </div>
             </TabsContent>
           </Tabs>
         </div>

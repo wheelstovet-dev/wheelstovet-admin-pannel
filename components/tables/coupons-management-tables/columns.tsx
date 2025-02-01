@@ -28,11 +28,11 @@ export const columns: ColumnDef<any>[] = [
   //   enableHiding: false
   // },
   {
-    accessorKey: 'id',
-    header: 'Sno',
-    cell: ({ row }) => row.index + 1,
-    size: 100, // Increased column width
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
   },
+  
   {
     accessorKey: 'CouponCode',
     header: 'Coupon Code',

@@ -61,12 +61,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           {/* <DropdownMenuItem onClick={handleCreateNewReferral}>
             <UserPlus className="mr-2 h-4 w-4" /> Create New Referral
           </DropdownMenuItem> */}
-          <DropdownMenuItem onClick={editReferral}>
+          {/* <DropdownMenuItem onClick={editReferral}>
             <Edit className="mr-2 h-4 w-4" /> Edit Referral
           </DropdownMenuItem>
           <DropdownMenuItem onClick={viewReferral}>
             <Eye className="mr-2 h-4 w-4" /> View Referral
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           {/* <DropdownMenuItem onClick={updateReferralStatus}>
             <UserCheck className="mr-2 h-4 w-4" /> Update Referral Status
           </DropdownMenuItem> */}

@@ -28,9 +28,14 @@ export const EmployeeManagementClient: React.FC = () => {
   const [pageNumber,setPageNumber]=useState(1);
   const [limit,setLimit]=useState(5);
   const [totalRecords,setTotalRecords]=useState(0);
+  const { assignmentStatus, employees,loading } = useSelector((state: RootState) => state.employee);
 
-  const { assignmentStatus, loading } = useSelector((state: RootState) => state.employee);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState('By type');
+  const [filteredData, setFilteredData] = useState(data);
+  const [filteredCases, setFilteredCases] = useState(data || []); // State for filtered users
 
+console.log("Emplyee",data)
   useEffect(() => {
     getAllEmployeesData();
   }, [pageNumber,limit]);
@@ -93,6 +98,36 @@ export const EmployeeManagementClient: React.FC = () => {
     } finally {
       setLoader(false);
     }
+  };
+
+  // useEffect(() => {
+  //   let filtered = data;
+
+  //   // Apply search filter
+  //   if (data) {
+  //     const lowerCasedSearchValue = searchTerm.toLowerCase();
+  //     const newFilteredCases =
+  //       searchTerm.trim() === ""
+  //         ? data // Show all users if no search value
+  //         : data.filter((data: any) =>
+  //             data?.ServiceId?.serviceName.toLowerCase().includes(lowerCasedSearchValue)
+  //           );
+  //         console.log(newFilteredCases);
+  //     setFilteredCases(newFilteredCases);
+  //   }
+  //    // Apply status filter
+  //    if (statusFilter) {
+  //     filtered = filtered.filter((item: any) => item.ServiceId.serviceName === statusFilter);
+  //   }
+
+  //   setFilteredData(filtered);
+  // }, [cases, searchTerm, statusFilter]);
+
+  // const handleSearch = (value: string) => setSearchTerm(value);
+
+  const handleStatusFilterChange = (serviceName: string) => {
+    setFilterType(serviceName || 'By type');
+    setStatusFilter(serviceName || null);
   };
 
   // Handle row click and navigate with ID

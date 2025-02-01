@@ -10,6 +10,11 @@ import { CaseFinance } from '@/constants/case-financial';
 
 export const columns: ColumnDef<CaseFinance>[] = [
   {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
+  {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
