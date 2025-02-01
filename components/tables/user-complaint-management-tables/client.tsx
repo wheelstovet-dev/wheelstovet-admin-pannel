@@ -86,11 +86,15 @@ const ComplaintManagementUserPage: React.FC = () => {
   };
 
   const handleComplaintByFilterChange = (complaintBy: string) => {
+    console.log("complaintby", complaintBy);
+    console.log("complaintby[0]", complaints);
     const filtered = complaintBy
       ? complaints.filter((item: any) => item.complaintBy === complaintBy)
       : complaints;
+    console.log("filtered", filtered);
     setFilteredData(filtered);
-  };
+};
+
 
   const filters = [
     {

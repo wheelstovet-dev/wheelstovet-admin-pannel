@@ -26,6 +26,7 @@ export default function EmployeeForm() {
     streetAddress: '',
     city: '',
     state: '',
+    rating:''
   });
 
   const [roles, setRoles] = useState(initialRoles);
@@ -205,6 +206,7 @@ export default function EmployeeForm() {
               className="border border-gray-300 rounded-lg px-4 py-2"
             />
           </div>
+          
           <div className="flex flex-col space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="role" className="font-medium flex items-center">
@@ -231,6 +233,19 @@ export default function EmployeeForm() {
                 <option key={index} value={role}>{role}</option>
               ))}
             </select>
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="rating" className="font-medium">Rating</label>
+            <input
+              type="rating"
+              name="rating"
+              id="rating"
+              placeholder="Enter Rating"
+              value="5"
+              onChange={handleChange}
+              required
+              className="border border-gray-300 rounded-lg px-4 py-2"
+            />
           </div>
         </div>
         <div className="flex space-x-4 mt-6">

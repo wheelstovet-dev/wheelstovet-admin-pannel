@@ -96,6 +96,11 @@ export const columns: ColumnDef<any>[] = [
   //   enableSorting: false,
   //   enableHiding: false
   // },
+  {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
   // {
   //   accessorKey: 'subscriptionId',
   //   header: 'Subscription ID',

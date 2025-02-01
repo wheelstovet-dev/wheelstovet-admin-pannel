@@ -31,7 +31,11 @@ export const columns: ColumnDef<any>[] = [
   //   header: 'Case Id',
    
   // },
-
+  {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
   // {
   //   accessorKey: 'userId',
   //   header: 'User Id'

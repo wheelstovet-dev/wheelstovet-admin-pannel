@@ -239,6 +239,11 @@ export const columns: ColumnDef<any>[] = [
     //     header: 'Case Id',
     //     cell: ({ row }) => <span>{row.original.caseId}</span>,
     //   },
+    {
+      accessorKey: 'sno',
+      header: 'S.no',
+      cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+    },
   {
     accessorKey: 'ServiceId',
     header: 'Service Name',
@@ -268,18 +273,22 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'preferredHours',
     header: 'Preferred Hours',
     cell: ({ row }) => {
-      const hours = row.original.PreferredHours || 0; // Default to 0 if no value
+      const hours = row.original.PreferredHours;
   
+      if (hours == null || hours === 0) {
+        return <span>Not Available</span>;
+      }
+    
       // Create a date object starting at midnight (00:00:00) and add the hours
       const time = new Date(0); // Epoch start
       time.setHours(hours, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds
-  
+    
       // Format the time in HH:mm:ss
       const formattedTime = format(time, 'HH:mm:ss');
-  
+    
       return <span>{formattedTime}</span>;
     },
-  },
+  },  
   {
     accessorKey: 'UserId',
     header: 'Contact',

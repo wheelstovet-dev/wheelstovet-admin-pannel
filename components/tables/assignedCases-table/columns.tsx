@@ -29,7 +29,11 @@ export const columns: ColumnDef<any>[] = [
   //   header: 'Case ID',
   //   cell: ({ row }) => <span className="text-red-600 font-bold px-1" style={{ borderRadius: '50%' }}>{row.original.caseId}</span>,
   // },
- 
+  {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
   {
     accessorKey: 'ServiceId.serviceName',
     header: 'Assigned Service',

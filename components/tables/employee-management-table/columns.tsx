@@ -49,6 +49,11 @@ const StatusCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<any>[] = [
   {
+    accessorKey: 'sno',
+    header: 'S.no',
+    cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+  },
+  {
     accessorKey: 'Name',
     header: 'Name',
     cell: ({ row }) => (
@@ -86,11 +91,11 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'Role',
-    header: 'Service Assigned',
+    header: 'Role',
   },
   {
     accessorKey: 'CreatedAt',
-    header: 'Assigned Date',
+    header: 'Joined Date',
   },
   {
     accessorKey: 'Status',
