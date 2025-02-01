@@ -80,3 +80,24 @@ export const getUnassignedCases = createAsyncThunk<
     );
   }
 });
+
+// -----------TODAY'S CASES SECTION --------------
+
+// Action to get Today's Cases
+export const getTodaysCases = createAsyncThunk<
+  any, // Return type as `any`
+  void, // No input arguments
+  { rejectValue: any } // Reject value type
+>('cases/getTodays', async (_, { rejectWithValue }) => {
+  try {
+    // Make API call to fetch today's cases
+    const response = await apiCall('GET', '/admin/cases/getTodayCases');
+    return response; // Return the full response including today's cases
+  } catch (error: any) {
+    // Handle errors and return the error message
+    return rejectWithValue(
+      error.response?.data || 'Failed to fetch today\'s cases'
+    );
+  }
+});
+
