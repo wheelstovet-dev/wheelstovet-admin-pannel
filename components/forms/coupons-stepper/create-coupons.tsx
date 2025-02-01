@@ -33,28 +33,24 @@ const couponFormSchema = z.object({
   DiscountPrice: z
     .number()
     .nonnegative('Discount Price cannot be negative')
-    .positive('Discount Price must be greater than zero').optional(),
+    .positive('Discount Price must be greater than zero')
+    .optional(),
 
-    StartDate: z
-    .string()
-    .transform((val) => new Date(val))
-    .pipe(z.date({ required_error: "Starting Date is required." })),
+  StartDate: z.date({ required_error: "Starting Date is required." }),
 
-  EndDate: z
-    .string()
-    .transform((val) => new Date(val))
-    .pipe(z.date({ required_error: "Ending Date is required." })),
+  EndDate: z.date({ required_error: "Ending Date is required." }),
 
-    
   CouponVisibility: z.enum(['public', 'private']),
   NoOfTimesCanBeApplied: z.preprocess(
-    (val) => Number(val), // Convert to number if it's a string
-    z.number().positive('Must be greater than zero') // Validate after conversion
-  ),  Description: z.string().optional(),
+    (val) => Number(val),
+    z.number().positive('Must be greater than zero')
+  ),
+  Description: z.string().optional(),
   UsageLimit: z.string().optional(),
   UsageCount: z.string().optional(),
   Status: z.enum(['active', 'inactive']),
 });
+
 
 type CouponFormSchema = z.infer<typeof couponFormSchema>;
 
@@ -103,15 +99,16 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
     defaultValues: selectedCoupons
       ? {
           ...selectedCoupons,
+          DiscountType: selectedCoupons.DiscountType || 'price',  // Ensure valid default
           StartDate: selectedCoupons.StartDate ? new Date(selectedCoupons.StartDate) : undefined,
           EndDate: selectedCoupons.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
         }
       : {
           CouponType: undefined,
           CouponCode: '',
-          DiscountType: 'price',
+          DiscountType: 'price',  // Default to 'price' to avoid empty value
           DiscountPercentage: 0,
-          DiscountPrice:0,
+          DiscountPrice: 0,
           StartDate: undefined,
           EndDate: undefined,
           CouponVisibility: 'public',
@@ -123,45 +120,77 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
         },
   });
   
+  
 
   const { handleSubmit, control, reset, formState: { errors } } = form;
 
   useEffect(() => {
     if (selectedCoupons && currentMode !== 'create') {
-      reset(selectedCoupons);
-    }
-  }, [selectedCoupons, currentMode, reset]);
-
-  const onSubmit = async (data: CouponFormSchema) => {
-    const formattedData = {
-      ...data,
-      StartDate: data.StartDate ? data.StartDate.toISOString() : null,
-      EndDate: data.EndDate ? data.EndDate.toISOString() : null,
-    };
-    console.log("formattedData",data);
-    try {
-      if (currentMode === 'create') {
-        await dispatch(createCoupon(formattedData)).unwrap();
-        ToastAtTopRight.fire({
-          icon: 'success',
-          title: 'Coupon created successfully!',
-        });
-      } else if (currentMode === 'update' && couponId) {
-        await dispatch(updateCoupon({ id: couponId, couponData: formattedData })).unwrap();
-        ToastAtTopRight.fire({
-          icon: 'success',
-          title: 'Coupon updated successfully!',
-        });
-      }
-      router.push('/coupons-management');
-    } catch (error: any) {
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: 'Error processing coupon',
-        text: error.message || 'Failed to process coupon',
+      reset({
+        ...selectedCoupons,
+        CouponType: selectedCoupons?.CouponType === 'petTaxi' ? 'petTaxi' : 'subscription',
+        StartDate: selectedCoupons?.StartDate ? new Date(selectedCoupons.StartDate) : undefined,
+        EndDate: selectedCoupons?.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
+      });
+    } else {
+      reset({
+        CouponType: undefined,
+        CouponCode: '',
+        DiscountType: 'price',
+        DiscountPercentage: 0,
+        DiscountPrice: 0,
+        StartDate: undefined,
+        EndDate: undefined,
+        CouponVisibility: 'public',
+        NoOfTimesCanBeApplied: 0,
+        Description: '',
+        UsageLimit: '',
+        UsageCount: '0',
+        Status: 'active',
       });
     }
+  }, [selectedCoupons, currentMode, reset]);
+  
+  
+  
+
+  // const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = form;
+
+const onSubmit = async (data: CouponFormSchema) => {
+  console.log("Form Data:", data); // Log form data
+  console.log("Form Errors:", errors); // Check for validation errors
+
+  const formattedData = {
+    ...data,
+    StartDate: data.StartDate ? data.StartDate.toISOString() : null,
+    EndDate: data.EndDate ? data.EndDate.toISOString() : null,
   };
+
+  try {
+    if (currentMode === 'create') {
+      await dispatch(createCoupon(formattedData)).unwrap();
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Coupon created successfully!',
+      });
+    } else if (currentMode === 'update' && couponId) {
+      await dispatch(updateCoupon({ id: couponId, couponData: formattedData })).unwrap();
+      ToastAtTopRight.fire({
+        icon: 'success',
+        title: 'Coupon updated successfully!',
+      });
+    }
+    router.push('/coupons-management');
+  } catch (error: any) {
+    ToastAtTopRight.fire({
+      icon: 'error',
+      title: 'Error processing coupon',
+      text: error.message || 'Failed to process coupon',
+    });
+  }
+};
+
+  
 
   return (
     <div>
@@ -183,34 +212,39 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
       />
       <Separator />
       <Form {...form}>
-        <form onSubmit={currentMode !== 'view' ? handleSubmit(onSubmit) : undefined} className="space-y-8">
-          <div className="w-full gap-8 md:grid md:grid-cols-3">
+      <form onSubmit={currentMode !== 'view' ? handleSubmit(onSubmit, (err) => console.log('Validation Errors:', err)) : undefined} className="space-y-8">
+      <div className="w-full gap-8 md:grid md:grid-cols-3">
             {/* Coupon Type */}
             <FormField
               control={control}
               name="CouponType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Coupon Type</FormLabel>
-                  <FormControl>
-                  <Select
-                    disabled={loading || currentMode === 'view'}
-                    onValueChange={(value) => field.onChange(value || undefined)}
-                    value={field.value ?? undefined}
-                  >
+                <FormField
+                  control={control}
+                  name="CouponType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Coupon Type</FormLabel>
+                      <FormControl>
+                        <Select
+                          disabled={loading || currentMode === 'view'}
+                          onValueChange={(value) => field.onChange(value || undefined)}
+                          value={field.value ?? undefined}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Coupon Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="petTaxi">Pet Taxi</SelectItem>
+                            <SelectItem value="subscription">Subscription</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage>{errors.CouponType?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
 
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Coupon Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="petTaxi">Pet Taxi</SelectItem>
-                        <SelectItem value="subscription">Subscription</SelectItem>
-                        {/* <SelectItem value="freeDelivery">Free Delivery</SelectItem> */}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors.CouponType?.message}</FormMessage>
-                </FormItem>
               )}
             />
 
@@ -243,7 +277,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                         setDiscountType(value as 'price' | 'percentage');
                         field.onChange(value);
                       }}
-                      value={field.value}
+                      value={field.value || 'price'}  // Ensure a fallback default
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Discount Type" />
@@ -258,6 +292,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
                 </FormItem>
               )}
             />
+
 
            {/* Discount Percentage (Only if Discount Type is Percentage) */}
           {discountType === "percentage" && (

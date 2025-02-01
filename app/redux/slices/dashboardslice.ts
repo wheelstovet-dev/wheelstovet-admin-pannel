@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getAllEnquiries, getEnquiryId, getPendingSubscriptions, getUnassignedCases } from '../actions/dashboardAction';
+import { getAllEnquiries, getEnquiryId, getPendingSubscriptions, getUnassignedCases, getTodaysCases } from '../actions/dashboardAction';
 
 interface DashboardState {
   loading: boolean;
@@ -16,6 +16,7 @@ interface DashboardState {
   selectedUnassignedCase: any | null;
   totalUnassignedCases: number;
 
+  todaysCases: any[];  // Added today's cases state
   successMessage: string | null;
   error: string | null;
   currentPage: number;
@@ -37,6 +38,7 @@ const initialState: DashboardState = {
   selectedUnassignedCase: null,
   totalUnassignedCases: 0,
 
+  todaysCases: [],  // Initialize today's cases array
   successMessage: null,
   error: null,
   currentPage: 1,
@@ -121,6 +123,22 @@ const dashboardslice = createSlice({
         state.totalPages = action.payload.totalPages;
       })
       .addCase(getUnassignedCases.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // -----------TODAY'S CASES SECTION --------------
+
+      // Fetch Today's Cases
+      .addCase(getTodaysCases.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getTodaysCases.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.todaysCases = action.payload.data; // Update today's cases in the state
+      })
+      .addCase(getTodaysCases.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
       });

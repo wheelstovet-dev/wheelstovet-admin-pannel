@@ -33,7 +33,7 @@ import { EnquiryClient } from '@/components/tables/enquiry-management-table/clie
 import ProtectedRoute from '@/components/protectedRoute';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { getAllEnquiries, getPendingSubscriptions } from '../redux/actions/dashboardAction';
+import { getAllEnquiries, getPendingSubscriptions, getTodaysCases } from '../redux/actions/dashboardAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { PendingSubscriptionClient } from '@/components/tables/pending-subscription-table/client';
 import CaseManagementClient from '@/components/tables/cases-tables/client';
@@ -112,7 +112,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
           <CardTitle className="text-sm font-medium text-gray-500 uppercase tracking-wide">
             {title}
           </CardTitle>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded px-2 py-1">
               {dropdownValue} <ChevronDown className="ml-1 h-4 w-4" />
             </DropdownMenuTrigger>
@@ -123,7 +123,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
         <CardTitle className="text-lg font-bold">
           {subtitle}
@@ -307,6 +307,7 @@ const handleCardClick = (card: string) => {
   };
 
   // -----------------------API INTEGRATION---------------
+
   const dispatch = useDispatch<AppDispatch>();
   
   const { Enquiries,pendingSubscriptions, loading, error } = useSelector(
@@ -465,14 +466,9 @@ const handleCardClick = (card: string) => {
               <div className="flex flex-wrap my-2 justify-between mx-3">
   {/* Card 1: Cases for Today */}
   <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
-    <CardHeader>
-      <CardTitle>Cases for Today</CardTitle>
-      <CardDescription>
-        You have 10 Cases for today.
-      </CardDescription>
-    </CardHeader>
+    {/*  */}
     <CardContent>
-      <RecentCases cases={petData} />
+      <RecentCases/>
     </CardContent>
   </Card>
 
