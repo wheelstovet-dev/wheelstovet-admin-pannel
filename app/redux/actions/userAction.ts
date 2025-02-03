@@ -21,7 +21,8 @@ export const getAllUsers = createAsyncThunk<
   }
 );
 
-// Action to get an admin by ID
+// Action to get an admin by ID and users
+
 export const getUserById = createAsyncThunk<
   AxiosResponse<any>, // Return type is the entire Axios response
   string, // Input type of the admin ID as a string
