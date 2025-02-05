@@ -56,10 +56,10 @@ export const columns: ColumnDef<any>[] = [
         style={{ borderRadius: "20px" }}
         className={`flex items-center justify-center px-2 py-1 ${
           row.original?.Status === 'RESOLVED' || row.original?.Status === 'resolved'
-            ? 'bg-yellow-400'
+            ? 'bg-green-500'
             : row.original?.Status === 'PENDING' || row.original?.Status === 'pending'
             ? 'bg-red-400'
-            : 'bg-red-200'
+            : 'bg-yellow-400'
         }`}
       >
         <span className='text-black bold'>{row.original?.Status}</span>

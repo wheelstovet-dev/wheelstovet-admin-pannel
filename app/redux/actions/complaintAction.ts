@@ -40,6 +40,7 @@ export const getComplaintById = createAsyncThunk<
   }
 );
 
+
 // // Action to update the status of a complaint
 export const updateComplaintStatus = createAsyncThunk<
 AxiosResponse<any>,

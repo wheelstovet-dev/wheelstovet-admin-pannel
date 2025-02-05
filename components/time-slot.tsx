@@ -43,16 +43,16 @@ const AvailableSlots: React.FC = () => {
 
   return (
     <div className="w-full lg:w-3/3 lg:me-3 mb-4">
-      <Card className="bg-gradient-to-r shadow-2xl rounded-3xl p-6">
+      <Card className="bg-gradient-to-r rounded-xl p-6">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center text-black">
+          <CardTitle className="text-2xl font-bold text-black">
             Available Slots for Today
           </CardTitle>
         </CardHeader>
 
         {/* Legend Section */}
-        <div className="flex justify-center gap-6 mb-6">
-          <div className="flex items-center gap-2">
+        <div className="flex gap-6 mb-6">
+          <div className="flex items-center gap-2 ml-6">
             <div className="w-5 h-5 bg-yellow-400 rounded"></div>
             <span className="text-sm font-medium">Available</span>
           </div>
