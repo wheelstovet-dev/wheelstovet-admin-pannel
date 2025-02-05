@@ -53,9 +53,9 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'EmpId',
     header: 'Assigned Employee',
     cell: ({ row }) => {
-      const firstName = row.original?.EmpId?.FirstName;
+      const Name = row.original?.EmpId?.Name;
       const lastName = row.original?.EmpId?.LastName;
-      return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
+      return `${Name}`;
     },
   },
   {

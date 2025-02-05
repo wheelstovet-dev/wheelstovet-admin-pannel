@@ -38,6 +38,8 @@ import { ToastAtTopRight } from '@/lib/sweetalert';
 import { PendingSubscriptionClient } from '@/components/tables/pending-subscription-table/client';
 import CaseManagementClient from '@/components/tables/cases-tables/client';
 import UnassignedCasesClient from '@/components/tables/unassigned-cases-dashboard-table/client';
+import TimeSlotSelector from '@/components/time-slot';
+import AvailableSlots from '@/components/time-slot';
 
 ChartJS.register(
   CategoryScale,
@@ -310,30 +312,30 @@ const handleCardClick = (card: string) => {
 
   const dispatch = useDispatch<AppDispatch>();
   
-  const { Enquiries,pendingSubscriptions, loading, error } = useSelector(
+  const {pendingSubscriptions, loading, error } = useSelector(
     (state: RootState) => state.dashboard
   );
   //==============ENQUIRY=================
-  const getEnqueries =async()=>{
-    await dispatch(getAllEnquiries({ page: 1, limit: 20 }))
+  // const getEnqueries =async()=>{
+  //   await dispatch(getAllEnquiries({ page: 1, limit: 5 }))
     
-    .unwrap()
-    .catch((err: any) => {
-      const errorMessage = err.message || 'Failed to fetch Enquiries';
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
-      });
-    });
+  //   .unwrap()
+  //   .catch((err: any) => {
+  //     const errorMessage = err.message || 'Failed to fetch Enquiries';
+  //     ToastAtTopRight.fire({
+  //       icon: 'error',
+  //       title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+  //     });
+  //   });
        
-  }
+  // }
 
   // ========== PENDING SUBSCRIPTION SECTION ==============
   const getPendingSubs = async()=>{
     await dispatch(getPendingSubscriptions({ page: 1, limit: 20 }))
     .unwrap()
     .catch((err: any) => {
-      const errorMessage = err.message || 'Failed to fetch Pending Subscription';
+      //const errorMessage = err.message || 'Failed to fetch Pending Subscription';
       // ToastAtTopRight.fire({
       //   icon: 'error',
       //   title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
@@ -344,7 +346,7 @@ const handleCardClick = (card: string) => {
 
   useEffect(() => {
     //get all Enquiries
-    getEnqueries();
+    //getEnqueries();
 
     //get all Pending Subscriptions
     getPendingSubs();
@@ -417,6 +419,7 @@ const handleCardClick = (card: string) => {
                 /> */}
               </div>
               
+              
               <div className="flex flex-wrap my-2 justify-between mx-3">
                 {/* Card 1: Cases for Today */}
                 <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
@@ -425,6 +428,13 @@ const handleCardClick = (card: string) => {
                     <RecentCases/>
                   </CardContent>
                 </Card>
+
+                
+                  {/* Available Slots for today */}
+                  
+                    <AvailableSlots/>
+            
+                
 
                 {/* Card 2: Unassigned Cases */}
                 {/* <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
@@ -447,7 +457,7 @@ const handleCardClick = (card: string) => {
                   <UnassignedCasesClient />
                 </div>
                 <div ref={enquiryRef}>
-                  <EnquiryClient initialData={Enquiries} loading={loading}/>
+                  <EnquiryClient/>
                 </div>
                 <div ref={dogWalkingRef}>
                 <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />

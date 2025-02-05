@@ -141,7 +141,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
   const [isUpdating, setIsUpdating] = useState(false); // Loading state for API call
   const dropdownRef = useRef<HTMLDivElement>(null); // Reference for detecting outside clicks
 
-  const statusOptions = ['pending', 'addressed'];
+  const statusOptions = ['Pending', 'Converted',"Rejected"];
 
   const handleStatusChange = async (newStatus: string) => {
     if (newStatus === status) return newStatus; // Avoid unnecessary API calls
@@ -200,11 +200,11 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
         onClick={() => !isUpdating && setIsOpen(!isOpen)}
         style={{ borderRadius: '20px', cursor: 'pointer', opacity: isUpdating ? 0.6 : 1 }}
         className={`flex items-center px-2 py-1 ${
-          status === 'addressed'
+          status === 'Converted'
             ? 'bg-green-400'
-            : status === 'pending'
+            : status === 'Pending'
             ? 'bg-yellow-400'
-            : 'bg-gray-400'
+            : 'bg-red-400'
         }`}
       >
         <span className="text-black">{isUpdating ? 'Updating...' : status}</span>
@@ -330,7 +330,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'Status',
     cell: ({ row }) => (
       <StatusDropdown
-        currentStatus={row.original.CurrentStatus || 'pending'} // Current status from API
+        currentStatus={row.original.CurrentStatus || 'Pending'} // Current status from API
         rowId={row.original._id} // Unique ID to identify the row
         onStatusChange={(newStatus) => {
           console.log('Status updated to:', newStatus);
