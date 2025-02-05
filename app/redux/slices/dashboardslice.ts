@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getAllEnquiries, getEnquiryId, getPendingSubscriptions, getUnassignedCases, getTodaysCases } from '../actions/dashboardAction';
+import { getAllEnquiries, getEnquiryId, getPendingSubscriptions,
+   getUnassignedCases, getTodaysCases ,getBookedSlots
+} from '../actions/dashboardAction';
 
 interface DashboardState {
   loading: boolean;
@@ -21,6 +23,8 @@ interface DashboardState {
   error: string | null;
   currentPage: number;
   totalPages: number;
+
+  bookedSlots: { petTaxi: string[]; petWalking: string[] };
 }
 
 const initialState: DashboardState = {
@@ -39,6 +43,9 @@ const initialState: DashboardState = {
   totalUnassignedCases: 0,
 
   todaysCases: [],  // Initialize today's cases array
+
+  bookedSlots: { petTaxi: [], petWalking: [] },
+
   successMessage: null,
   error: null,
   currentPage: 1,
@@ -139,6 +146,23 @@ const dashboardslice = createSlice({
         state.todaysCases = action.payload.data; // Update today's cases in the state
       })
       .addCase(getTodaysCases.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // -----------BOOKED SLOTS SECTION --------------
+      .addCase(getBookedSlots.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getBookedSlots.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.bookedSlots = {
+          petTaxi: action.payload.data.petTaxi || [],
+          petWalking: action.payload.data.petWalking || [],
+        };
+      })
+      .addCase(getBookedSlots.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
       });

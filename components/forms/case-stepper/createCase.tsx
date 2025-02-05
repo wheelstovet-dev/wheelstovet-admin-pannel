@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from '@/app/redux/store';
 import { useSearchParams } from 'next/navigation';
 import { getCaseById } from '@/app/redux/actions/casesAction';
 import Image from 'next/image';
+import dog_loader from "@/public/images/Frame (2).png"
 
 // Define the Zod schema for the form
 const caseFormSchema = z.object({
@@ -32,6 +33,10 @@ const caseFormSchema = z.object({
   charges: z.number().optional(),
   paymentMode: z.string().optional(),
   timeSlot: z.string().optional(),
+  emp: z.object({
+    empName: z.string().optional(),
+    mobileno: z.string().optional(),
+  }).optional(),
   pet: z.object({
     name: z.string().optional(),
     species: z.string().optional(),
@@ -97,6 +102,12 @@ export const CreateCaseForm: React.FC = () => {
         charges: selectedCase.Charges ?? 0,
         paymentMode: selectedCase.PaymentMode,
         timeSlot: selectedCase.TimeSlot || '',
+        emp: selectedCase.EmpId
+        ? {
+            empName: selectedCase.EmpId.Name,
+            mobileno: selectedCase.EmpId.MobileNo,
+          }
+        : undefined,
         pet: selectedCase.PetId
         ? {
             name: selectedCase.PetId.Name,
@@ -137,360 +148,391 @@ export const CreateCaseForm: React.FC = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Heading title="View Case" description="View the case details." />
+      <div className="flex items-center justify-between mb-6">
+  <Heading title="View Case" description="View the case details." />
+</div>
+
+<Separator />
+
+<Form {...form}>
+  <form className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
+      {/* Image Section */}
+<div className="p-4 bg-white rounded-xl shadow-md">
+  <FormField
+    control={control}
+    name="imageUrl"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel className="text-lg font-semibold">Image</FormLabel>
+        <FormControl>
+          <Image
+            src={field.value || dog_loader}
+            alt="Transaction Image"
+            width={200} // Increased width
+            height={200} // Increased height
+            className="w-48 h-48 object-cover rounded-md "
+          />
+        </FormControl>
+      </FormItem>
+    )}
+  />
+</div>
+
+
+      {/* Transaction Section */}
+      <div className="p-4 bg-white rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Transaction Details</h2>
+        <FormField
+          control={control}
+          name="transactionId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Transaction ID</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="transactionStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Transaction Status</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
       </div>
-      <Separator />
-      <Form {...form}>
-        <form className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
-            
-          <FormField
-              control={control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image</FormLabel>
-                  <FormControl>
-                    {field.value ? (
-                      <Image
-                        src={field.value}
-                        alt="Transaction Image"
-                        className="w-32 h-32 object-cover rounded-md border"
-                      />
-                    ) : (
-                      <p className="text-gray-500">No Image Available</p>
-                    )}
-                  </FormControl>
-                </FormItem>
-              )}
-            />
 
-            {/* Transaction Details */}
-            <FormField
-              control={control}
-              name="transactionId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Transaction ID</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="transactionStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Transaction Status</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+      {/* User Information */}
+      <div className="p-4 bg-white rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">User Information</h2>
+        <FormField
+          control={control}
+          name="firstName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
 
+      {/* Service Details */}
+      <div className="p-4 bg-white rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Service Details</h2>
+        <FormField
+          control={control}
+          name="serviceName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Service Name</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="serviceType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Service Type</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
+      {/* Employee Section */}
+        
+          <div className="p-4 bg-white rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Employee Details</h2>
+            <FormField
+              control={control}
+              name="emp.empName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Employee Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled {...field} value={field.value} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="emp.mobileno"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mobile Number</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled {...field} value={field.value} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
-            {/* User Information */}
+          {/* Pet details */}
+          {control._formValues.pet && (<div className="p-4 bg-white rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Pet Details</h2>
             <FormField
               control={control}
-              name="firstName"
+              name="pet.name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Pet Name</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled {...field} />
+                    <Input type="text" disabled className="border-gray-300" {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
             <FormField
               control={control}
-              name="lastName"
+              name="pet.species"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Pet Species</FormLabel>
                   <FormControl>
-                    <Input type="text" disabled {...field} />
+                    <Input type="text" disabled className="border-gray-300" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+)}
+          
+          {control._formValues.clinic && (
+          <div className="p-4 bg-white rounded-xl shadow-md">
+            {/* clinic details */}
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Clinic Details</h2>
+            <FormField
+              control={control}
+              name="clinic.clinicName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Clinic Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled className="border-gray-300" {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
             <FormField
               control={control}
-              name="email"
+              name="clinic.address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Clinic Address</FormLabel>
                   <FormControl>
-                    <Input type="email" disabled {...field} />
+                    <Input type="text" disabled className="border-gray-300" {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
-
-            {/* Service Information */}
-            <FormField
-              control={control}
-              name="serviceName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Service Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="serviceType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Service Type</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* Case Details */}
-            <FormField
-              control={control}
-              name="currentStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Current Status</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="pickupLocation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pick-Up Location</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="dropLocation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Drop Location</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="charges"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Charges</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled {...field} value={field.value ?? 0} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="paymentMode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment Mode</FormLabel>
-                  <FormControl>
-                    <Input type="text" disabled {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            </div>)}
+          
+            {control._formValues.salon && (<div className="p-4 bg-white rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Salon Details</h2>
+              {/* Salon Details */}
               <FormField
                 control={control}
-                name="timeSlot"
+                name="salon.salonName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Time Slot</FormLabel>
+                    <FormLabel>Salon Name</FormLabel>
                     <FormControl>
-                      <Input type="text" disabled {...field} value={field.value || ''} />
+                      <Input type="text" disabled className="border-gray-300" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
               />
-
-                  {/* Pet Details */}
-{control._formValues.pet && (
-  <>
-    <FormField
-      control={control}
-      name="pet.name"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Pet Name</FormLabel>
-          <FormControl>
-            <Input type="text" disabled {...field} value={field.value} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={control}
-      name="pet.species"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Pet Species</FormLabel>
-          <FormControl>
-            <Input type="text" disabled {...field} value={field.value} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-  </>
-)}
-
-{/* Clinic Details */}
-{control._formValues.clinic && (
-  <>
-    <FormField
-      control={control}
-      name="clinic.clinicName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Clinic Name</FormLabel>
-          <FormControl>
-            <Input type="text" disabled {...field} value={field.value} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={control}
-      name="clinic.address"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Clinic Address</FormLabel>
-          <FormControl>
-            <Input type="text" disabled {...field} value={field.value} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-  </>
-)}
-
-                {/* Hostel Details */}
-                {control._formValues.hostel && (
-                  <>
-                    <FormField
-                      control={control}
-                      name="hostel.hostelName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hostel Name</FormLabel>
-                          <FormControl>
-                            <Input type="text" disabled {...field} value={field.value} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name="hostel.address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hostel Address</FormLabel>
-                          <FormControl>
-                            <Input type="text" disabled {...field} value={field.value} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </>
+              <FormField
+                control={control}
+                name="salon.address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Salon Address</FormLabel>
+                    <FormControl>
+                      <Input type="text" disabled className="border-gray-300" {...field} />
+                    </FormControl>
+                  </FormItem>
                 )}
+              />
+            </div>)}
+            
 
-                {/* Salon Details */}
-                {control._formValues.salon && (
-                  <>
-                    <FormField
-                      control={control}
-                      name="salon.salonName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Salon Name</FormLabel>
-                          <FormControl>
-                            <Input type="text" disabled {...field} value={field.value} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={control}
-                      name="salon.address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Salon Address</FormLabel>
-                          <FormControl>
-                            <Input type="text" disabled {...field} value={field.value} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                )}
+            {control._formValues.hostel && (<div className="p-4 bg-white rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Hostel Details</h2>
+            {/* Hostel Details */}
+            <FormField
+              control={control}
+              name="hostel.hostelName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hostel Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled className="border-gray-300" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="hostel.address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hostel Address</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled className="border-gray-300" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            </div>)}
+            
+      {/* Other Details */}
+      <div className="p-4 bg-white rounded-xl shadow-md col-span-3">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Other Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={control}
+            name="currentStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Current Status</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="pickupLocation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pick-Up Location</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="dropLocation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Drop Location</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="charges"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Charges</FormLabel>
+                <FormControl>
+                  <Input type="number" disabled className="border-gray-300" {...field} value={field.value ?? 0} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="paymentMode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Payment Mode</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="timeSlot"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time Slot</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} value={field.value || ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+          control={control}
+          name="createdAt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Created At</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" value={field.value ? format(new Date(field.value), 'MM/dd/yyyy, h:mm:ss a') : ''} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="updatedAt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Updated At</FormLabel>
+              <FormControl>
+                <Input type="text" disabled className="border-gray-300" value={field.value ? format(new Date(field.value), 'MM/dd/yyyy, h:mm:ss a') : ''} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        </div>
+      </div>
+    </div>
+  </form>
+</Form>
 
-
-
-                <FormField
-                  control={control}
-                  name="createdAt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Created At</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          disabled
-                          value={field.value ? format(new Date(field.value), 'MM/dd/yyyy, h:mm:ss a') : ''}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name="updatedAt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Updated At</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          disabled
-                          value={field.value ? format(new Date(field.value), 'MM/dd/yyyy, h:mm:ss a') : ''}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-          </div>
-        </form>
-      </Form>
     </>
   );
 };

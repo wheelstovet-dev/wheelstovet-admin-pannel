@@ -56,7 +56,7 @@ export const getPendingSubscriptions = createAsyncThunk<
   } catch (error: any) {
     // Handle errors and reject with meaningful error message
     return rejectWithValue(
-      error.response?.data || 'Failed to fetch pending subscriptions'
+      error.response?.data
     );
   }
 });
@@ -100,4 +100,26 @@ export const getTodaysCases = createAsyncThunk<
     );
   }
 });
+
+
+// ----------- BOOKED SLOTS SECTION --------------
+
+// Action to get booked slots
+export const getBookedSlots = createAsyncThunk<
+  any, // Return type as `any`
+  void, // No input arguments
+  { rejectValue: any } // Reject value type
+>('slots/getBooked', async (_, { rejectWithValue }) => {
+  try {
+    // Make API call to fetch booked slots
+    const response = await apiCall('GET', '/admin/slots/booked');
+    return response; // Return the full response including booked slots
+  } catch (error: any) {
+    // Handle errors and return the error message
+    return rejectWithValue(
+      error.response?.data || 'Failed to fetch booked slots'
+    );
+  }
+});
+
 

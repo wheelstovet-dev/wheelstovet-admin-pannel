@@ -21,7 +21,7 @@ interface EnquiryFormType {
 
 const enquiryFormSchema = z.object({
   enquiryName: z.string().min(1, 'Enquiry Name is required'),
-  preferredDate: z.date({ required_error: 'Preferred Date is required.' }),
+  preferredDate: z.union([z.date(), z.null()]), 
   preferredTime: z.string().min(1, 'Preferred Time is required'),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   phoneNo: z.string().min(1, 'Phone number is required'),
@@ -49,7 +49,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
     resolver: zodResolver(enquiryFormSchema),
     defaultValues: {
       enquiryName: initialData?.ServiceId?.serviceName || '',
-      preferredDate: initialData?.PreferredDates ? new Date(initialData.PreferredDates) : new Date(),
+      preferredDate: initialData?.PreferredDates?.length
+      ? new Date(initialData.PreferredDates[0])
+      : null, // Use null to indicate "Not Available"
       preferredTime: initialData?.PreferredHours ,
       email: initialData?.UserId?.Email ,
       phoneNo: initialData?.UserId?.MobileNo ,
@@ -65,10 +67,12 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
     if (initialData) {
       form.reset({
         enquiryName: initialData?.ServiceId?.serviceName || '',
-        preferredDate: initialData?.PreferredDates ? new Date(initialData.PreferredDates) : new Date(),
+        preferredDate: initialData?.PreferredDates?.length
+        ? new Date(initialData.PreferredDates[0])
+        : null, // Use null to indicate "Not Available"
         preferredTime: initialData?.PreferredHours
-  ? `${String(initialData.PreferredHours).padStart(2, '0')}:00:00`
-  : '',
+        ? `${String(initialData.PreferredHours).padStart(2, '0')}:00:00`
+        : '',
         email: initialData?.UserId?.Email || '',
         phoneNo: initialData?.UserId?.MobileNo || '',
         pickupAddress: initialData?.PickupLocation || '',
@@ -128,28 +132,20 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Preferred Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {/* {field.value ? format(field.value, 'PPP') : 'Pick a date'} */}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={isEnabled || loading} />
-                    </PopoverContent>
-                  </Popover>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      disabled={isEnabled || loading}
+                      placeholder="Enter Preferred Date"
+                      value={field.value ? format(new Date(field.value), 'PPP') : 'Not Available'}
+                      onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />
+
+
 
             {/* Preferred Time */}
             <FormField
@@ -220,8 +216,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="resolved">resolved</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Converted">Converted </SelectItem>
+                        <SelectItem value="Rejected">Rejected </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
