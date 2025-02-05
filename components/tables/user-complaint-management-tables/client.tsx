@@ -67,42 +67,55 @@ const ComplaintManagementUserPage: React.FC = () => {
   
   useEffect(() => {
     setFilteredData(complaints);
+    resetFilters();
   }, [complaints]);
+  
 
   const handleSearch = (searchValue: string) => {
     setSearchTerm(searchValue);
     const filtered = complaints.filter((item: any) =>
-      item.description.toLowerCase().includes(searchValue.toLowerCase())
+      item.Description.toLowerCase().includes(searchValue.toLowerCase())
     );
     setFilteredData(filtered);
   };
+  
 
   const handleStatusFilterChange = (status: string) => {
     setStatusFilter(status);
     const filtered = status
-      ? complaints.filter((item: any) => item.status === status)
+      ? complaints.filter((item: any) => item.Status.toLowerCase() === status.toLowerCase())
       : complaints;
     setFilteredData(filtered);
   };
+  
 
   const handleComplaintByFilterChange = (complaintBy: string) => {
-    console.log("complaintby", complaintBy);
-    console.log("complaintby[0]", complaints);
+    setFilterType(`By ${complaintBy}`);
     const filtered = complaintBy
-      ? complaints.filter((item: any) => item.complaintBy === complaintBy)
+      ? complaints.filter((item: any) => item.ComplaintBy.toLowerCase() === complaintBy.toLowerCase())
       : complaints;
-    console.log("filtered", filtered);
     setFilteredData(filtered);
-};
-
+  };
+  
+  const resetFilters = () => {
+    setFilterType('By type');
+    setStatusFilter(null);
+    setSearchTerm('');
+    setFilteredData(complaints);
+  };
+  
 
   const filters = [
     {
       label: 'Status',
-      subOptions: ['Open', 'Closed'],
+      subOptions: ['pending','inprogress', 'resolved'],
     },
     {
       label: 'Complaint By',
+      subOptions: ['User', 'Employee'],
+    },
+    {
+      label: 'Reset',
       subOptions: ['User', 'Employee'],
     },
   ];
@@ -129,32 +142,49 @@ const ComplaintManagementUserPage: React.FC = () => {
           <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded-xl px-4 py-2">
             {filterType} <ChevronDown className="ml-1 h-4 w-4" />
           </DropdownMenuTrigger>
+
           <DropdownMenuContent>
-            {filters.map((filter) => (
-              <DropdownMenuSub key={filter.label}>
-                <DropdownMenuSubTrigger className="flex items-center justify-between">
+            {filters.map((filter) =>
+              filter.label === 'Reset' ? (
+                // Standalone Reset Option
+                <DropdownMenuItem
+                  key={filter.label}
+                  onClick={() => {
+                    resetFilters();
+                  }}
+                  className="font-semibold text-red-500 hover:bg-red-100"
+                >
                   {filter.label}
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  {filter.subOptions.map((subOption) => (
-                    <DropdownMenuItem
-                      key={subOption}
-                      onClick={() => {
-                        if (filter.label === 'Status') {
-                          handleStatusFilterChange(subOption);
-                        } else if (filter.label === 'Complaint By') {
-                          handleComplaintByFilterChange(subOption);
-                        }
-                      }}
-                    >
-                      {subOption}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            ))}
+                </DropdownMenuItem>
+              ) : (
+                // Regular Filter Options with Sub-menus
+                <DropdownMenuSub key={filter.label}>
+                  <DropdownMenuSubTrigger className="flex items-center justify-between">
+                    {filter.label}
+                  </DropdownMenuSubTrigger>
+
+                  <DropdownMenuSubContent>
+                    {filter.subOptions.map((subOption) => (
+                      <DropdownMenuItem
+                        key={subOption}
+                        onClick={() => {
+                          if (filter.label === 'Status') {
+                            handleStatusFilterChange(subOption);
+                          } else if (filter.label === 'Complaint By') {
+                            handleComplaintByFilterChange(subOption);
+                          }
+                        }}
+                      >
+                        {subOption}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
+
       </div>
       <Separator />
       {loading ? 'Loading...' : (

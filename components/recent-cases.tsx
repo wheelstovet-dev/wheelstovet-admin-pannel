@@ -73,7 +73,9 @@ export function RecentCases() {
       {/* {error && <div>{error}</div>} */}
 
       <CardHeader>
-        <CardTitle className="text-2xl">Cases for Today</CardTitle> {/* Large Title */}
+        <CardTitle className="text-2xl font-bold text-black">
+                    Cases for Today
+          </CardTitle>
         <CardDescription className="text-l text-gray-500">
           You have {formattedCases.length} Cases for today.
         </CardDescription>

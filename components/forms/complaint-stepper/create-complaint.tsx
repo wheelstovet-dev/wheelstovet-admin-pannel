@@ -47,7 +47,9 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
     } else if (propMode) {
       setCurrentMode(propMode);
     }
+    //console.log("Current Mode:", currentMode);  // Debug this
   }, [urlMode, propMode]);
+  
 
   const form = useForm<ComplaintFormData>({
     resolver: zodResolver(complaintFormSchema),
@@ -68,9 +70,15 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
       dispatch(getComplaintById(complaintId))
         .unwrap()
         .then((data: any) => {
-          setComplaintData(data.data);
-          form.reset(data.data);
-          console.log("Fetched complaint data:", data.data);
+          //console.log("Fetched complaint data:", data.data);
+          // Sanitize ResolvedAt to avoid null values
+          const sanitizedData = {
+            ...data.data,
+            ResolvedAt: data.data.ResolvedAt ?? '',  // Replace null with an empty string
+          };
+          setComplaintData(sanitizedData);
+          form.reset(sanitizedData);
+
         })
         .catch((error: any) => {
           ToastAtTopRight.fire({
@@ -86,18 +94,37 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
   const { control, handleSubmit, formState: { errors } } = form;
 
   const onSubmit: SubmitHandler<ComplaintFormData> = async (data) => {
-    console.log("Form submitted with data:", data); // Check if this gets logged
+    //console.log("Update button clicked");
+    //console.log("Form data submitted:", data);
+  
     try {
       setLoader(true);
-      const response = await dispatch(updateComplaint({ id: complaintId, complaintData: data })).unwrap();
-      console.log("Response:", response); // Check if the response is received
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Complaint updated successfully!',
-      });
-      router.push('/complaints');
+  
+      //console.log("Dispatching updateComplaint action with data:", { id: complaintId, complaintData: data });
+  
+      const response = await dispatch(updateComplaint({ id: complaintId, complaintData: data }));
+  
+      //console.log("Dispatch result (raw):", response);
+  
+      if (response.meta.requestStatus === 'fulfilled') {
+        //console.log("Redux action fulfilled with payload:", response.payload);
+  
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Complaint updated successfully!',
+        });
+  
+        router.push('/complaint-management');
+      } else {
+        //console.error("Redux action rejected:", response.error);
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: 'Error updating complaint',
+          //text: response.error?.message || 'Failed to update complaint',
+        });
+      }
     } catch (error: any) {
-      console.log("Error:", error); // Check if this gets triggered
+      //console.error("Error during complaint update:", error);
       ToastAtTopRight.fire({
         icon: 'error',
         title: 'Error updating complaint',
@@ -107,6 +134,15 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
       setLoader(false);
     }
   };
+  
+  
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      //console.log("Validation Errors:", errors);  // Log any validation errors
+    }
+  }, [errors]);
+  
+
   
 
   const renderErrorMessage = (error: any) => {
@@ -118,13 +154,19 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
   if (loader) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">
-        {currentMode === 'view' ? 'View Complaint' : 'Update Complaint'}
-      </h2>
+              <div className="container mx-auto p-4">
+                <h2 className="text-2xl font-bold mb-4">
+                  {currentMode === 'view' ? 'View Complaint' : 'Update Complaint'}
+                </h2>
 
-      <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <Form {...form}>
+                <form 
+              onSubmit={handleSubmit((data) => {
+                //console.log("Form submitted with data:", data);  // Log form data here
+                onSubmit(data);  // Call your actual submit logic
+              })} 
+              className="space-y-6"
+            >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
 
             <FormField control={control} name="ComplaintType" render={({ field }) => (
@@ -166,8 +208,9 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="inprogress">In Progress</SelectItem>
                       <SelectItem value="resolved">Resolved</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -204,12 +247,30 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
               </FormItem>
             )} />
 
+            {/* <FormField control={control} name="ResolvedAt" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Resolved At</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Enter Resolved Date"
+                  {...field}
+                  value={field.value ?? ''}  // Ensure empty string is shown if null
+                  disabled={currentMode === 'view'}
+                />
+              </FormControl>
+              <FormMessage>{errors.ResolvedAt?.message}</FormMessage>
+            </FormItem>
+          )} /> */}
+
+
           </div>
             
+  
           {currentMode === 'update' && (
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              Update Complaint
-            </Button>
+           <Button type="submit" >
+           Update Complaint
+         </Button>                 
           )}
 
           {currentMode === 'view' && (
