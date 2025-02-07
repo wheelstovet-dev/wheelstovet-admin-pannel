@@ -130,6 +130,25 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Plan.Frequency',
     header: 'Frequency'
   },
+  // {
+  //   accessorKey: 'AssignedEmp',
+  //   header: 'Employee Name',
+  //   cell: ({ row }) => {
+  //     const formatName = (name:any) => {
+  //       if (!name) return '';
+  //       return name
+  //         .split(' ') // Split by space
+  //         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+  //         .join(' '); // Join back with space
+  //     };
+  
+  //     return (
+  //       <div>
+  //         <span>{formatName(row.original?.AssignedEmp?.Name)}</span>
+  //       </div>
+  //     );
+  //   },
+  // },  
   {
     accessorKey: 'AssignedEmp',
     header: 'Employee Name',

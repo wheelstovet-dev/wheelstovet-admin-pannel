@@ -6,7 +6,9 @@ import { SubscriptionHistoryClient } from '@/components/tables/subscription-hist
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ProtectedRoute from '@/components/protectedRoute';
 
-const breadcrumbItems = [{ title: 'Subscription History', link: '/dashboard/subscriptionHistory' }];
+const breadcrumbItems = [{ title: 'Subscription Management', link: '/subscription-management' },
+  { title: 'Walk History Details ', link: '' }
+];
 
 export default function SubscriptionHistory() {
   return (

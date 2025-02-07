@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { ToastAtTopRight } from '@/lib/sweetalert';
 import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -38,7 +39,16 @@ export const CellAction: React.FC<any> = ({ data }) => {
 
  
   const assignEmployee = () => {
+    //console.log("data",data);
+    if(!data.AssignedEmp){
     router.push(`/employee-management?subscriptionId=${data._id}`); 
+    }
+    else{
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: 'Employee already assigned',
+      });
+    }
   };
   
   

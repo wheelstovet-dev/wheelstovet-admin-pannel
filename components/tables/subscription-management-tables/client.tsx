@@ -23,7 +23,7 @@ export const SubscriptionManagementClient: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
   const [pageNumber,setPageNumber]=useState(1);
-  const [limit,setLimit]=useState(10);
+  const [limit,setLimit]=useState(5);
   const [totalRecords,setTotalRecords]=useState(0);
 
   const handleSearch = (searchValue: string) => {

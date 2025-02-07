@@ -25,10 +25,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  console.log("data",data._id);
   const onConfirm = async () => {
     // Your confirm logic here
   };
-
+  const handleViewSubscriptionHistory = () => {
+    router.push(`/subscription-history/view?id=${data._id}`); 
+  };
  
 
  
@@ -49,6 +52,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={handleViewSubscriptionHistory}>
+            <Eye className="mr-2 h-4 w-4" /> View Subscription History
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>

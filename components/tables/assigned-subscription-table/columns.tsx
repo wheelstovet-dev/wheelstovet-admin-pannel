@@ -83,8 +83,8 @@ export const columns: ColumnDef<any>[] = [
   //   cell: ({ row }) => <span>{row.original.timeSlot}</span>,
   // },
   
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => <CellAction data={row.original} />,
-  // },
+  {
+    id: 'actions',
+    cell: ({ row }) => <CellAction data={row.original} />,
+  },
 ];
