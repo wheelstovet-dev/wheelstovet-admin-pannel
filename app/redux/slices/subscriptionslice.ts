@@ -7,21 +7,23 @@ interface SubscriptionState {
   loading: boolean;
   subscriptions: any[];
   selectedSubscription: any | null;
-  walkRecords: any[];
   error: string | null;
   currentPage: number;
   totalSubscriptions: number;
+  walkRecords: any[];
+  walkRecordsLoading: boolean;
   totalPages: number;
 }
 
 const initialState: SubscriptionState = {
   loading: false,
   subscriptions: [],
-  walkRecords: [], // Add walkRecords to initial state
   selectedSubscription: null,
   error: null,
   currentPage: 1,
   totalSubscriptions: 0,
+  walkRecords: [],
+  walkRecordsLoading: false,
   totalPages: 0,
 };
 
@@ -68,22 +70,22 @@ const subscriptionSlice = createSlice({
       state.error = action.payload;
     })
 
-      // get walk records slice
+      // get Walk Records
       .addCase(getWalkRecords.pending, (state) => {
-        state.loading = true;
+        state.walkRecordsLoading = true;
+        //state.walkRecordsError = null;
       })
       .addCase(
         getWalkRecords.fulfilled,
-        (state, action: PayloadAction<AxiosResponse<{ total: number; currentPage: number; totalPages: number; subscriptions: any[] }>>) => {
-          state.loading = false;
-          state.walkRecords = action.payload.data.subscriptions; // Store walk records in walkRecords array
-          state.currentPage = action.payload.data.currentPage;
-          state.totalPages = action.payload.data.totalPages;
+        (state, action: PayloadAction<AxiosResponse<any>>) => {
+          state.walkRecordsLoading = false;
+          console.log('walkRecords', action.payload.data);
+          state.walkRecords = action.payload.data;
         }
       )
       .addCase(getWalkRecords.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.walkRecordsLoading = false;
+        //state.walkRecordsError = action.payload || 'Failed to fetch walk records';
       })
 
       // slice to update the status of subscription

@@ -1,6 +1,7 @@
 'use client';
 
 export interface AssignedSubscription {
+  _id:string
   caseId: string;
   plan: string;
   frequency: string;
@@ -11,6 +12,7 @@ export interface AssignedSubscription {
 
 export const AssignedSubscriptionData: AssignedSubscription[] = [
   {
+    _id: '1',
     caseId: '101',
     plan: '1 time Dog Walking',
     frequency: 'Daily',
@@ -18,7 +20,7 @@ export const AssignedSubscriptionData: AssignedSubscription[] = [
     assignedDate: '2023-09-01',
     timeSlot: '10:00 AM',
   },
-  {
+  { _id: '1',
     caseId: '102',
     plan: '2 Times Dog Walking',
     frequency: 'Weekly',
@@ -26,7 +28,7 @@ export const AssignedSubscriptionData: AssignedSubscription[] = [
     assignedDate: '2023-09-02',
     timeSlot: '02:00 PM',
   },
-  {
+  { _id: '1',
     caseId: '103',
     plan: '2 Times Dog Walking',
     frequency: 'Weekly',
@@ -34,7 +36,7 @@ export const AssignedSubscriptionData: AssignedSubscription[] = [
     assignedDate: '2023-09-03',
     timeSlot: '11:00 AM',
   },
-  {
+  { _id: '1',
     caseId: '104',
     plan: '2 Times Dog Walking',
     frequency: 'Weekly',
@@ -42,7 +44,7 @@ export const AssignedSubscriptionData: AssignedSubscription[] = [
     assignedDate: '2023-09-04',
     timeSlot: '09:00 AM',
   },
-  {
+  { _id: '1',
     caseId: '105',
     plan: '2 Times Dog Walking',
     frequency: 'Weekly',
@@ -50,7 +52,7 @@ export const AssignedSubscriptionData: AssignedSubscription[] = [
     assignedDate: '2023-09-05',
     timeSlot: '03:00 PM',
   },
-  {
+  { _id: '1',
     caseId: '106',
     plan: '2 Times Dog Walking',
     frequency: 'Weekly',

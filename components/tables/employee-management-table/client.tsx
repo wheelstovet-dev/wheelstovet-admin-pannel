@@ -136,7 +136,7 @@ export const EmployeeManagementClient: React.FC = () => {
           placeholder="Search by Name or Role or Mobile No"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          className="w-80 px-4 py-2 border rounded-md"
+          className="w-full px-4 py-2 border rounded-md"
         />
       </div>
 

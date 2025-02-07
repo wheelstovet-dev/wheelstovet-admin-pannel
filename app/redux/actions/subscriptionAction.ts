@@ -52,8 +52,9 @@ export const getWalkRecords = createAsyncThunk<
   'subscriptions/getWalkRecords',
   async ({ id, page, limit }, { rejectWithValue }) => {
     try {
-      const response = await apiCall('GET', `/admin/getWalkrecord/${id}?page=${page}&limit=${limit}`);
+      const response = await apiCall('GET', `/admin/walk-records/history?subscriptionId=${id}&page=${page}&limit=${limit}`);
       // Return full response including subscriptions and pagination data
+      console.log('API Response for walk records:', response);
       return response;
     } catch (error: any) {
       return rejectWithValue(error || 'Failed to fetch subscriptions');

@@ -3,8 +3,9 @@
 import { ColumnDef, Row } from '@tanstack/react-table';
 // import { UserManagement } from '@/constants/user-management-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar, Check, ChevronDown, X } from 'lucide-react';
+import { Calendar, Check, ChevronDown, Mail, Phone, X } from 'lucide-react';
 import { useState } from 'react';
+import { format } from 'date-fns';
 
 // interface SubscriptionManagement {
 //   status: string;
@@ -92,57 +93,120 @@ export const columns: ColumnDef<any>[] = [
     header: 'S.no',
     cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
   },
+
+  {
+    accessorKey: 'EmployeeId',
+    header: 'Employee Details',
+    cell: ({ row }) => {
+      const formatName = (name:any) => {
+        if (!name) return '';
+        return name
+          .split(' ') // Split by space
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+          .join(' '); // Join back with space
+      };
+  
+      return (
+        <div className="flex flex-col me-5 text-center">
+        <span>{formatName(row.original?.EmployeeId?.Name)}</span>
+        <div className="flex items-center mt-2">
+          <Phone className="text-green-500 mr-2" width={15} height={15} />
+          <span className="text-[12px]">{row.original?.EmployeeId?.MobileNo}</span>
+        </div>
+      </div>
+      );
+    },
+  }, 
+  {
+    accessorKey: 'SubscriptionId',
+    header: 'User Details',
+    cell: ({ row }) => {
+      const user = row.original?.SubscriptionId?.UserId;
+      return (
+        <div className="flex flex-col me-5">
+        <div className="text-center">
+          {user ? `${user.FirstName} ${user.LastName}` : 'N/A'}
+        </div>
+        <div className="flex items-center mt-1">
+        <Mail className="text-blue-500 mr-2" width={15} height={15} />
+        <span className="text-[12px]">{row.original?.SubscriptionId?.UserId?.Email}</span>
+      </div>
+      </div>
+      );
+    },
+  },
+  // {
+  //   accessorKey: 'contact',
+  //   header: 'Contact',
+  //   cell: ({ row }) => (
+  //     <div className="flex flex-col me-5">
+  //       <div className="flex items-center mt-1">
+  //         <Mail className="text-blue-500 mr-2" width={15} height={15} />
+  //         <span className="text-[12px]">{row.original.MobileNo}</span>
+  //       </div>
+  //       <div className="flex items-center mt-2">
+  //         <Phone className="text-green-500 mr-2" width={15} height={15} />
+  //         <span className="text-[12px]">{row.original.Email}</span>
+  //       </div>
+  //     </div>
+  //   ),
+  // }, 
   {
     accessorKey: 'Status',
     header: 'Status',
     cell: ({ row }) => (
       <div className="">
-        <span className="text-[12px]">{row.original?.Status}</span>
+        <span>{row.original?.Status}</span>
       </div>
     ),
   },
   {
-    accessorKey: 'Date',
-    header: 'Date',
+      accessorKey: 'Date',
+      header: 'Date',
+      cell: ({ row }) => format(new Date(row.original.Date), 'dd-MMM-yyyy'),
+    },
+  // {
+  //   accessorKey: 'Date',
+  //   header: 'Date',
+  //   cell: ({ row }) => (
+  //     <div className="">
+  //       <span>{row.original?.Date}</span>
+  //     </div>
+  //   ),
+  // },
+  {
+    accessorKey: 'LatePickup',
+    header: 'Ontime Pickup',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original?.Date}</span>
+      <div className='text-center'>
+        <span>{row.original.LatePickup ? "No" : "Yes"}</span>
+      </div>
+    ),
+  },  
+  {
+    accessorKey: 'LateDrop',
+    header: 'Ontime Drop',
+    cell: ({ row }) => (
+      <div className="text-center">
+        <span>{row.original.LateDrop ? "No" : "Yes"}</span>
       </div>
     ),
   },
+  // {
+  //   accessorKey: 'Duration',
+  //   header: 'Duration',
+  //   cell: ({ row }) => (
+  //     <div className="">
+  //       <span>{row.original?.Duration} min</span>
+  //     </div>
+  //   ),
+  // },
   {
-    accessorKey: 'timeIn',
-    header: 'Time In',
+    accessorKey: 'TimeSlot',
+    header: 'Time Slot',
     cell: ({ row }) => (
       <div className="">
-        <span className="text-[12px]">{row.original.timeIn}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'timeOut',
-    header: 'Time Out',
-    cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.timeOut}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'Duration',
-    header: 'Duration',
-    cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original?.Duration}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'Late',
-    header: 'Late',
-    cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.note}</span>
+        <span>{row.original.TimeSlot}</span>
       </div>
     ),
   },
