@@ -29,8 +29,14 @@ const getProfile = () => {
 };
 
 const logout = () => {
+  console.log("logout before");
+  localStorage.removeItem('activeItem');
+  console.log("logout after");
+  localStorage.clear();
   storage.clearToken();
+  window.location.reload(); // Ensure storage reset reflects in UI
 };
+
 
 export const userService = {
   login,

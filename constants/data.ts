@@ -110,6 +110,16 @@ export type Employee = {
   profile_picture?: string | null; 
 };
 
+const handleLogout = () => {
+  // Remove authentication tokens or session data
+  sessionStorage.removeItem('authToken');
+  localStorage.removeItem('authToken');
+  
+  // Redirect to the login page or home
+  window.location.href = '/auth/login';
+};
+
+
 export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
@@ -264,9 +274,9 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Log Out',
-    href: '/logout',
+    href: '#', // Prevent navigation, handle logout programmatically
     icon: 'logout',
-    label: 'Log Out'
+    label: 'Log Out',
   }
 ];
 

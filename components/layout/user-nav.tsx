@@ -48,6 +48,7 @@ export function UserNav() {
   
   const onConfirm = async () => {
     sessionStorage.removeItem('token');
+    localStorage.clear();
     router.push('/auth/login');
   }
 

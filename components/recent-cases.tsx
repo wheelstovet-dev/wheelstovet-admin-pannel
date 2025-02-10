@@ -36,7 +36,7 @@ export function RecentCases() {
       .unwrap()
       .catch((err: any) => {
         const errorMessage = err.message || 'Failed to fetch today\'s cases';
-        alert(errorMessage);
+       
       });
   }, [dispatch]);
 

@@ -99,7 +99,7 @@ export const SubscriptionHistoryClient: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Subscription History [walk records] (${totalRecords})`}
+          title={`Subscription History [walk records] (${data.length})`}
           description="View Subscription (Client side table functionalities.)"
         />
       </div>

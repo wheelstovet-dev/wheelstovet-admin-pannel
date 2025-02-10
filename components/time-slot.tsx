@@ -33,7 +33,7 @@ const AvailableSlots: React.FC = () => {
         .unwrap()
         .catch((err: any) => {
           const errorMessage = 'Failed to fetch booked Slot';
-          alert(errorMessage);
+          
         });
     }, [dispatch]);
   
