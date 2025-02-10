@@ -40,6 +40,8 @@ import CaseManagementClient from '@/components/tables/cases-tables/client';
 import UnassignedCasesClient from '@/components/tables/unassigned-cases-dashboard-table/client';
 import TimeSlotSelector from '@/components/time-slot';
 import AvailableSlots from '@/components/time-slot';
+import DashboardCasesGraph from '@/components/dashboardCasesGraph';
+import DashboardSubscriptionChart from '@/components/dashboardSubscriptionGraph';
 
 ChartJS.register(
   CategoryScale,
@@ -141,47 +143,11 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
   );
 };
 
-const initialData = {
-  labels: ['September', 'October', 'November', 'December', 'January', 'February', 'March', 'April'],
-  datasets: [
-    {
-      label: 'Dog Walking',
-      data: [2, 3, 5, 4, 3, 5, 6, 4],
-      borderColor: 'orange',
-      backgroundColor: 'rgba(255, 165, 0, 0.2)',
-      borderWidth: 2,
-      fill: true, // Fill the area under the line
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false,
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      max: 10,
-      grid: {
-        display: false, // Remove grid lines
-      },
-    },
-    x: {
-      grid: {
-        display: false, // Remove grid lines
-      },
-    },
-  },
-};
 
 export default function Page() {
   const [selectedCard, setSelectedCard] = useState(""); // Track selected card
-  const [graphData, setGraphData] = useState(initialData);
-  const [graphDropdownValue, setGraphDropdownValue] = useState('Monthly');
+  //const [graphData, setGraphData] = useState(initialData);
+  //const [graphDropdownValue, setGraphDropdownValue] = useState('Monthly');
   const [selectedCase, setSelectedCase] = useState('Dog Walking');
 
 
@@ -202,111 +168,7 @@ const handleCardClick = (card: string) => {
   }
 };
 
-  const handleGraphChange = (value: string) => {
-    setGraphDropdownValue(value);
-    // Update graphData based on the value
-    if (value === 'Daily') {
-      setGraphData({
-        ...initialData,
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        datasets: [
-          {
-            ...initialData.datasets[0],
-            data: [1, 2, 3, 4, 5, 6, 7],
-          },
-        ],
-      });
-    } else if (value === 'Weekly') {
-      setGraphData({
-        ...initialData,
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        datasets: [
-          {
-            ...initialData.datasets[0],
-            data: [4, 3, 5, 6],
-          },
-        ],
-      });
-    } else if (value === 'Monthly') {
-      setGraphData(initialData);
-    }
-  };
 
-  const handleCaseChange = (caseType: string) => {
-    setSelectedCase(caseType);
-    // Update graphData based on the selected case
-    if (caseType === 'Dog Walking') {
-      setGraphData({
-        ...initialData,
-        datasets: [
-          {
-            label: 'Dog Walking',
-            data: [2, 3, 5, 4, 3, 5, 6, 4],
-            borderColor: 'orange',
-            backgroundColor: 'rgba(255, 165, 0, 0.2)',
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
-    } else if (caseType === 'Employee Escalated') {
-      setGraphData({
-        ...initialData,
-        datasets: [
-          {
-            label: 'Employee Escalated',
-            data: [1, 2, 2, 3, 4, 5, 6, 5],
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 0.2)',
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
-    } else if (caseType === 'Client Escalated') {
-      setGraphData({
-        ...initialData,
-        datasets: [
-          {
-            label: 'Client Escalated',
-            data: [1, 1, 2, 2, 3, 3, 4, 4],
-            borderColor: 'green',
-            backgroundColor: 'rgba(0, 255, 0, 0.2)',
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
-    } else if (caseType === 'Pet Handling') {
-      setGraphData({
-        ...initialData,
-        datasets: [
-          {
-            label: 'Pet Handling',
-            data: [3, 4, 5, 6, 4, 5, 6, 7],
-            borderColor: 'purple',
-            backgroundColor: 'rgba(128, 0, 128, 0.2)',
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
-    } else if (caseType === 'Pet Taxi') {
-      setGraphData({
-        ...initialData,
-        datasets: [
-          {
-            label: 'Pet Taxi',
-            data: [2, 2, 3, 3, 4, 4, 5, 5],
-            borderColor: 'red',
-            backgroundColor: 'rgba(255, 0, 0, 0.2)',
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
-    }
-  };
 
   // -----------------------API INTEGRATION---------------
 
@@ -315,20 +177,6 @@ const handleCardClick = (card: string) => {
   const {pendingSubscriptions, loading, error } = useSelector(
     (state: RootState) => state.dashboard
   );
-  //==============ENQUIRY=================
-  // const getEnqueries =async()=>{
-  //   await dispatch(getAllEnquiries({ page: 1, limit: 5 }))
-    
-  //   .unwrap()
-  //   .catch((err: any) => {
-  //     const errorMessage = err.message || 'Failed to fetch Enquiries';
-  //     ToastAtTopRight.fire({
-  //       icon: 'error',
-  //       title: typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
-  //     });
-  //   });
-       
-  // }
 
   // ========== PENDING SUBSCRIPTION SECTION ==============
   const getPendingSubs = async()=>{
@@ -419,6 +267,9 @@ const handleCardClick = (card: string) => {
                 /> */}
               </div>
               
+              {/* Graph for dashboard */}
+              <DashboardSubscriptionChart/>
+              <DashboardCasesGraph/>
               
               <div className="flex flex-wrap my-2 justify-between mx-3">
                 {/* Card 1: Cases for Today */}
@@ -470,53 +321,7 @@ const handleCardClick = (card: string) => {
                  
                   
                 </div>
-                <div className="grid grid-cols-1 gap-4">
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <div className="flex justify-between items-center w-full">
-                      <CardTitle>Total Cases</CardTitle>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded px-2 py-1">
-                          {graphDropdownValue} <ChevronDown className="ml-1 h-4 w-4" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          {['Daily', 'Weekly', 'Monthly'].map((value) => (
-                            <DropdownMenuItem key={value} onClick={() => handleGraphChange(value)}>
-                              {value}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-center space-x-4 mb-4">
-                      <button
-                        className={`px-4 py-2 rounded ${selectedCase === 'Dog Walking' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleCaseChange('Dog Walking')}
-                      >
-                        Dog Walking
-                      </button>
-                      <button
-                        className={`px-4 py-2 rounded ${selectedCase === 'Employee Escalated' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleCaseChange('Employee Escalated')}
-                      >
-                        Employee Escalated
-                      </button>
-                      <button
-                        className={`px-4 py-2 rounded ${selectedCase === 'Client Escalated' ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
-                        onClick={() => handleCaseChange('Client Escalated')}
-                      >
-                        Client Escalated
-                      </button>
-                     
-                    </div>
-                    <div className="w-full" style={{ height: '50%' }}> {/* Set height of the graph container */}
-                      <Line data={graphData} options={options} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                
             </TabsContent>
           </Tabs>
         </div>

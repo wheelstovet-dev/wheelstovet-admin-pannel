@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
+import { useRouter } from 'next/navigation';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -26,6 +27,7 @@ export function DashboardNav({
   setOpen,
   isMobileNav = false
 }: DashboardNavProps) {
+  const router=useRouter();
   const path = usePathname();
   const { isMinimized } = useSidebar();
   const defaultActiveItem = '/dashboard';
@@ -41,6 +43,15 @@ export function DashboardNav({
     }
     setExpandedItems(newExpandedItems);
     setLocalStorageItem('expandedItems', newExpandedItems);
+  };
+
+  const handleLogout = () => {
+    // Remove any session data (for example, clear localStorage or sessionStorage)
+    localStorage.clear();
+    sessionStorage.clear();
+  
+    // Redirect to login page or home page after logout
+    router.push('/auth/login');
   };
 
   const handleClick = (href: string) => {
@@ -75,6 +86,32 @@ export function DashboardNav({
           const Icon = Icons[item.icon || 'arrowRight'];
           const isExpanded = expandedItems.includes(item.href || '');
           const isActive = activeItem === item.href;
+
+          if (item.title === 'Log Out') {
+            return (
+              <div key={index}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      onClick={handleLogout} // Trigger the logout function on click
+                      className={cn(
+                        'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer', // Added cursor-pointer class here
+                        isActive ? 'bg-accent text-black' : 'transparent'
+                      )}
+                    >
+                      <Icon className="ml-3 size-5" />
+                      {isMobileNav || (!isMinimized && !isMobileNav) ? (
+                        <span className="mr-2 truncate">{item.title}</span>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </TooltipTrigger>
+                </Tooltip>
+              </div>
+            );
+          }
+          
 
           return (
             <div key={index}>

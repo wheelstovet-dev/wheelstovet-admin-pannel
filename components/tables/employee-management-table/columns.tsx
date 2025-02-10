@@ -1,5 +1,5 @@
 'use client';
-
+import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -94,9 +94,10 @@ export const columns: ColumnDef<any>[] = [
     header: 'Role',
   },
   {
-    accessorKey: 'CreatedAt',
-    header: 'Joined Date',
-  },
+      accessorKey: 'CreatedAt',
+      header: 'Joined Date',
+      cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    },
   {
     accessorKey: 'Status',
     header: 'Status',

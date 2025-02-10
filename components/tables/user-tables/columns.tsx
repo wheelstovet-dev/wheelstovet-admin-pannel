@@ -36,22 +36,28 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'FirstName',
-    header: 'First Name'
+    header: 'First Name',
+    cell: ({ row }) => {
+      return <div className="text-center">{row.original?.FirstName || 'N/A'}</div>;
+    },
   },
   {
     accessorKey: 'LastName',
-    header: 'Last Name'
+    header: 'Last Name',
+    cell: ({ row }) => {
+      return <div className="text-center">{row.original?.LastName || 'N/A'}</div>;
+    },
   },
   {
     accessorKey: 'contact',
     header: 'Contact',
     cell: ({ row }) => (
-      <div className="flex flex-col me-5">
-        <div className="flex items-center mt-1">
+      <div className="flex flex-col me-5 text-center">
+        <div className="flex items-center mt-1 text-center">
           <Mail className="text-blue-500 mr-2" width={15} height={15} />
           <span className="text-[12px]">{row.original.Email}</span>
         </div>
-        <div className="flex items-center mt-2">
+        <div className="flex items-center mt-2 text-center">
           <Phone className="text-green-500 mr-2" width={15} height={15} />
           <span className="text-[12px]">{row.original.MobileNo}</span>
         </div>
@@ -92,9 +98,13 @@ export const columns: ColumnDef<any>[] = [
   //   header: 'Reference'
   // },
   {
-      accessorKey: 'LocationDescription',
-      header: 'Address'
+    accessorKey: 'LocationDescription',
+    header: 'Address',
+    cell: ({ row }) => {
+      return <div className="text-center">{row.original?.LocationDescription || 'N/A'}</div>;
     },
+  },
+  
   {
     id: 'actions',
     cell: ({ row }) => (<div className='user-action'><CellAction data={row.original} /></div>)

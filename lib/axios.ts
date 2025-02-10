@@ -31,6 +31,7 @@ axios.interceptors.response.use(
     // If the error is a 401 Unauthorized, handle the token expiration
     if (error.response && error.response.status === 401) {
       // Clear the token if expired or invalid
+      localStorage.clear(); // Clear all localStorage items
       removeSessionStorageItem('token'); // Assuming you have this function to remove items from sessionStorage
       
       // Redirect user to login page automatically
