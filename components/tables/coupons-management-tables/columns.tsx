@@ -36,7 +36,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'CouponCode',
     header: 'Coupon Code',
-    cell: ({ row }) => row.original?.CouponCode,
+    cell: ({ row }) => row.original?.CouponCode || 'N/A',
     size: 250, // Increased column width
   },
   {

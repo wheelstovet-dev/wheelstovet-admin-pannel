@@ -43,11 +43,13 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'ServiceId.serviceName',
-    header: 'Service Name'
+    header: 'Service Name',
+    cell: ({ row }) => <span>{row.original?.ServiceId?.serviceName || 'N/A'}</span>,
   },
   {
     accessorKey: 'CurrentStatus',
-    header: 'Current Status'
+    header: 'Current Status',
+    cell: ({ row }) => <span>{row.original?.CurrentStatus || 'N/A'}</span>,
   },
   {
     accessorKey: 'EmpId',
@@ -55,19 +57,21 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       const Name = row.original?.EmpId?.Name;
       const lastName = row.original?.EmpId?.LastName;
-      return `${Name}`;
+      return Name ? `${Name} ${lastName || ''}` : 'N/A';
     },
   },
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => 
+      <span>{row.original?.CreatedAt ? format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy') : 'N/A'}</span>,
   },
   {
-    accessorKey: 'TimeSlot', // Use 'TimeSlot' instead of 'CreatedAt'
+    accessorKey: 'TimeSlot',
     header: 'Time Slot',
-    cell: ({ row }) => row.original.TimeSlot, // Directly access 'TimeSlot' from the data
+    cell: ({ row }) => <span>{row.original?.TimeSlot || 'N/A'}</span>,
   },
+  
 //   {
 //     accessorKey: 'status',
 //     header: 'Status',

@@ -69,7 +69,7 @@ export const ReferralManagementViewClient: React.FC<ReferralManagementViewClient
       <div className="flex items-start justify-between">
         <Heading
           title={`Referrals (${data.length})`}
-          description="Manage and view referrals (Client side table functionalities.)"
+          description=""
         />
       </div>
       <Separator />

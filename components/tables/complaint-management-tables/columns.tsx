@@ -32,7 +32,8 @@ export const columns: ColumnDef<ComplaintManagement>[] = [
   },
   {
     accessorKey: 'complaintType',
-    header: 'Complaint Type'
+    header: 'Complaint Type',
+    cell: ({ row }) => <span>{row.original?.complaintType || 'N/A'}</span>,
   },
   {
     accessorKey: 'status',

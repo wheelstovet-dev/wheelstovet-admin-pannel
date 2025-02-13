@@ -315,7 +315,7 @@ const handleCardClick = (card: string) => {
                 </div>
 
                   {/* <EnquiryClient initialData={Enquiries} loading={loading}/> */}
-                  <EmployeeEsclatedClient />
+                  {/* <EmployeeEsclatedClient /> */}
 
                 </div>
                  

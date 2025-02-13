@@ -37,38 +37,35 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'ServiceId.serviceName',
     header: 'Assigned Service',
-    cell: ({ row }) => <span>{row.original.ServiceId?.serviceName || 'N/A'}</span>,
+    cell: ({ row }) => <span>{row.original?.ServiceId?.serviceName || 'N/A'}</span>,
   },
- 
-  
- 
   {
     accessorKey: 'CurrentStatus',
     header: 'Status',
-    cell: ({ row }) => <span>{row.original?.CurrentStatus}</span>,
+    cell: ({ row }) => <span>{row.original?.CurrentStatus || 'N/A'}</span>,
   },
-
   {
     accessorKey: 'CreatedAt',
     header: 'Assigned Date',
-    cell: ({ row }) => format(new Date(row.original?.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => 
+      <span>{row.original?.CreatedAt ? format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy') : 'N/A'}</span>,
   },
- 
-  {
-    accessorKey: 'Charges',
-    header: 'Charges',
-    cell: ({ row }) => <span>{row.original?.Charges}</span>,
-  },
+  // {
+  //   accessorKey: 'Charges',
+  //   header: 'Charges',
+  //   cell: ({ row }) => <span>{row.original?.Charges || 'N/A'}</span>,
+  // },
   {
     accessorKey: 'PaymentMode',
     header: 'Payment Mode',
-    cell: ({ row }) => <span>{row.original?.PaymentMode}</span>,
+    cell: ({ row }) => <span>{row.original?.PaymentMode || 'N/A'}</span>,
   },
   {
     accessorKey: 'PickUp',
     header: 'Pickup Address',
-    cell: ({ row }) => <span>{row.original?.PickUp}</span>,
+    cell: ({ row }) => <span>{row.original?.PickUp || 'N/A'}</span>,
   },
+  
   
   // {
   //   id: 'actions',

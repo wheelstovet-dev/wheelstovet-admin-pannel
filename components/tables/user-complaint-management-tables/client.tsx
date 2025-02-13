@@ -128,7 +128,7 @@ const ComplaintManagementUserPage: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`All Complaints (${totalRecords})`} description="Manage Complaints" />
+        <Heading title={`All Complaints (${totalRecords})`} description="" />
       </div>
       <div className="flex justify-between items-center mb-1">
         <input

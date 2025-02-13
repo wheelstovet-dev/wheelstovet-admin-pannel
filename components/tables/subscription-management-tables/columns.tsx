@@ -124,12 +124,15 @@ export const columns: ColumnDef<any>[] = [
   // },
   {
     accessorKey: 'Plan.Name',
-    header: 'Plan'
+    header: 'Plan',
+    cell: ({ row }) => <span>{row.original?.Plan?.Name || 'N/A'}</span>,
   },
   {
     accessorKey: 'Plan.Frequency',
-    header: 'Frequency'
+    header: 'Frequency',
+    cell: ({ row }) => <span>{row.original?.Plan?.Frequency || 'N/A'}</span>,
   },
+  
   // {
   //   accessorKey: 'AssignedEmp',
   //   header: 'Employee Name',
@@ -160,8 +163,12 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => {
+      const date = row.original?.CreatedAt;
+      return date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A';
+    },
   },
+  
   // {
   //   accessorKey: 'Timeslot',
   //   header: 'Time Slot'

@@ -21,6 +21,7 @@ import { AppDispatch, RootState } from '@/app/redux/store';
 import { setLoading } from '@/app/redux/slices/authslice';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { getAllCases } from '@/app/redux/actions/casesAction';
+import { Button } from '@/components/ui/button';
 
 const CaseManagementClient: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,41 +29,50 @@ const CaseManagementClient: React.FC = () => {
 
   const { cases, loading, error } = useSelector((state: RootState) => state.caseManagement);
 
+  const [pageNumber,setPageNumber]=useState(1);
+  const [limit,setLimit]=useState(5);
+  const [totalRecords,setTotalRecords]=useState(0);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('By type');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState(cases);
-  const [filteredCases, setFilteredCases] = useState(cases || []); // State for filtered users
+  const [casesData, setCasesData] = useState(cases || []); // State for filtered users
 
 
-  useEffect(() => {
-    dispatch(setLoading(true));
-    dispatch(getAllCases({ page: 1, limit: 20 }))
-      .unwrap()
-      .catch((err: any) => {
+  const getAllCasesData = async () => {
+       dispatch(setLoading(true)); // Assuming you have a loading state setter
+    
+      try {
+        const resultAction: any = await dispatch(getAllCases({ page: pageNumber, limit: limit }));
+    
+        //console.log("resultAction.type",resultAction.type);
+        if (resultAction.type === 'cases/getAll/fulfilled') {
+          setCasesData(resultAction?.payload?.data); // Update state with fetched data
+          setTotalRecords(resultAction?.payload?.pagination?.total);
+          //console.log("resultAction",resultAction.payload?.message);
+        } else {
+          throw new Error(resultAction.payload?.message || 'Failed to fetch cases');
+        }
+      } catch (error: any) {
         ToastAtTopRight.fire({
           icon: 'error',
-          title: err.message || 'Failed to fetch cases',
+          title:'Failed to fetch cases',
         });
-      })
-      .finally(() => {
-        dispatch(setLoading(false));
-      });
-  }, [dispatch]);
+      } finally {
+        // dispatch(setLoading(false));
+      }
+    };
+    
+    useEffect(() => {
+      getAllCasesData();
+    }, [pageNumber, limit]); // Runs when pageNumber or limit changes
 
-  // useEffect(() => {
-  //   if (cases) {
-  //     const lowerCasedSearchValue = searchTerm.toLowerCase();
-  //     const newFilteredCases =
-  //       searchTerm.trim() === ""
-  //         ? cases // Show all users if no search value
-  //         : cases.filter((cases: any) =>
-  //             cases?.ServiceId?.serviceName.toLowerCase().includes(lowerCasedSearchValue)
-  //           );
-  //         console.log(newFilteredCases);
-  //     setFilteredCases(newFilteredCases);
-  //   }
-  // }, [cases, searchTerm]);
+    const handlePageChange=(newPage:number)=>{
+      if(newPage>0 && newPage<=Math.ceil(totalRecords/limit)){
+        setPageNumber(newPage);
+      }
+    }
 
   useEffect(() => {
     let filtered = cases;
@@ -77,7 +87,7 @@ const CaseManagementClient: React.FC = () => {
               cases?.ServiceId?.serviceName.toLowerCase().includes(lowerCasedSearchValue)
             );
           console.log(newFilteredCases);
-      setFilteredCases(newFilteredCases);
+          setCasesData(newFilteredCases);
     }
     // if (searchTerm) {
     //   console.log("SearchTerm",searchTerm)
@@ -109,8 +119,8 @@ const CaseManagementClient: React.FC = () => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`All Cases (${filteredData?.length})`}
-          description="Manage Cases"
+          title={`All Cases (${totalRecords})`}
+          description=""
         />
         <div className="flex space-x-2 w-full max-w-3xl ml-auto justify-end"> {/* Added ml-auto */}
           <DropdownMenu>
@@ -123,7 +133,7 @@ const CaseManagementClient: React.FC = () => {
                   Sort by Service
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  {['Salon Visit', 'Vet Visit', 'To Hostel', 'Pet Taxi', 'Pet Handling'].map(
+                  {['Salon Visit', 'Vet Visit', 'To Hostel', 'Pet Taxi'].map(
                     (service) => (
                       <DropdownMenuItem
                         key={service}
@@ -161,7 +171,31 @@ const CaseManagementClient: React.FC = () => {
           onSearch={handleSearch}
         />
       )}
+      <div className="flex justify-end space-x-2 py-2">
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber - 1)}
+            disabled={pageNumber === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {pageNumber} of {Math.ceil(totalRecords / limit)}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(pageNumber + 1)}
+            disabled={pageNumber >= Math.ceil(totalRecords / limit)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </>
+    
   );
 };
 

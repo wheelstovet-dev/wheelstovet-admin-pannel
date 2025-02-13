@@ -65,7 +65,7 @@ export const ViewPetClient: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title="View Pet Details" description="Detailed information about the pet." />
+        <Heading title="View Pet Details" description="" />
       </div>
       <Separator />
       {loader ? (
