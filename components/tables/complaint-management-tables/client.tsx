@@ -57,7 +57,7 @@ export const ComplaintManagementClient: React.FC = () => {
       <div className="flex items-start justify-between">
         <Heading
           title={` Create Complaint Type (${data.length})`}
-          description="Complaint Subscription (Client side table functionalities.)"
+          description=""
         />
         <Button
           className="text-xs md:text-sm"

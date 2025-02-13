@@ -84,7 +84,7 @@ export const AdminManagementClient: React.FC = () => {
       <div className="flex items-start justify-between">
         <Heading
           title={`Admin (${data.length})`}
-          description="Manage Admin (Client side table functionalities.)"
+          description=""
         />
         <Button
           className="text-xs md:text-sm"

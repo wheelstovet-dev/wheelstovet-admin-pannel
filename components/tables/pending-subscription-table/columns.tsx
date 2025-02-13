@@ -127,11 +127,14 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Plan.Name',
     header: 'Plan',
+    cell: ({ row }) => <span>{row.original?.Plan?.Name || 'N/A'}</span>,
   },
   {
     accessorKey: 'Plan.Frequency',
-    header: 'Frequency'
+    header: 'Frequency',
+    cell: ({ row }) => <span>{row.original?.Plan?.Frequency || 'N/A'}</span>,
   },
+  
   {
     accessorKey: 'CreatedAt',
     header: 'Date',

@@ -43,31 +43,32 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'ServiceId.serviceName',
-    header: 'Service Name'
+    header: 'Service Name',
+    cell: ({ row }) => row.original?.ServiceId?.serviceName || 'N/A',
   },
   {
     accessorKey: 'CurrentStatus',
-    header: 'Current Status'
+    header: 'Current Status',
   },
   {
-    accessorKey: 'UserId',
+    accessorKey: 'EmpId',
     header: 'Assigned Employee',
-    cell: ({ row }) => {
-      const firstName = row.original?.UserId?.FirstName;
-      const lastName = row.original?.UserId?.LastName;
-      return `${firstName && lastName ? firstName + ' ' + lastName : 'N/A'}`;
-    },
+    cell: ({ row }) => row.original?.EmpId?.Name || 'N/A',
   },
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => {
+      const date = row.original?.CreatedAt;
+      return date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A';
+    },
   },
   {
-    accessorKey: 'TimeSlot', // Use 'TimeSlot' instead of 'CreatedAt'
+    accessorKey: 'TimeSlot',
     header: 'Time Slot',
-    cell: ({ row }) => row.original.TimeSlot, // Directly access 'TimeSlot' from the data
+    cell: ({ row }) => row.original?.TimeSlot || 'N/A',
   },
+  
 //   {
 //     accessorKey: 'status',
 //     header: 'Status',

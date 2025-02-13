@@ -75,7 +75,7 @@ const UserCasesClient: React.FC = () => {
       <div className="flex items-start justify-between">
         <Heading
           title={`Booked Cases (${filteredData?.length})`}
-          description="Detailed information about the Booked Cases."
+          description=""
         />
       </div>
       

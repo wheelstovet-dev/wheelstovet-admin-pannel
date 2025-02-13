@@ -3,15 +3,15 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Calendar } from 'lucide-react';
+import { format } from 'date-fns';
 
 export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Name',
     header: 'Name',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Name}</span>
+      <div className="text-center">
+        <span>{row.original.Name || 'N/A'}</span>
       </div>
     ),
   },
@@ -19,8 +19,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Species',
     header: 'Species',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Species}</span>
+      <div className="text-center">
+        <span>{row.original.Species || 'N/A'}</span>
       </div>
     ),
   },
@@ -28,8 +28,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Age',
     header: 'Age',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Age}</span>
+      <div className="text-center">
+        <span>{row.original.Age ?? 'N/A'}</span>
       </div>
     ),
   },
@@ -37,8 +37,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Breed',
     header: 'Breed',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Breed}</span>
+      <div className="text-center">
+        <span>{row.original.Breed || 'N/A'}</span>
       </div>
     ),
   },
@@ -46,8 +46,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Temperament',
     header: 'Temperament',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Temperament}</span>
+      <div className="text-center">
+        <span>{row.original.Temperament || 'N/A'}</span>
       </div>
     ),
   },
@@ -55,8 +55,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'Behavior',
     header: 'Behavior',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.Behavior}</span>
+      <div className="text-center">
+        <span>{row.original.Behavior || 'N/A'}</span>
       </div>
     ),
   },
@@ -64,8 +64,8 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'HealthIssue',
     header: 'Health Issue',
     cell: ({ row }) => (
-      <div className="">
-        <span className="text-[12px]">{row.original.HealthIssue}</span>
+      <div className="text-center">
+        <span>{row.original.HealthIssue || 'N/A'}</span>
       </div>
     ),
   },
@@ -73,9 +73,10 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'CreatedAt',
     header: 'Created At',
     cell: ({ row }) => (
-      <div className="flex items-center">
-        <Calendar className="text-blue-500 mr-2" width={16} height={16} />
-        <span className="text-[12px]">{new Date(row.original.CreatedAt).toLocaleDateString()}</span>
+      <div className="text-center">
+        <span>
+          {row.original.CreatedAt ? format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy') : 'N/A'}
+        </span>
       </div>
     ),
   },
@@ -83,9 +84,10 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'UpdatedAt',
     header: 'Updated At',
     cell: ({ row }) => (
-      <div className="flex items-center">
-        <Calendar className="text-blue-500 mr-2" width={16} height={16} />
-        <span className="text-[12px]">{new Date(row.original.UpdatedAt).toLocaleDateString()}</span>
+      <div className="text-center">
+        <span>
+          {row.original.UpdatedAt ? format(new Date(row.original.UpdatedAt), 'dd-MMM-yyyy') : 'N/A'}
+        </span>
       </div>
     ),
   },

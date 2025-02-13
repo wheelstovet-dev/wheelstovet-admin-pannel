@@ -263,12 +263,12 @@ export const navItems: NavItem[] = [
       //   icon: 'paymentSetting',
       //   label: 'payment-settings'
       // },
-      {
-        title: 'Notification Settings',
-        href: '/settings-management/notifications',
-        icon: 'notificationSetting',
-        label: 'notification-settings'
-      },
+      // {
+      //   title: 'Notification Settings',
+      //   href: '/settings-management/notifications',
+      //   icon: 'notificationSetting',
+      //   label: 'notification-settings'
+      // },
       
     ]
   },

@@ -247,7 +247,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'ServiceId',
     header: 'Service Name',
-    cell: ({ row }) => <span>{row.original.ServiceId?.serviceName}</span>,
+    cell: ({ row }) => <span>{row.original.ServiceId?.serviceName || 'N/A'}</span>,
   },
   {
     accessorKey: 'PreferredDates',

@@ -33,7 +33,7 @@ export const AssignedSubscriptionClient: React.FC = () => {
       <div className="flex items-start justify-between">
         <Heading
           title={`Assigned Subscription (${assignedSubscription?.length || 0})`}
-          description="View assigned employee subscription"
+          description=""
         />
       </div>
       <Separator />

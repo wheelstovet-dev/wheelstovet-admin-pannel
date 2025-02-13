@@ -82,7 +82,7 @@ export const SubscriptionManagementClient: React.FC = () => {
       <div className="flex items-start justify-between">
         <Heading
           title={`Manage Subscription (${totalRecords})`}
-          description="Manage Subscription (Client side table functionalities.)"
+          description=""
         />
         {/* Uncomment if you want to add a button for adding subscriptions */}
         {/* <Button

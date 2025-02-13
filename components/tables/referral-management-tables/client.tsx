@@ -34,7 +34,7 @@ console.log(data);
         <Heading
           // title={`Referral Coupons (${data.length})`}
           title={`Referral Coupons`}
-          description="Manage and view referral coupons (Client side table functionalities.)"
+          description=""
         />
       </div>
       <Separator />

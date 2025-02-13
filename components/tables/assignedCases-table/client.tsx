@@ -106,58 +106,10 @@ const handleStatusFilterChange = (serviceName: string) => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`All Cases (${filteredData?.length})`}
-          description="Manage Cases"
+          title={`Assigned Cases (${filteredData?.length})`}
+          description=""
         />
-        <div className="flex space-x-2 w-full max-w-3xl">
-          {/* <input
-            type="text"
-            placeholder="Search by service name or assigned employee"
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="border border-gray-300 rounded-xl px-4 py-2 flex-1"
-          />
-          <div className="hidden items-center space-x-2 md:flex">
-            <CalendarDateRangePicker />
-          </div> */}
-          <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center text-gray-700 border border-gray-300 rounded-xl px-4 py-2 hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition">
-            {filterType} <ChevronDown className="ml-1 h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className="bg-white shadow-md rounded-lg border border-gray-200 z-50 absolute"
-            align="end"
-          >
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="flex items-center text-gray-700 px-4 py-2 bg-white hover:bg-gray-200 transition rounded-t-lg">
-                Filter by Status
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="bg-white border-t border-gray-200 rounded-b-lg">
-                {["pending", "assigned", "in-progress", "completed"].map((status) => (
-                  <DropdownMenuItem
-                    key={status}
-                    onClick={() => handleStatusFilterChange(status)}
-                    className="px-4 py-2 hover:bg-gray-200 transition cursor-pointer"
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuItem
-                  onClick={() => {
-                    setFilterType('By type');
-                    setStatusFilter(null);
-                  }}
-                  className="px-4 py-2 hover:bg-red-200 transition text-red-600 font-semibold cursor-pointer"
-                >
-                  Reset
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-
-        </div>
+        
       </div>
       <Separator />
       {loading ? 'Loading...' :

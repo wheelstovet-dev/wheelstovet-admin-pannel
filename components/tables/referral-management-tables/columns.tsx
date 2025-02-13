@@ -45,7 +45,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'ReferredBy Percentage',
     cell: ({ row }) => (
       <div className="flex justify-center">
-        <span className='text-center' >{row.original?.ReferredByPercentage} %</span>
+        <span className='text-center'>{row.original?.ReferredByPercentage ? `${row.original.ReferredByPercentage} %` : 'N/A'}</span>
       </div>
     )
   },
@@ -54,10 +54,11 @@ export const columns: ColumnDef<any>[] = [
     header: 'ReferredTo Percentage',
     cell: ({ row }) => (
       <div className="flex justify-center">
-        <span className='text-center' >{row.original?.ReferredToPercentage} %</span>
+        <span className='text-center'>{row.original?.ReferredToPercentage ? `${row.original.ReferredToPercentage} %` : 'N/A'}</span>
       </div>
     )
   },
+  
   // {
   //   accessorKey: 'discountPercentage',
   //   header: 'Discount',
@@ -72,9 +73,10 @@ export const columns: ColumnDef<any>[] = [
     header: 'Validity',
     cell: ({ row }) => {
       const months = row.original?.validForMonths;
-      return <span>{months} {months === 1 ? 'Month' : 'Months'}</span>;
+      return <span>{months ? `${months} ${months === 1 ? 'Month' : 'Months'}` : 'N/A'}</span>;
     },
   },
+  
   // {
   //   accessorKey: 'status',
   //   header: 'Status',
