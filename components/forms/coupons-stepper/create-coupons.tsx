@@ -181,10 +181,10 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
         }
         description={
           currentMode === 'create'
-            ? 'Fill out the form below to create a new coupon.'
+            ? ''
             : currentMode === 'update'
-              ? 'Modify the details of the coupon.'
-              : 'View the details of the coupon.'
+              ? ''
+              : ''
         }
       />
       <Separator />

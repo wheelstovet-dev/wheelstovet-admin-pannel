@@ -44,6 +44,7 @@ export default function DogWalkingPage() {
     try {
       const updatePromises = Array.from(modifiedPlans).map(async (planId) => {
         const updatedPlan = plans.find((plan: any) => plan._id === planId);
+        console.log("updatedPlan",updatedPlan);
         const planData = {
           BasePrice: updatedPlan.BasePrice,
           ExtraChargePer15Min: updatedPlan.ExtraChargePer15Min,

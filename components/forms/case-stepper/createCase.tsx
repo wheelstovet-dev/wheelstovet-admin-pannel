@@ -149,7 +149,7 @@ export const CreateCaseForm: React.FC = () => {
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-  <Heading title="View Case" description="View the case details." />
+  <Heading title="View Case" description="" />
 </div>
 
 <Separator />
