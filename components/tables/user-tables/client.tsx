@@ -51,10 +51,7 @@ export const UserClient: React.FC = () => {
         throw new Error(resultAction.payload?.message.message || 'Failed to fetch users');
       }
     } catch (error: any) {
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: error.message || 'Failed to get users',
-      });
+    
     } finally {
       dispatch(setLoading(false));
     }
@@ -79,7 +76,7 @@ export const UserClient: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Users (${totalRecords})`} description="Manage users" />
+        <Heading title={`Users (${totalRecords})`} description="" />
         {/* Search Input */}
       <div className="mb-4">
         <input

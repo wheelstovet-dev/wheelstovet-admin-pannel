@@ -15,7 +15,7 @@ export default function CaseManagementPage() {
       <div className="flex-1 space-y-4 min-h-screen p-4 pt-6 md:p-8">      
         <BreadCrumb items={breadcrumbItems} />
         <CaseManagementClient/>
-        <DogManagementClient/>
+        {/* <DogManagementClient/> */}
         
       </div>
       </ScrollArea>

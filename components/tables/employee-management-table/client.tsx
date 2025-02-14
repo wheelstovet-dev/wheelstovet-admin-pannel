@@ -123,7 +123,7 @@ export const EmployeeManagementClient: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Employee (${totalRecords})`} description="Manage Employee" />
+        <Heading title={`Employee (${totalRecords})`} description="" />
         <Button className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-600" onClick={() => router.push(`/employee-form`)}>
           Add New
         </Button>

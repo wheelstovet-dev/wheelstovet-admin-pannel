@@ -82,9 +82,9 @@ export const columns: ColumnDef<any>[] = [
           className="flex items-center justify-center w-8 h-8 rounded-full mr-2"
           style={{ backgroundColor: getRandomColor(), color: 'white' }}
         >
-          {row.original.Name?.charAt(0) || ''}
+         {row.original.Name?.charAt(0) || 'N/A'}
         </div>
-        <span>{row.original.Name}</span>
+        <span>{row.original.Name || 'N/A'}</span>
       </div>
     ),
     enableSorting: true,
@@ -95,7 +95,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="flex items-center mt-1">
         <Mail className="text-blue-500 mr-2" width={10} height={10} />
-        <span>{row.original.Email}</span>
+        <span>{row.original.Email|| 'N/A'}</span>
       </div>
     ),
   },

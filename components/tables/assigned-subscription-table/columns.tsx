@@ -44,47 +44,37 @@ export const columns: ColumnDef<any>[] = [
     header: 'Employee Name',
     cell: ({ row }) => {
       const Name = row.original?.AssignedEmp?.Name;
-      return `${Name ? Name : 'N/A'}`;
+      return Name || 'N/A';
     },
   },
- 
   {
     accessorKey: 'Plan',
     header: 'Plan',
-    cell: ({ row }) => <span>{row.original?.Plan?.Name}</span>,
+    cell: ({ row }) => <span>{row.original?.Plan?.Name || 'N/A'}</span>,
   },
- 
-  
- 
   {
     accessorKey: 'Frequency',
     header: 'Frequency',
-    cell: ({ row }) => <span>{row.original?.Plan?.Frequency}</span>,
+    cell: ({ row }) => <span>{row.original?.Plan?.Frequency || 'N/A'}</span>,
   },
   {
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => <span>{row.original?.Status}</span>,
+    cell: ({ row }) => <span>{row.original?.Status || 'N/A'}</span>,
   },
   {
     accessorKey: 'PickupLocation',
-    header: 'PickupLocation',
-    cell: ({ row }) => <span>{row.original?.PickupLocation}</span>,
+    header: 'Pickup Location',
+    cell: ({ row }) => <span>{row.original?.PickupLocation || 'N/A'}</span>,
   },
   {
     accessorKey: 'CreatedAt',
     header: 'Assigned Date',
-    cell: ({ row }) => format(new Date(row.original?.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => 
+      <span>{row.original?.CreatedAt ? format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy') : 'N/A'}</span>,
   },
- 
-  // {
-  //   accessorKey: 'timeSlot',
-  //   header: 'Time Slot',
-  //   cell: ({ row }) => <span>{row.original.timeSlot}</span>,
-  // },
-  
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />,
-  },
+  },  
 ];

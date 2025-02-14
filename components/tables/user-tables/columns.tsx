@@ -51,19 +51,25 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'contact',
     header: 'Contact',
-    cell: ({ row }) => (
-      <div className="flex flex-col me-5 text-center">
-        <div className="flex items-center mt-1 text-center">
-          <Mail className="text-blue-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.Email}</span>
+    cell: ({ row }) => {
+      const email = row.original?.Email || 'N/A';
+      const mobile = row.original?.MobileNo || 'N/A';
+  
+      return (
+        <div className="flex flex-col">
+          <div className="flex items-center mt-1">
+            <Mail className="text-blue-500 mr-2" width={15} height={15} />
+            <span className="text-[12px]">{email}</span>
+          </div>
+          <div className="flex items-center mt-2">
+            <Phone className="text-green-500 mr-2" width={15} height={15} />
+            <span className="text-[12px]">{mobile}</span>
+          </div>
         </div>
-        <div className="flex items-center mt-2 text-center">
-          <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.MobileNo}</span>
-        </div>
-      </div>
-    ),
+      );
+    },
   },
+  
   // {
   //   accessorKey: 'AccountStatus',
   //   header: 'Activity Status',

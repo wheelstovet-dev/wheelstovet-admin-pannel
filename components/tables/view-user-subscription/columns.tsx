@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/redux/store';
+import { CellAction } from './cell-action';
 const StatusCell = ({ row }: { row: Row<any> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isOpen, setIsOpen] = useState(false);
@@ -121,25 +122,31 @@ export const columns: ColumnDef<any>[] = [
   // },
   {
     accessorKey: 'Plan.Name',
-    header: 'Plan'
+    header: 'Plan',
+    cell: ({ row }) => row.original?.Plan?.Name || 'N/A',
   },
   {
     accessorKey: 'WalkFrequency',
-    header: 'Frequency'
+    header: 'Frequency',
+    cell: ({ row }) => row.original?.WalkFrequency || 'N/A',
   },
   {
     accessorKey: 'AssignedEmp',
     header: 'Employee Name',
     cell: ({ row }) => {
       const Name = row.original?.AssignedEmp?.Name;
-      return `${Name ? Name : 'N/A'}`;
+      return Name ? Name : 'N/A';
     },
   },
   {
     accessorKey: 'CreatedAt',
     header: 'Date',
-    cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
+    cell: ({ row }) => {
+      const date = row.original?.CreatedAt;
+      return date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A';
+    },
   },
+  
   // {
   //   accessorKey: 'Timeslot',
   //   header: 'Time Slot'
@@ -162,7 +169,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => <StatusCell row={row} />,
+    cell: ({ row }) => row.original?.Status || 'N/A',
   },
   {
     accessorKey: 'IsActive',
@@ -184,8 +191,8 @@ export const columns: ColumnDef<any>[] = [
     )
   },
  
-//   {
-//     id: 'actions',
-//     cell: ({ row }) => <CellAction data={row.original} />
-//   }
+  {
+    id: 'actions',
+    cell: ({ row }) => <CellAction data={row.original} />
+  }
 ];

@@ -62,9 +62,9 @@ export const columns: ColumnDef<any>[] = [
           className="flex items-center justify-center w-8 h-8 rounded-full mr-2"
           style={{ backgroundColor: getRandomColor(), color: 'white' }}
         >
-          {row.original.Name?.charAt(0)}
+          {row.original.Name?.charAt(0) || 'N/A'}
         </div>
-        <span>{row.original.Name}</span>
+        <span>{row.original.Name || 'N/A'}</span>
       </div>
     ),
     enableSorting: true,
@@ -72,6 +72,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Gender',
     header: 'Gender',
+    cell: ({ row }) => <span>{row.original.Gender || 'N/A'}</span>,
   },
   {
     accessorKey: 'contact',
@@ -80,11 +81,11 @@ export const columns: ColumnDef<any>[] = [
       <div className="flex flex-col me-5">
         <div className="flex items-center mt-1">
           <Mail className="text-blue-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.MobileNo}</span>
+          <span className="text-[12px]">{row.original.MobileNo || 'N/A'}</span>
         </div>
         <div className="flex items-center mt-2">
           <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original.Email}</span>
+          <span className="text-[12px]">{row.original.Email || 'N/A'}</span>
         </div>
       </div>
     ),
@@ -92,12 +93,15 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Role',
     header: 'Role',
+    cell: ({ row }) => <span>{row.original.Role || 'N/A'}</span>,
   },
   {
-      accessorKey: 'CreatedAt',
-      header: 'Joined Date',
-      cell: ({ row }) => format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy'),
-    },
+    accessorKey: 'CreatedAt',
+    header: 'Joined Date',
+    cell: ({ row }) => (
+      <span>{row.original.CreatedAt ? format(new Date(row.original.CreatedAt), 'dd-MMM-yyyy') : 'N/A'}</span>
+    ),
+  },
   {
     accessorKey: 'Status',
     header: 'Status',
@@ -106,6 +110,7 @@ export const columns: ColumnDef<any>[] = [
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => (<div className='emp-action'><CellAction data={row.original} /></div>),
+    cell: ({ row }) => <div className="emp-action"><CellAction data={row.original} /></div>,
   },
 ];
+

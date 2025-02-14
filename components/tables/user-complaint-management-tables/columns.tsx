@@ -42,12 +42,15 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: 'ComplaintBy',
-    header: 'Complaint By'
+    header: 'Complaint By',
+    cell: ({ row }) => row.original?.ComplaintBy || 'N/A',
   },
   {
     accessorKey: 'Description',
-    header: 'Description'
+    header: 'Description',
+    cell: ({ row }) => row.original?.Description || 'No description provided',
   },
+  
   {
     accessorKey: 'Status',
     header: 'Status',

@@ -99,7 +99,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'Employee Details',
     cell: ({ row }) => {
       const formatName = (name:any) => {
-        if (!name) return '';
+        if (!name) return 'N/A';
         return name
           .split(' ') // Split by space
           .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
@@ -108,10 +108,10 @@ export const columns: ColumnDef<any>[] = [
   
       return (
         <div className="flex flex-col me-5 text-center">
-        <span>{formatName(row.original?.EmployeeId?.Name)}</span>
+        <span>{formatName(row.original?.EmployeeId?.Name) || 'N/A'}</span>
         <div className="flex items-center mt-2">
           <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original?.EmployeeId?.MobileNo}</span>
+          <span className="text-[12px]">{row.original?.EmployeeId?.MobileNo || 'N/A'}</span>
         </div>
       </div>
       );
@@ -129,7 +129,7 @@ export const columns: ColumnDef<any>[] = [
         </div>
         <div className="flex items-center mt-1">
         <Mail className="text-blue-500 mr-2" width={15} height={15} />
-        <span className="text-[12px]">{row.original?.SubscriptionId?.UserId?.Email}</span>
+        <span className="text-[12px]">{row.original?.SubscriptionId?.UserId?.Email || 'N/A'}</span>
       </div>
       </div>
       );
@@ -154,17 +154,16 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => (
-      <div className="">
-        <span>{row.original?.Status}</span>
-      </div>
-    ),
+    cell: ({ row }) => <span>{row.original?.Status || 'N/A'}</span>,
   },
   {
-      accessorKey: 'Date',
-      header: 'Date',
-      cell: ({ row }) => format(new Date(row.original.Date), 'dd-MMM-yyyy'),
+    accessorKey: 'Date',
+    header: 'Date',
+    cell: ({ row }) => {
+      const date = row.original?.Date;
+      return <span>{date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A'}</span>;
     },
+  },
   // {
   //   accessorKey: 'Date',
   //   header: 'Date',
@@ -206,7 +205,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'Time Slot',
     cell: ({ row }) => (
       <div className="">
-        <span>{row.original.TimeSlot}</span>
+        <span>{row.original?.TimeSlot || 'N/A'}</span>
       </div>
     ),
   },

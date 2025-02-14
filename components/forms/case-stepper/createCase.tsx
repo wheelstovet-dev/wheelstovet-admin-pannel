@@ -279,8 +279,7 @@ export const CreateCaseForm: React.FC = () => {
         />
       </div>
       {/* Employee Section */}
-        
-          <div className="p-4 bg-white rounded-xl shadow-md">
+      {control._formValues.emp && (<div className="p-4 bg-white rounded-xl shadow-md">
             <h2 className="text-lg font-semibold text-gray-700 mb-3">Employee Details</h2>
             <FormField
               control={control}
@@ -306,7 +305,7 @@ export const CreateCaseForm: React.FC = () => {
                 </FormItem>
               )}
             />
-          </div>
+          </div>)}
 
           {/* Pet details */}
           {control._formValues.pet && (<div className="p-4 bg-white rounded-xl shadow-md">
