@@ -66,7 +66,7 @@ const AvailableSlots: React.FC = () => {
           {/* PET Taxi Card */}
           <Card className="p-4 rounded-xl border border-yellow-400">
             <h3 className="text-lg font-semibold mb-4 text-center text-black">
-              PET Taxi
+              Pet Taxi
             </h3>
             <ul className="grid grid-cols-2 gap-3">
               {timeSlots.map((slot, index) => {
@@ -94,7 +94,7 @@ const AvailableSlots: React.FC = () => {
           {/* PET Walking Card */}
           <Card className="p-4 rounded-xl shadow-md border border-yellow-400">
             <h3 className="text-lg font-semibold mb-4 text-center text-black">
-              PET Walking
+              Pet Walking
             </h3>
             <ul className="grid grid-cols-2 gap-3">
               {timeSlots.map((slot, index) => {

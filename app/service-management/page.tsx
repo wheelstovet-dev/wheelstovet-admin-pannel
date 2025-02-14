@@ -18,6 +18,7 @@ const servicesData = [
   { name: 'TO HOSTEL', folderRoute: "hostels", icon: '/images/rescue.png' },
   { name: 'OUTING WITH PET', folderRoute: "outingWithPet", icon: '/images/Frame (2).png' },
   { name: 'PET RELOCATION', folderRoute: "petRelocation", icon: '/images/taxi.png' },
+  { name: 'PET RELOCATION', folderRoute: "petRelocation", icon: '/images/taxi.png' },
 ];
 
 export default function ServiceManagementPage() {
