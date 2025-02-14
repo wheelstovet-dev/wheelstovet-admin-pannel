@@ -35,6 +35,7 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
       pickupLocation: '',
       includeSundays: '',
       status: '',
+      asignedEmployee: '',
     },
   });
 
@@ -67,6 +68,7 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
             pickupLocation: subscription.PickupLocation || '',
             includeSundays: subscription.IncludeSundays ? 'Yes' : 'No',
             status: subscription.Status || '',
+            asignedEmployee: assignedEmp?.Name || '',
           });
         })
         .catch((error) => {
@@ -197,6 +199,16 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
                 <FormLabel>Status</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="Enter Status" {...field} disabled={currentMode === 'view'} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField control={control} name="asignedEmployee" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Asigned Employee</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Enter asigned employee name" {...field} disabled={currentMode === 'view'} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
