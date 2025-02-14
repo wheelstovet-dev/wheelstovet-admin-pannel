@@ -52,7 +52,19 @@ const serviceSlice = createSlice({
   reducers: {
     setCurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload; // Update currentPage in state
+    },
+    setUpdatedDogPlan(state, action: PayloadAction<{ id: string; planData: any }>) {
+      state.dogPlans = state.dogPlans.map((plan) => {
+        if (plan._id === action.payload.id) {
+          return {
+            ...plan,
+            ...action.payload.planData, // Update specific fields from planData
+          };
+        }
+        return plan; // Keep other plans unchanged
+      });
     }
+    
   },
   extraReducers: (builder) => {
     builder
@@ -98,20 +110,16 @@ const serviceSlice = createSlice({
       .addCase(updateDogPlan.pending, (state) => {
         state.loading = true;
       })
-      .addCase(
-        updateDogPlan.fulfilled,
-        (state, action: PayloadAction<AxiosResponse<any>>) => {
-          state.loading = false;
-          const updateDogPlan = action.payload.data;
-          // Ensure state.services is an array before attempting to map over it
-          if (Array.isArray(state.services)) {
-            state.dogPlans = state.services.map((dogPlans) =>
-              dogPlans._id === updateDogPlan._id ? updateDogPlan : dogPlans
-            );
-          }
-          state.selectedPlan = updateDogPlan;
-        }
-      )
+      .addCase(updateDogPlan.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
+        state.loading = false;
+        const updatedDogPlan = action.payload.data;
+        state.dogPlans = state.dogPlans.map((plan) =>
+          plan._id === updatedDogPlan._id
+            ? { ...plan, BasePrice: updatedDogPlan.BasePrice, ExtraChargePer15Min: updatedDogPlan.ExtraChargePer15Min }
+            : plan
+        );
+        state.selectedPlan = updatedDogPlan;
+      })    
       .addCase(updateDogPlan.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
@@ -293,4 +301,5 @@ const serviceSlice = createSlice({
   }
 });
 
+export const { setCurrentPage ,setUpdatedDogPlan } = serviceSlice.actions;
 export default serviceSlice.reducer;

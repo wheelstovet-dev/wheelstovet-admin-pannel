@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -15,69 +15,65 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createCoupon, getCouponByCode, updateCoupon } from '@/app/redux/actions/couponAction';
 import { AppDispatch, RootState } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
-// import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
-const couponFormSchema = z.object({
-  CouponType: z.enum(['petTaxi', 'subscription']).optional(),
-  CouponCode: z.string().min(1, 'Coupon Code is required'),
-  DiscountType: z.enum(['price', 'percentage']),
-  DiscountPercentage: z
-    .number()
-    .positive('Discount Percentage must be greater than zero')
-    .max(100, 'Discount Percentage cannot exceed 100%'),
-  DiscountPrice: z
-    .number()
-    .nonnegative('Discount Price cannot be negative')
-    .positive('Discount Price must be greater than zero')
-    .optional(),
+const couponFormSchema = z
+  .object({
+    CouponType: z.enum(['petTaxi', 'subscription']).optional(),
+    CouponCode: z.string().min(1, 'Coupon Code is required'),
+    DiscountType: z.enum(['price', 'percentage']),
+    StartDate: z.date({ required_error: 'Starting Date is required.' }),
+    EndDate: z.date({ required_error: 'Ending Date is required.' }),
+    CouponVisibility: z.enum(['public', 'private']),
+    NoOfTimesCanBeApplied: z
+      .preprocess((val) => (val !== '' ? Number(val) : undefined), z.number().positive('Must be greater than zero')),
+    Description: z.string().optional(),
+    UsageLimit: z.string().optional(),
+    UsageCount: z.string().optional(),
+    Status: z.enum(['active', 'inactive']),
+  })
+  .and(
+    z
+      .object({
+        // DiscountType: z.literal('Discount Percentage'),
+        DiscountPercentage: z
+          .preprocess((val) => (val !== '' ? Number(val) : undefined), z.number().positive().max(100)),
+        DiscountPrice: z.undefined(),
+      })
+      .or(
+        z.object({
+          // DiscountType: z.literal('Discount Price'),
+          DiscountPrice: z
+            .preprocess((val) => (val !== '' ? Number(val) : undefined), z.number().positive()),
+          DiscountPercentage: z.undefined(),
+        })
+      )
+  );
 
-  StartDate: z.date({ required_error: "Starting Date is required." }),
+export type CouponFormSchema = z.infer<typeof couponFormSchema>;
 
-  EndDate: z.date({ required_error: "Ending Date is required." }),
-
-  CouponVisibility: z.enum(['public', 'private']),
-  NoOfTimesCanBeApplied: z.preprocess(
-    (val) => Number(val),
-    z.number().positive('Must be greater than zero')
-  ),
-  Description: z.string().optional(),
-  UsageLimit: z.string().optional(),
-  UsageCount: z.string().optional(),
-  Status: z.enum(['active', 'inactive']),
-});
-
-
-type CouponFormSchema = z.infer<typeof couponFormSchema>;
-
-export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> = ({ mode: propMode }) => {
+export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = ({ mode: propMode }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlMode = searchParams.get('mode');
   const couponId = searchParams.get('id');
   const couponCode = searchParams.get('code');
   const dispatch = useDispatch<AppDispatch>();
-  const [discountType, setDiscountType] = useState<'price' | 'percentage'>('price');
+  
+  const [couponData, setCouponData] = useState({} as CouponFormSchema);
+  console.log(couponData);
+  const [loading, setLoading] = useState<boolean>(false);
 
-
-  const [date, setDate] = React.useState<Date>()
-
-  const { selectedCoupons, loading, error } = useSelector((state: RootState) => state.coupons);
-  console.log(selectedCoupons);
-
+  // const { selectedCoupons, loading } = useSelector((state: RootState) => state.coupons);
   const [currentMode, setCurrentMode] = useState<'create' | 'update' | 'view'>(
     (urlMode as 'create' | 'view' | 'update') || 'create'
   );
 
-  // Format function for default values
-  // const formatDate = (date: any | null) => {
-  //   if (!date) return '';
-  //   return format(new Date(date), 'dd-mm-yyyy');
-  // };
+  const [discountType, setDiscountType] = useState(couponData?.DiscountType||'');
 
   useEffect(() => {
     if (urlMode) {
@@ -89,106 +85,87 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view'; }> =
 
   useEffect(() => {
     if ((currentMode === 'view' || currentMode === 'update') && couponCode) {
-      dispatch(getCouponByCode(couponCode));
+      setLoading(true);
+      dispatch(getCouponByCode(couponCode))
+      .unwrap()
+        .then((data) => {
+          console.log(data);
+          setCouponData(data.data);
+          form.reset(data.data);
+        })
+        .catch((error) => {
+          ToastAtTopRight.fire({
+            icon: 'error',
+            title: 'Error fetching Coupon data',
+            text: error.message,
+          });
+        })
+        .finally(() => setLoading(false));
     }
   }, [currentMode, couponCode, dispatch]);
 
   const form = useForm<CouponFormSchema>({
     resolver: zodResolver(couponFormSchema),
     mode: 'onChange',
-    defaultValues: selectedCoupons
-      ? {
-          ...selectedCoupons,
-          DiscountType: selectedCoupons.DiscountType || 'price',  // Ensure valid default
-          StartDate: selectedCoupons.StartDate ? new Date(selectedCoupons.StartDate) : undefined,
-          EndDate: selectedCoupons.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
-        }
-      : {
-          CouponType: undefined,
-          CouponCode: '',
-          DiscountType: 'price',  // Default to 'price' to avoid empty value
-          DiscountPercentage: 0,
-          DiscountPrice: 0,
-          StartDate: undefined,
-          EndDate: undefined,
-          CouponVisibility: 'public',
-          NoOfTimesCanBeApplied: 0,
-          Description: '',
-          UsageLimit: '',
-          UsageCount: '0',
-          Status: 'active',
-        },
+    defaultValues: couponData ||{
+      CouponType: undefined,
+      CouponCode: '',
+      DiscountType: undefined,
+      DiscountPercentage: undefined,
+      DiscountPrice: undefined,
+      StartDate: undefined,
+      EndDate: undefined,
+      CouponVisibility: 'public',
+      NoOfTimesCanBeApplied: undefined,
+      Description: '',
+      UsageLimit: '',
+      UsageCount: '0',
+      Status: 'active',
+    },
   });
-  
-  
 
   const { handleSubmit, control, reset, formState: { errors } } = form;
 
   useEffect(() => {
-    if (selectedCoupons && currentMode !== 'create') {
+    if (couponData && currentMode !== 'create') {
       reset({
-        ...selectedCoupons,
-        CouponType: selectedCoupons?.CouponType === 'petTaxi' ? 'petTaxi' : 'subscription',
-        StartDate: selectedCoupons?.StartDate ? new Date(selectedCoupons.StartDate) : undefined,
-        EndDate: selectedCoupons?.EndDate ? new Date(selectedCoupons.EndDate) : undefined,
-      });
-    } else {
-      reset({
-        CouponType: undefined,
-        CouponCode: '',
-        DiscountType: 'price',
-        DiscountPercentage: 0,
-        DiscountPrice: 0,
-        StartDate: undefined,
-        EndDate: undefined,
-        CouponVisibility: 'public',
-        NoOfTimesCanBeApplied: 0,
-        Description: '',
-        UsageLimit: '',
-        UsageCount: '0',
-        Status: 'active',
+        ...couponData,
+        StartDate: couponData.StartDate ? new Date(couponData.StartDate) : undefined,
+        EndDate: couponData.EndDate ? new Date(couponData.EndDate) : undefined,
       });
     }
-  }, [selectedCoupons, currentMode, reset]);
-  
-  
-  
+  }, [couponData, currentMode, reset]);
 
-  // const { handleSubmit, control, reset, formState: { errors, isSubmitting } } = form;
+  const onSubmit = async (data: CouponFormSchema) => {
+    const formattedData = {
+      ...data,
+      StartDate: data.StartDate ? data.StartDate.toISOString() : null,
+      EndDate: data.EndDate ? data.EndDate.toISOString() : null,
+    };
 
-const onSubmit = async (data: CouponFormSchema) => {
-  console.log("Form Data:", data); // Log form data
-  console.log("Form Errors:", errors); // Check for validation errors
-
-  const formattedData = {
-    ...data,
-    StartDate: data.StartDate ? data.StartDate.toISOString() : null,
-    EndDate: data.EndDate ? data.EndDate.toISOString() : null,
+    try {
+      if (currentMode === 'create') {
+        await dispatch(createCoupon(formattedData)).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Coupon created successfully!',
+        });
+      } else if (currentMode === 'update' && couponId) {
+        await dispatch(updateCoupon({ id: couponId, couponData: formattedData })).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Coupon updated successfully!',
+        });
+      }
+      router.push('/coupons-management');
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: 'Error processing coupon',
+        text: error.message || 'Failed to process coupon',
+      });
+    }
   };
-
-  try {
-    if (currentMode === 'create') {
-      await dispatch(createCoupon(formattedData)).unwrap();
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Coupon created successfully!',
-      });
-    } else if (currentMode === 'update' && couponId) {
-      await dispatch(updateCoupon({ id: couponId, couponData: formattedData })).unwrap();
-      ToastAtTopRight.fire({
-        icon: 'success',
-        title: 'Coupon updated successfully!',
-      });
-    }
-    router.push('/coupons-management');
-  } catch (error: any) {
-    ToastAtTopRight.fire({
-      icon: 'error',
-      title: 'Error processing coupon',
-      text: error.message || 'Failed to process coupon',
-    });
-  }
-};
 
   
 
@@ -276,8 +253,9 @@ const onSubmit = async (data: CouponFormSchema) => {
                       onValueChange={(value) => {
                         setDiscountType(value as 'price' | 'percentage');
                         field.onChange(value);
+                        console.log(value);
                       }}
-                      value={field.value || 'price'}  // Ensure a fallback default
+                      value={field.value || undefined}  // Ensure a fallback default
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Discount Type" />
@@ -295,7 +273,7 @@ const onSubmit = async (data: CouponFormSchema) => {
 
 
            {/* Discount Percentage (Only if Discount Type is Percentage) */}
-          {discountType === "percentage" && (
+          {(discountType == "percentage" || couponData?.DiscountType === 'percentage') && (
             <FormField
               control={control}
               name="DiscountPercentage"
@@ -307,7 +285,7 @@ const onSubmit = async (data: CouponFormSchema) => {
                       type="number"
                       placeholder="Enter Discount Percentage"
                       {...field}
-                      onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                      onChange={(e) => field.onChange(e.target.value === null ? undefined : Number(e.target.value))}
                       disabled={loading || currentMode === 'view'}
                     />
                   </FormControl>
@@ -318,7 +296,7 @@ const onSubmit = async (data: CouponFormSchema) => {
           )}
 
             {/* Discount Price (Only if Discount Type is Price) */}
-            {discountType === "price" && (
+            {(discountType == "price" || couponData?.DiscountType === 'price') && (
               <FormField
                 control={control}
                 name="DiscountPrice"
@@ -330,7 +308,7 @@ const onSubmit = async (data: CouponFormSchema) => {
                         type="number"
                         placeholder="Enter Discount Price"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
+                        onChange={(e) => field.onChange(e.target.value === null ? undefined : Number(e.target.value))}
                         disabled={loading || currentMode === 'view'}
                       />
                     </FormControl>

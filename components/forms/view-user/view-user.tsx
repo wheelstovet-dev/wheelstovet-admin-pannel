@@ -19,7 +19,7 @@ const userFormSchema = z.object({
     FirstName: z.string(),
     LastName: z.string(),
     Email: z.string(),
-    Phone: z.number(),
+    MobileNo: z.number(),
     LocationDescription: z.string(),
     AccountStatus: z.boolean(),
     LoginType: z.string(),
@@ -43,7 +43,7 @@ export const ViewUser: React.FC<any> = () => {
             FirstName: '',
             LastName: '',
             Email: '',
-            Phone: '',
+            MobileNo: '',
             LocationDescription: '',
             AccountStatus: false,
             LoginType: '',
@@ -132,12 +132,12 @@ export const ViewUser: React.FC<any> = () => {
                         {/* Phone */}
                         <FormField
                             control={control}
-                            name="Phone"
+                            name="MobileNo"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Phone</FormLabel>
+                                    <FormLabel>Mobile No</FormLabel>
                                     <FormControl>
-                                        <Input type="text" placeholder="Phone" {...field} disabled />
+                                        <Input type="text" placeholder="Mobile No" {...field} disabled />
                                     </FormControl>
                                 </FormItem>
                             )}

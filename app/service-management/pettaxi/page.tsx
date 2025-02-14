@@ -110,6 +110,11 @@ export default function PetTaxiPage() {
         const serviceData = {
           fixedCharge: data.FixedCharges,
           handlingAddOnCharge: data.HandlingAddOnCharge,
+          
+          additionalPetCharge: data.AdditionalPetCharge,
+          additionalDistanceCharge: data.AdditionalDistanceCharge,
+          includedDistance: data.IncludedDistance
+
         };
         console.log('Submitted Data:', serviceData);
 
