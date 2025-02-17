@@ -35,7 +35,7 @@ const statusFlow = [
   'Completed',
 ];
 
-const serviceTypes = ['Salon Visit', 'Vet Visit', 'To Hostel', 'Pet Taxi'];
+const serviceTypes = ['Salon Visit', 'Vet Visit', 'To Hostel', 'Pet Taxi','One Time Dog Walking'];
 
 const CaseManagementClient: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,7 +44,7 @@ const CaseManagementClient: React.FC = () => {
   const { cases, loading, error } = useSelector((state: RootState) => state.caseManagement);
 
   const [pageNumber, setPageNumber] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [totalRecords, setTotalRecords] = useState(0);
   const [casesData, setCasesData] = useState(cases || []);
   const [filteredCases, setFilteredCases] = useState(cases || []);
@@ -67,7 +67,7 @@ const CaseManagementClient: React.FC = () => {
     } catch (error: any) {
       ToastAtTopRight.fire({
         icon: 'error',
-        title: 'Failed to fetch cases',
+        title: error?.message||'Failed to fetch cases',
       });
     }
   };

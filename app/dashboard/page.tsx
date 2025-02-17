@@ -111,35 +111,21 @@ const CardComponent: React.FC<CardComponentProps> = ({ title, subtitle, image, c
 
   return (
     <Card className="w-full md:w-auto cursor-pointer" onClick={onClick}>
-      <CardHeader className="flex flex-col space-y-1 pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-            {title}
-          </CardTitle>
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center text-gray-600 border border-gray-300 rounded px-2 py-1">
-              {dropdownValue} <ChevronDown className="ml-1 h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {['Daily', 'Weekly', 'Monthly'].map((value) => (
-                <DropdownMenuItem key={value} onClick={() => setDropdownValue(value)}>
-                  {value}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-        </div>
-        <CardTitle className="text-lg font-bold">
-          {subtitle}
+  <CardHeader className="pb-2">
+    <div className="flex justify-between items-center">
+      <div className="flex flex-col">
+        <CardTitle className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+          {title}
         </CardTitle>
-      </CardHeader>
-      <CardContent className="flex items-center justify-between p-2">
-        <img src={image} alt={subtitle} className="h-20 w-20" />
-        <div className="flex flex-col items-center">
-          <GaugeChart percentage={percentage} color={color} />
-        </div>
-      </CardContent>
-    </Card>
+        <CardTitle className="text-lg font-bold">{subtitle}</CardTitle>
+      </div>
+      {image && (
+        <img src={image} alt={subtitle} className="h-16 w-16 object-contain ml-4" />
+      )}
+    </div>
+  </CardHeader>
+</Card>
+
   );
 };
 
@@ -271,56 +257,29 @@ const handleCardClick = (card: string) => {
               <DashboardSubscriptionChart/>
               <DashboardCasesGraph/>
               
-              <div className="flex flex-wrap my-2 justify-between mx-3">
-                {/* Card 1: Cases for Today */}
-                <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
+              {/* Available Slots for today */}
+                  
+                    <AvailableSlots/>
+
+
+              {/* Card 1: Cases for Today */}
+              <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
                   {/*  */}
                   <CardContent>
                     <RecentCases/>
                   </CardContent>
                 </Card>
-
-                
-                  {/* Available Slots for today */}
-                  
-                    <AvailableSlots/>
-            
-                
-
-                {/* Card 2: Unassigned Cases */}
-                {/* <Card className="w-full lg:w-3/3 lg:me-3 mb-4">
-                  <CardHeader>
-                    <CardTitle>Unassigned Cases</CardTitle>
-                    <CardDescription>
-                      You have 26 Unassigned Cases.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <RecentCases cases={unassignedData} />
-                  </CardContent>
-                </Card> */}
-
-              </div>
-
-                <div className="flex  justify-between mx-3 lg:flex-nowrap flex-wrap ">
-                <div className="">
-                <div ref={petTaxiRef}>
+              
+              <div ref={petTaxiRef}>
                   <UnassignedCasesClient />
-                </div>
-                <div ref={enquiryRef}>
-                  <EnquiryClient/>
                 </div>
                 <div ref={dogWalkingRef}>
                 <PendingSubscriptionClient initialData={pendingSubscriptions} loading={loading} />
                 </div>
-
-                  {/* <EnquiryClient initialData={Enquiries} loading={loading}/> */}
-                  {/* <EmployeeEsclatedClient /> */}
-
+              <div ref={enquiryRef}>
+                  <EnquiryClient/>
                 </div>
-                 
-                  
-                </div>
+                
                 
             </TabsContent>
           </Tabs>

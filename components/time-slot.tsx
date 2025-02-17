@@ -15,6 +15,25 @@ const timeSlots = [
   "05:00 PM - 06:00 PM",
 ];
 
+const timeSlotDogWalking = [
+  "08:00 AM - 08:30 AM",
+  "08:30 AM - 09:00 AM",
+  "09:00 AM - 09:30 AM",
+  "09:30 AM - 10:00 AM",
+  "10:00 AM - 10:30 AM",
+  "10:30 AM - 11:00 AM",
+  "11:00 AM - 11:30 AM",
+  "11:30 AM - 12:00 PM",
+  "04:00 PM - 04:30 PM",
+  "04:30 PM - 05:00 PM",
+  "05:00 PM - 05:30 PM",
+  "05:30 PM - 06:00 PM",
+  "06:00 PM - 06:30 PM",
+  "06:30 PM - 07:00 PM",
+  "07:00 PM - 07:30 PM",
+  "07:30 PM - 08:00 PM"
+];
+
 const AvailableSlots: React.FC = () => {
   //const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   // const [bookedSlots, setBookedSlots] = useState<{ petTaxi: string[]; petWalking: string[] }>({
@@ -68,7 +87,7 @@ const AvailableSlots: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4 text-center text-black">
               Pet Taxi
             </h3>
-            <ul className="grid grid-cols-2 gap-3">
+            <ul className="grid grid-cols-1 gap-3">
               {timeSlots.map((slot, index) => {
                 const isBooked = bookedSlots.petTaxi.includes(slot);
                 //const isSelected = selectedSlot === slot;
@@ -97,7 +116,7 @@ const AvailableSlots: React.FC = () => {
               Pet Walking
             </h3>
             <ul className="grid grid-cols-2 gap-3">
-              {timeSlots.map((slot, index) => {
+              {timeSlotDogWalking.map((slot, index) => {
                 const isBooked = bookedSlots.petWalking.includes(slot);
                 //const isSelected = selectedSlot === slot;
 

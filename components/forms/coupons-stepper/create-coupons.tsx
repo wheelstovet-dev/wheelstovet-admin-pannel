@@ -23,7 +23,7 @@ import { format } from 'date-fns';
 
 const couponFormSchema = z
   .object({
-    CouponType: z.enum(['petTaxi', 'subscription']).optional(),
+    CouponType: z.enum(['petTaxi', 'subscription','reward']).optional(),
     CouponCode: z.string().min(1, 'Coupon Code is required'),
     DiscountType: z.enum(['price', 'percentage']),
     StartDate: z.date({ required_error: 'Starting Date is required.' }),
@@ -159,10 +159,10 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
       }
       router.push('/coupons-management');
     } catch (error: any) {
+      console.log("Error:", error.message.fields.message);
       ToastAtTopRight.fire({
         icon: 'error',
-        title: 'Error processing coupon',
-        text: error.message || 'Failed to process coupon',
+        title: error?.message?.fields?.message || 'Failed to process coupon',
       });
     }
   };
@@ -214,6 +214,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
                           <SelectContent>
                             <SelectItem value="petTaxi">Pet Taxi</SelectItem>
                             <SelectItem value="subscription">Subscription</SelectItem>
+                            <SelectItem value="reward">Reward</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -242,81 +243,88 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
 
             {/* Discount Type */}
             <FormField
-              control={control}
-              name="DiscountType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Discount Type</FormLabel>
-                  <FormControl>
-                    <Select
-                      disabled={loading || currentMode === 'view'}
-                      onValueChange={(value) => {
-                        setDiscountType(value as 'price' | 'percentage');
-                        field.onChange(value);
-                        console.log(value);
-                      }}
-                      value={field.value || undefined}  // Ensure a fallback default
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Discount Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="price">Discount Price</SelectItem>
-                        <SelectItem value="percentage">Discount Percentage</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors.DiscountType?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
+  control={control}
+  name="DiscountType"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Discount Type</FormLabel>
+      <FormControl>
+        <Select
+          disabled={loading || currentMode === 'view'}
+          onValueChange={(value) => {
+            setDiscountType(value as 'price' | 'percentage');
+            field.onChange(value);
+
+            // Reset the other field when switching discount type
+            if (value === 'price') {
+              form.setValue('DiscountPercentage', undefined);
+            } else {
+              form.setValue('DiscountPrice', undefined);
+            }
+          }}
+          value={field.value || undefined}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Discount Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="price">Discount Price</SelectItem>
+            <SelectItem value="percentage">Discount Percentage</SelectItem>
+          </SelectContent>
+        </Select>
+      </FormControl>
+      <FormMessage>{errors.DiscountType?.message}</FormMessage>
+    </FormItem>
+  )}
+/>
 
 
-           {/* Discount Percentage (Only if Discount Type is Percentage) */}
-          {(discountType == "percentage" || couponData?.DiscountType === 'percentage') && (
-            <FormField
-              control={control}
-              name="DiscountPercentage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Discount Percentage</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter Discount Percentage"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value === null ? undefined : Number(e.target.value))}
-                      disabled={loading || currentMode === 'view'}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.DiscountPercentage?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-          )}
 
-            {/* Discount Price (Only if Discount Type is Price) */}
-            {(discountType == "price" || couponData?.DiscountType === 'price') && (
-              <FormField
-                control={control}
-                name="DiscountPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discount Price</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter Discount Price"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value === null ? undefined : Number(e.target.value))}
-                        disabled={loading || currentMode === 'view'}
-                      />
-                    </FormControl>
-                    <FormMessage>{errors.DiscountPrice?.message}</FormMessage>
-                  </FormItem>
-                )}
-              />
-            )}
+           {/* Discount Percentage */}
+{(discountType == "percentage" || couponData?.DiscountType === 'percentage') && (
+  <FormField
+    control={control}
+    name="DiscountPercentage"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Discount Percentage</FormLabel>
+        <FormControl>
+          <Input
+            type="number"
+            placeholder="Enter Discount Percentage"
+            {...field}
+            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+            disabled={loading || currentMode === 'view'}
+          />
+        </FormControl>
+        <FormMessage>{errors.DiscountPercentage?.message}</FormMessage>
+      </FormItem>
+    )}
+  />
+)}
+
+{/* Discount Price */}
+{(discountType == "price" || couponData?.DiscountType === 'price') && (
+  <FormField
+    control={control}
+    name="DiscountPrice"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Discount Price</FormLabel>
+        <FormControl>
+          <Input
+            type="number"
+            placeholder="Enter Discount Price"
+            {...field}
+            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+            disabled={loading || currentMode === 'view'}
+          />
+        </FormControl>
+        <FormMessage>{errors.DiscountPrice?.message}</FormMessage>
+      </FormItem>
+    )}
+  />
+)}
 
 
             {/* Start Date */}

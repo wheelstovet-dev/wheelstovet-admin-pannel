@@ -50,7 +50,7 @@ export const CouponsManagementClient: React.FC = () => {
     } catch (error: any) {
       ToastAtTopRight.fire({
         icon: 'error',
-        title: error.message || 'Failed to fetch coupons',
+        title: error?.message?.fields?.message || 'Failed to fetch coupons',
       });
     } finally {
       // dispatch(setLoading(false));

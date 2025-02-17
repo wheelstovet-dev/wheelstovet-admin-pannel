@@ -43,9 +43,10 @@ const DashboardCasesGraph: React.FC = () => {
     labels,
     datasets: [],
   });
-  
-  const [selectedCase, setSelectedCase] = useState('Pet Taxi');
+
+  const [selectedCase, setSelectedCase] = useState('Vet Visit');
   const [apiData, setApiData] = useState<{ service: string; data: number[] }[]>([]);
+  const [totalCases, setTotalCases] = useState<number>(0);
 
   // Fetch Data from API
   useEffect(() => {
@@ -110,6 +111,9 @@ const DashboardCasesGraph: React.FC = () => {
           },
         ],
       });
+      // Calculate total cases
+      const total = selectedService.data.reduce((sum, num) => sum + num, 0);
+      setTotalCases(total);
     }
   };
 
@@ -135,13 +139,14 @@ const DashboardCasesGraph: React.FC = () => {
     <div className="grid grid-cols-1 gap-4">
       <Card className="col-span-1">
         <CardHeader >
-          <CardTitle className="text-2xl font-bold text-black">
+          <CardTitle className="text-2xl font-bold text-black p-6">
           Transportation Services
           </CardTitle>
+          <span className="ml-2 text-lg font-bold text-gray-600 px-6">{selectedCase} Cases ({totalCases})</span>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center space-x-4 mb-4">
-            {['Pet Taxi', 'Salon Visit', 'Vet Visit', 'To Hostel'].map(service => (
+            {['Vet Visit','Pet Taxi', 'Salon Visit', 'To Hostel'].map(service => (
               <button
                 key={service}
                 className={`px-4 py-2 rounded ${selectedCase === service ? 'bg-yellow-500 text-white' : 'bg-gray-200'}`}
