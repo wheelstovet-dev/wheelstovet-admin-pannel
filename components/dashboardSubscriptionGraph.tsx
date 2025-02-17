@@ -103,7 +103,7 @@ const DashboardSubscriptionChart: React.FC = () => {
 
   
   return (
-    <div className="grid grid-cols-2 gap-6 p-4">
+    <div className="grid grid-cols-2 gap-6">
       {/* Walking Subscriptions */}
       <Card className="shadow-lg rounded-2xl bg-white">
         <CardHeader>

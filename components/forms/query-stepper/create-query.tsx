@@ -39,9 +39,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
   console.log(initialData);
 
   const title = initialData && isEnabled ? "View Enquiry" : initialData ? "Edit Enquiry" : "Create New Enquiry";
-  const description = initialData && isEnabled 
-    ? "View the enquiry details." : initialData ? "Edit the enquiry details."
-    : "To create a new enquiry, fill in the required information.";
+  // const description = initialData && isEnabled 
+  //   ? "View the enquiry details." : initialData ? "Edit the enquiry details."
+  //   : "To create a new enquiry, fill in the required information.";
 
   const action = initialData ? 'Save changes' : 'Create';
 
@@ -104,7 +104,7 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
+        <Heading title={title} description="" />
       </div>
       <Separator />
       <Form {...form}>

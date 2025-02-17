@@ -41,10 +41,10 @@ const UnassignedCasesClient: React.FC = () => {
     dispatch(setLoading(true));
     dispatch(getUnassignedCases({ page: 1, limit: 20 }))
       .unwrap()
-      .catch((err: any) => {
+      .catch((error: any) => {
         ToastAtTopRight.fire({
           icon: 'error',
-          title: err.message || 'Failed to fetch cases',
+          title: error?.message || 'Failed to fetch cases',
         });
       })
       .finally(() => {

@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from '@/app/redux/store';
 import { getDogWalkPlans, updateDogPlan } from '@/app/redux/actions/servicesAction';
 import ProtectedRoute from '@/components/protectedRoute';
 import { ToastAtTopRight } from '@/lib/sweetalert';
+import { set } from 'date-fns';
 
 export default function DogWalkingPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,7 +15,7 @@ export default function DogWalkingPage() {
 
   const [plans, setPlans] = useState<any>([]);
   const [totalCharges, setTotalCharges] = useState<number>(0);
-  const [sundayCharge, setSundayCharge] = useState<number>(200);
+  const [sundayCharge, setSundayCharge] = useState<number>(0);
   const [modifiedPlans, setModifiedPlans] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function DogWalkingPage() {
 
   useEffect(() => {
     setPlans(dogPlans);
+    setSundayCharge(dogPlans[0]?.SundayCharge || 0);
   }, [dogPlans]);
 
   useEffect(() => {
@@ -44,33 +46,40 @@ export default function DogWalkingPage() {
     try {
       const updatePromises = Array.from(modifiedPlans).map(async (planId) => {
         const updatedPlan = plans.find((plan: any) => plan._id === planId);
-        console.log("updatedPlan",updatedPlan);
+        console.log("updatedPlan", updatedPlan);
         const planData = {
           BasePrice: updatedPlan.BasePrice,
           ExtraChargePer15Min: updatedPlan.ExtraChargePer15Min,
+          SundayCharge: sundayCharge, // Ensure SundayCharge is included
         };
+        console.log("Payload being sent:", planData); // Debugging log
         await dispatch(updateDogPlan({ id: planId, planData }));
         setPlans((prevPlans: any) =>
           prevPlans.map((plan: any) => (plan._id === planId ? { ...plan, ...planData } : plan))
         );
       });
+  
       await Promise.all(updatePromises);
       ToastAtTopRight.fire({
         icon: 'success',
         title: 'Dog Walking Plans updated successfully!',
       });
+  
       setModifiedPlans(new Set());
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Update error:", error?.message); // Debugging log
       ToastAtTopRight.fire({
         icon: 'error',
         title: 'Failed to update Dog Walking Plans',
       });
     }
   };
+  
+  
 
   const handleCancel = () => {
     setPlans(dogPlans);
-    setSundayCharge(200);
+    setSundayCharge(sundayCharge);
     setModifiedPlans(new Set());
     ToastAtTopRight.fire({
       icon: 'info',
