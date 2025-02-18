@@ -32,12 +32,12 @@ export const columns: ColumnDef<any>[] = [
   },
 
   {
-    accessorKey: 'AssignedEmployee', // A generic accessor key
-    header: 'Assigned Employee',
+    accessorKey: '', // A generic accessor key
+    header: 'Name',
     cell: ({ row }) => {
-      const firstName = row.original?.UserId?.FirstName || row.original?.EmployeeId?.FirstName;
-      const lastName = row.original?.UserId?.LastName || row.original?.EmployeeId?.LastName;
-      return firstName && lastName ? `${firstName} ${lastName}` : 'N/A';
+      const firstName = row.original?.UserId?.FirstName || row.original?.EmployeeId?.Name || '';
+      const lastName = row.original?.UserId?.LastName || row.original?.EmployeeId?.LastName || '';
+      return firstName || lastName ? `${firstName} ${lastName}` : 'N/A';
     },
   },
   {
