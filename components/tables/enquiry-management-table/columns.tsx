@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Mail, Phone } from 'lucide-react';
-// import { CellAction } from './cell-action';
+ import { CellAction } from './cell-action';
 import { Enquiry } from '@/constants/enquiry-data';
 import { format } from 'date-fns';
 import axios from 'axios';
@@ -246,7 +246,7 @@ export const columns: ColumnDef<any>[] = [
     },
   {
     accessorKey: 'ServiceId',
-    header: 'Service Name',
+    header: 'Service Enquired',
     cell: ({ row }) => <span>{row.original.ServiceId?.serviceName || 'N/A'}</span>,
   },
   {
@@ -270,7 +270,7 @@ export const columns: ColumnDef<any>[] = [
     },
   },  
   {
-    accessorKey: 'preferredHours',
+    accessorKey: 'PreferredHours',
     header: 'Preferred Hours',
     cell: ({ row }) => {
       const hours = row.original.PreferredHours;
@@ -278,17 +278,11 @@ export const columns: ColumnDef<any>[] = [
       if (hours == null || hours === 0) {
         return <span>Not Available</span>;
       }
-    
-      // Create a date object starting at midnight (00:00:00) and add the hours
-      const time = new Date(0); // Epoch start
-      time.setHours(hours, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds
-    
-      // Format the time in HH:mm:ss
-      const formattedTime = format(time, 'HH:mm:ss');
-    
-      return <span>{formattedTime}</span>;
+  
+      return <span>{hours}</span>;
     },
-  },  
+  },
+  
   {
     accessorKey: 'UserId',
     header: 'Contact',
@@ -341,8 +335,9 @@ export const columns: ColumnDef<any>[] = [
   },
   
   
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => <CellAction data={row.original} />,
-  // },
+  {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => <div className="enquiry-action"><CellAction data={row.original} /></div>,
+    },
 ];

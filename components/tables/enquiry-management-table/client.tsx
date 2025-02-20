@@ -114,7 +114,7 @@ export const EnquiryClient: React.FC= () => {
         columns={columns}
         data={data}
         onRowClick={handleRowClick}
-        stopPropagationSelectors={[".enquiryStatus-update"]} // pass the class name of the column element to prevent event bubbling
+        stopPropagationSelectors={[".enquiryStatus-update",".enquiry-action",".select-button"]} // pass the class name of the column element to prevent event bubbling
       />
       )}
 
