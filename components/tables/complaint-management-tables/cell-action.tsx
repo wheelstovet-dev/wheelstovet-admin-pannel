@@ -82,7 +82,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <UserCheck className="mr-2 h-4 w-4" /> Record Resolution
           </DropdownMenuItem> */}
           
-          <DropdownMenuItem onClick={console.log("Deleted")}>
+          <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
