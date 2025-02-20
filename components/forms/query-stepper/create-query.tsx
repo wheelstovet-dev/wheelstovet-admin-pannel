@@ -26,6 +26,9 @@ const enquiryFormSchema = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   phoneNo: z.string().min(1, 'Phone number is required'),
   pickupAddress: z.string().min(1, 'Pickup Address is required'),
+  RescueDropLocation: z.string().optional(),
+  TakePetToVet: z.boolean(),
+  DropCity: z.string().optional(),
   status: z.enum(['pending', 'resolved'], {
     required_error: 'Status is required',
   }),
@@ -57,6 +60,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
       phoneNo: initialData?.UserId?.MobileNo ,
       pickupAddress: initialData?.PickupLocation ,
       status: initialData?.CurrentStatus || 'N/A',
+      RescueDropLocation: initialData?.RescueDropLocation || '',
+      TakePetToVet: initialData?.TakePetToVet ?? false,
+      DropCity: initialData?.DropCity || '',
       createdAt: initialData?.CreatedAt ? new Date(initialData?.CreatedAt) : undefined,
       updatedAt: initialData?.UpdatedAt ? new Date(initialData?.UpdatedAt) : undefined,
     },
@@ -70,12 +76,14 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
         preferredDate: initialData?.PreferredDates?.length
         ? new Date(initialData.PreferredDates[0])
         : null, // Use null to indicate "Not Available"
-        preferredTime: initialData?.PreferredHours
-        ? `${String(initialData.PreferredHours).padStart(2, '0')}:00:00`
-        : '',
+        preferredTime: initialData?.PreferredHours ? `${initialData.PreferredHours}` : '',
+
         email: initialData?.UserId?.Email || '',
         phoneNo: initialData?.UserId?.MobileNo || '',
         pickupAddress: initialData?.PickupLocation || '',
+        RescueDropLocation: initialData?.RescueDropLocation || 'N/A',
+        TakePetToVet: initialData?.TakePetToVet ?? false,
+        DropCity: initialData?.DropCity || 'N/A',
         status: initialData?.CurrentStatus || 'N/A',
         createdAt: initialData?.CreatedAt ? new Date(initialData?.CreatedAt) : undefined,
       updatedAt: initialData?.UpdatedAt ? new Date(initialData?.UpdatedAt) : undefined,
@@ -117,7 +125,7 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
               name="enquiryName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Enquiry Name</FormLabel>
+                  <FormLabel>Service Enquired</FormLabel>
                   <FormControl>
                     <Input type="text" disabled={isEnabled || loading} placeholder="Enter Enquiry Name" {...field} />
                   </FormControl>
@@ -198,6 +206,46 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
                   <FormLabel>Pickup Address</FormLabel>
                   <FormControl>
                     <Input type="text" disabled={isEnabled || loading} placeholder="Enter Pickup Address" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* RescueDropLocation */}
+            <FormField
+              control={control}
+              name="RescueDropLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rescue Drop Location</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Rescue Drop Location" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {/* TakePetToVet */}
+            <FormField
+              control={control}
+              name="TakePetToVet"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Take Pet To Vet</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Take Pet To Vet" value={field.value ? "Yes" : "No"}   />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {/* DropCity */}
+            <FormField
+              control={control}
+              name="DropCity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Drop City</FormLabel>
+                  <FormControl>
+                    <Input type="text" disabled={isEnabled || loading} placeholder="Enter Drop City" {...field} />
                   </FormControl>
                 </FormItem>
               )}
