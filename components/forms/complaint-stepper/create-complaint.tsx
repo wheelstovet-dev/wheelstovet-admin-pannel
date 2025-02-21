@@ -17,6 +17,15 @@ import { TextBox } from '@/components/ui/textbox';
 const complaintFormSchema = z.object({
   ComplaintType: z.string().min(1, 'Complaint Type is required'),
   ComplaintBy: z.string().min(1, 'Complaint By is required'),
+
+  UserEmail: z.string().optional(),
+  UserMobile: z.string().optional(),
+  UserFullName: z.string().optional(),
+
+  EmployeeEmail: z.string().optional(),
+  EmployeeMobile: z.string().optional(),
+  EmployeeFullName: z.string().optional(),
+
   Description: z.string().min(1, 'Description is required'),
   Status: z.string().min(1, 'Status is required'),
   Priority: z.string().min(1, 'Priority is required'),
@@ -64,6 +73,8 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
     },
   });
 
+  const [complaintBy, setComplaintBy] = useState<string>('');
+
   useEffect(() => {
     if (currentMode === 'view' || currentMode === 'update') {
       setLoader(true);
@@ -71,11 +82,25 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
         .unwrap()
         .then((data: any) => {
           //console.log("Fetched complaint data:", data.data);
+
+          const { UserId, EmployeeId, ComplaintBy } = data.data;
+
+        // Store complaintBy in state
+        setComplaintBy(ComplaintBy);
+        
           // Sanitize ResolvedAt to avoid null values
           const sanitizedData = {
             ...data.data,
             ResolvedAt: data.data.ResolvedAt ?? '',  // Replace null with an empty string
-          };
+            UserEmail: data.data.UserId?.Email || '',
+          UserMobile: data.data.UserId?.MobileNo?.toString() || '',
+          UserFullName: `${data.data.UserId?.FirstName || ''} ${data.data.UserId?.LastName || ''}`.trim(),
+            // If ComplaintBy is 'employee', set employee details
+          EmployeeEmail: data.data.EmployeeId?.Email || '',
+          EmployeeMobile: data.data.EmployeeId?.MobileNo?.toString() || '',
+          EmployeeFullName: data.data.EmployeeId?.Name || '',
+        
+        };
           setComplaintData(sanitizedData);
           form.reset(sanitizedData);
 
@@ -173,7 +198,7 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
               <FormItem>
                 <FormLabel>Complaint Type</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Enter Complainant Type" {...field} disabled={currentMode === 'view'} />
+                  <Input type="text" placeholder="Enter Complainant Type" {...field} disabled={true} />
                 </FormControl>
                 <FormMessage>{renderErrorMessage(errors.ComplaintType)}</FormMessage>
               </FormItem>
@@ -183,17 +208,81 @@ export const ComplaintForm: React.FC<ComplaintFormProps> = ({ mode: propMode }) 
               <FormItem>
                 <FormLabel>Complaint By</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Enter Complainant" {...field} disabled={currentMode === 'view'} />
+                  <Input type="text" placeholder="Enter Complainant" {...field} disabled={true} />
                 </FormControl>
                 <FormMessage>{renderErrorMessage(errors.ComplaintBy)}</FormMessage>
               </FormItem>
             )} />
 
+
+            {complaintBy === 'user' && (
+              <>
+                <FormField control={control} name="UserFullName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>User Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                <FormField control={control} name="UserEmail" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                <FormField control={control} name="UserMobile" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile No</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              </>
+            )}
+
+            {complaintBy === 'employee' && (
+              <>
+                <FormField control={control} name="EmployeeFullName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Employee Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                <FormField control={control} name="EmployeeEmail" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                <FormField control={control} name="EmployeeMobile" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile No</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} disabled />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              </>
+            )}
+
+
             <FormField control={control} name="Description" render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Enter Description" {...field} disabled={currentMode === 'view'} />
+                  <Input type="text" placeholder="Enter Description" {...field} disabled={true} />
                 </FormControl>
                 <FormMessage>{renderErrorMessage(errors.Description)}</FormMessage>
               </FormItem>

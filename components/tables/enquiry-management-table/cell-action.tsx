@@ -1,5 +1,7 @@
 'use client';
 
+import { deleteEnquiry, getAllEnquiries } from '@/app/redux/actions/dashboardAction';
+import { AppDispatch } from '@/app/redux/store';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,33 +12,36 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Enquiry } from '@/constants/enquiry-data';
+import { ToastAtTopRight } from '@/lib/sweetalert';
 import { Edit, MoreHorizontal, Trash, Eye, UserPlus, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 
 export const CellAction: React.FC<any> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
   
   const onConfirm = async () => {
     console.log("data");
-      // Your confirm logic here
-    //   try {
-    //     await dispatch(deleteComplaint(data._id)).unwrap();
-    //     ToastAtTopRight.fire({
-    //       icon: 'success',
-    //       title: 'Complaint deleted successfully!',
-    //     });
-    //     dispatch(getAllComplaints({ page: 1, limit: 20 })); // Refresh the complaint list
-    //   } catch (error: any) {
-    //     ToastAtTopRight.fire({
-    //       icon: 'error',
-    //       title: error || 'Failed to delete complaint',
-    //     });
-    //   }
+      //Your confirm logic here
+      try {
+        await dispatch(deleteEnquiry(data._id)).unwrap();
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Enquiry deleted successfully!',
+        });
+        dispatch(getAllEnquiries({ page: 1, limit: 5 })); // Refresh the complaint list
+      } catch (error: any) {
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: error || 'Failed to delete enquiry',
+        });
+      }
     };
 
   // const handleRegisterNewSubscription = () => {

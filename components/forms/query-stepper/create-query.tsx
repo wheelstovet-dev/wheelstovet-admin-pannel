@@ -21,7 +21,7 @@ interface EnquiryFormType {
 
 const enquiryFormSchema = z.object({
   enquiryName: z.string().min(1, 'Enquiry Name is required'),
-  preferredDate: z.union([z.date(), z.null()]), 
+  preferredDate: z.array(z.date()).or(z.null()), // Use null to indicate "Not Available"
   preferredTime: z.string().min(1, 'Preferred Time is required'),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   phoneNo: z.string().min(1, 'Phone number is required'),
@@ -53,8 +53,9 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
     defaultValues: {
       enquiryName: initialData?.ServiceId?.serviceName || '',
       preferredDate: initialData?.PreferredDates?.length
-      ? new Date(initialData.PreferredDates[0])
+      ? initialData.PreferredDates.map((date: string) => new Date(date))
       : null, // Use null to indicate "Not Available"
+    
       preferredTime: initialData?.PreferredHours ,
       email: initialData?.UserId?.Email ,
       phoneNo: initialData?.UserId?.MobileNo ,
@@ -74,8 +75,8 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
       form.reset({
         enquiryName: initialData?.ServiceId?.serviceName || '',
         preferredDate: initialData?.PreferredDates?.length
-        ? new Date(initialData.PreferredDates[0])
-        : null, // Use null to indicate "Not Available"
+      ? initialData.PreferredDates.map((date: string) => new Date(date))
+      : null, // Use null to indicate "Not Available"
         preferredTime: initialData?.PreferredHours ? `${initialData.PreferredHours}` : '',
 
         email: initialData?.UserId?.Email || '',
@@ -133,25 +134,37 @@ export const CreateEnquiryForm: React.FC<EnquiryFormType> = ({ initialData, isEn
               )}
             />
 
-            {/* Preferred Date */}
-            <FormField
-              control={control}
-              name="preferredDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preferred Date</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      disabled={isEnabled || loading}
-                      placeholder="Enter Preferred Date"
-                      value={field.value ? format(new Date(field.value), 'PPP') : 'Not Available'}
-                      onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            {/* Preferred Dates */}
+              <FormField
+                control={control}
+                name="preferredDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preferred Dates</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        disabled={isEnabled || loading}
+                        placeholder="Enter Preferred Dates"
+                        value={
+                          field.value?.length
+                            ? field.value.map((date: Date) => format(new Date(date), 'PPP')).join(', ')
+                            : 'Not Available'
+                        }
+                        onChange={(e) => {
+                          const dates = e.target.value
+                            .split(',')
+                            .map((date) => date.trim())
+                            .filter((date) => date) // Remove empty values
+                            .map((date) => new Date(date)); // Convert to Date objects
+                          field.onChange(dates.length ? dates : null);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
 
 
 

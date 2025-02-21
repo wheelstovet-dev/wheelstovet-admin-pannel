@@ -5,7 +5,8 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar, Check, ChevronDown, Mail, Phone, X } from 'lucide-react';
 import { useState } from 'react';
-import { format } from 'date-fns';
+import { format, formatDuration } from 'date-fns';
+import { timeEnd } from 'console';
 
 // interface SubscriptionManagement {
 //   status: string;
@@ -94,47 +95,47 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
   },
 
-  {
-    accessorKey: 'EmployeeId',
-    header: 'Employee Details',
-    cell: ({ row }) => {
-      const formatName = (name:any) => {
-        if (!name) return 'N/A';
-        return name
-          .split(' ') // Split by space
-          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
-          .join(' '); // Join back with space
-      };
+  // {
+  //   accessorKey: 'EmployeeId',
+  //   header: 'Employee Details',
+  //   cell: ({ row }) => {
+  //     const formatName = (name:any) => {
+  //       if (!name) return 'N/A';
+  //       return name
+  //         .split(' ') // Split by space
+  //         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
+  //         .join(' '); // Join back with space
+  //     };
   
-      return (
-        <div className="flex flex-col me-5 text-center">
-        <span>{formatName(row.original?.EmployeeId?.Name) || 'N/A'}</span>
-        <div className="flex items-center mt-2">
-          <Phone className="text-green-500 mr-2" width={15} height={15} />
-          <span className="text-[12px]">{row.original?.EmployeeId?.MobileNo || 'N/A'}</span>
-        </div>
-      </div>
-      );
-    },
-  }, 
-  {
-    accessorKey: 'SubscriptionId',
-    header: 'User Details',
-    cell: ({ row }) => {
-      const user = row.original?.SubscriptionId?.UserId;
-      return (
-        <div className="flex flex-col me-5">
-        <div className="text-center">
-          {user ? `${user.FirstName} ${user.LastName}` : 'N/A'}
-        </div>
-        <div className="flex items-center mt-1">
-        <Mail className="text-blue-500 mr-2" width={15} height={15} />
-        <span className="text-[12px]">{row.original?.SubscriptionId?.UserId?.Email || 'N/A'}</span>
-      </div>
-      </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="flex flex-col me-5 text-center">
+  //       <span>{formatName(row.original?.EmployeeId?.Name) || 'N/A'}</span>
+  //       <div className="flex items-center mt-2">
+  //         <Phone className="text-green-500 mr-2" width={15} height={15} />
+  //         <span className="text-[12px]">{row.original?.EmployeeId?.MobileNo || 'N/A'}</span>
+  //       </div>
+  //     </div>
+  //     );
+  //   },
+  // }, 
+  // {
+  //   accessorKey: 'SubscriptionId',
+  //   header: 'User Details',
+  //   cell: ({ row }) => {
+  //     const user = row.original?.SubscriptionId?.UserId;
+  //     return (
+  //       <div className="flex flex-col me-5">
+  //       <div className="text-center">
+  //         {user ? `${user.FirstName} ${user.LastName}` : 'N/A'}
+  //       </div>
+  //       <div className="flex items-center mt-1">
+  //       <Mail className="text-blue-500 mr-2" width={15} height={15} />
+  //       <span className="text-[12px]">{row.original?.SubscriptionId?.UserId?.Email || 'N/A'}</span>
+  //     </div>
+  //     </div>
+  //     );
+  //   },
+  // },
   // {
   //   accessorKey: 'contact',
   //   header: 'Contact',
@@ -151,11 +152,7 @@ export const columns: ColumnDef<any>[] = [
   //     </div>
   //   ),
   // }, 
-  {
-    accessorKey: 'Status',
-    header: 'Status',
-    cell: ({ row }) => <span>{row.original?.Status || 'N/A'}</span>,
-  },
+  
   {
     accessorKey: 'Date',
     header: 'Date',
@@ -164,42 +161,53 @@ export const columns: ColumnDef<any>[] = [
       return <span>{date ? format(new Date(date), 'dd-MMM-yyyy') : 'N/A'}</span>;
     },
   },
+
+  {
+    accessorKey: 'PickupTime',
+    header: 'Pickup Time',
+    cell: ({ row }) => {
+      const date = row.original.PickupTime ? new Date(row.original.PickupTime) : null;
+      return date && !isNaN(date.getTime()) ? format(date, 'hh:mm a') : 'N/A';
+    },
+  },
+  
+  {
+    accessorKey: 'DropTime',
+    header: 'Drop Time',
+    cell: ({ row }) => {
+      const date = row.original.DropTime ? new Date(row.original.DropTime) : null;
+      return date && !isNaN(date.getTime()) ? format(date, 'hh:mm a') : 'N/A';
+    },
+  },
+  
+  
   // {
-  //   accessorKey: 'Date',
-  //   header: 'Date',
+  //   accessorKey: 'LatePickup',
+  //   header: 'Ontime Pickup',
   //   cell: ({ row }) => (
-  //     <div className="">
-  //       <span>{row.original?.Date}</span>
+  //     <div className='text-center'>
+  //       <span>{row.original.LatePickup ? "No" : "Yes"}</span>
+  //     </div>
+  //   ),
+  // },  
+  // {
+  //   accessorKey: 'LateDrop',
+  //   header: 'Ontime Drop',
+  //   cell: ({ row }) => (
+  //     <div className="text-center">
+  //       <span>{row.original.LateDrop ? "No" : "Yes"}</span>
   //     </div>
   //   ),
   // },
   {
-    accessorKey: 'LatePickup',
-    header: 'Ontime Pickup',
+    accessorKey: 'Duration',
+    header: 'Duration',
     cell: ({ row }) => (
-      <div className='text-center'>
-        <span>{row.original.LatePickup ? "No" : "Yes"}</span>
-      </div>
-    ),
-  },  
-  {
-    accessorKey: 'LateDrop',
-    header: 'Ontime Drop',
-    cell: ({ row }) => (
-      <div className="text-center">
-        <span>{row.original.LateDrop ? "No" : "Yes"}</span>
+      <div className="">
+        <span>{row.original?.Duration} min</span>
       </div>
     ),
   },
-  // {
-  //   accessorKey: 'Duration',
-  //   header: 'Duration',
-  //   cell: ({ row }) => (
-  //     <div className="">
-  //       <span>{row.original?.Duration} min</span>
-  //     </div>
-  //   ),
-  // },
   {
     accessorKey: 'TimeSlot',
     header: 'Time Slot',
@@ -208,5 +216,20 @@ export const columns: ColumnDef<any>[] = [
         <span>{row.original?.TimeSlot || 'N/A'}</span>
       </div>
     ),
+  },
+  {
+    accessorKey: 'Note',
+    header: 'Note',
+    cell: ({ row }) => (
+      <div className="">
+        <span>{row.original?.Note}</span>
+      </div>
+    ),
+  },
+
+  {
+    accessorKey: 'Status',
+    header: 'Status',
+    cell: ({ row }) => <span>{row.original?.Status || 'N/A'}</span>,
   },
 ];
