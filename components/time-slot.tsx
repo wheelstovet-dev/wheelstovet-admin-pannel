@@ -4,7 +4,7 @@ import { AppDispatch, RootState } from "@/app/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { getBookedSlots } from "@/app/redux/actions/dashboardAction";
 
-const timeSlots = [
+const timeSlotPetTaxi = [
   "10:00 AM - 11:00 AM",
   "11:00 AM - 12:00 PM",
   "12:00 PM - 01:00 PM",
@@ -88,7 +88,7 @@ const AvailableSlots: React.FC = () => {
               Pet Taxi
             </h3>
             <ul className="grid grid-cols-1 gap-3">
-              {timeSlots.map((slot, index) => {
+              {timeSlotPetTaxi.map((slot, index) => {
                 const isBooked = bookedSlots.petTaxi.includes(slot);
                 //const isSelected = selectedSlot === slot;
 

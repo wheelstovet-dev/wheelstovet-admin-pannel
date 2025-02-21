@@ -52,6 +52,8 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
       asignedEmployeeMobileNo: '',
       asignedEmployeeEmail: '',
 
+      TotalCharge: '',
+
     },
   });
 
@@ -99,6 +101,8 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
             asignedEmployeeName: assignedEmp?.Name || 'Not Assigned',
             asignedEmployeeMobileNo: assignedEmp?.MobileNo || 'Not Available',
             asignedEmployeeEmail: assignedEmp?.Email || 'Not Available',
+
+            TotalCharge: subscription.TotalCharge || 'Not Available',
           });
         })
         .catch((error) => {
@@ -325,6 +329,16 @@ export const ViewSubscriptionForm: React.FC<SubscriptionFormProps> = ({ mode: pr
                 <FormLabel>Include Sundays</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="Include Sundays?" {...field} disabled={currentMode === 'view'} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+<FormField control={control} name="TotalCharge" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Total Charge</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Total Charge" {...field} disabled={currentMode === 'view'} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

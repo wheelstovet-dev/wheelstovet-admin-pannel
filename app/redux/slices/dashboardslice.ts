@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getAllEnquiries, getEnquiryId, getPendingSubscriptions,
-   getUnassignedCases, getTodaysCases ,getBookedSlots
+   getUnassignedCases, getTodaysCases ,getBookedSlots,deleteEnquiry
 } from '../actions/dashboardAction';
 
 interface DashboardState {
@@ -95,6 +95,22 @@ const dashboardslice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // Delete Enquiry
+      .addCase(deleteEnquiry.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteEnquiry.fulfilled, (state, action: PayloadAction<string>) => {
+        state.loading = false;
+        state.Enquiries = state.Enquiries.filter(enquiry => enquiry.id !== action.payload);
+        state.successMessage = 'Enquiry deleted successfully';
+      })      
+      .addCase(deleteEnquiry.rejected, (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
 
       // -----------PENDING SUBSCRIPTION SECTION --------------
 

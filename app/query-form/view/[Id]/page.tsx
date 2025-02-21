@@ -11,7 +11,7 @@ import { getEnquiryId } from '@/app/redux/actions/dashboardAction';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { useParams } from 'next/navigation';
 
-const breadcrumbItems = [{ title: 'Employee', link: '/dashboard/employee' }];
+const breadcrumbItems = [{ title: 'Enquiry', link: '/dashboard/enquiry' }];
 
 export default function Page() {
     // const initialData = {

@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar, Check, ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
+import { getAllSubscriptions, updateSubscriptionStatus } from '@/app/redux/actions/subscriptionAction';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/redux/store';
 import { ToastAtTopRight } from '@/lib/sweetalert';
@@ -34,6 +34,7 @@ const StatusCell = ({ row }: { row: Row<any> }) => {
         icon: 'success',
         title: `Status updated to ${newStatus}`,
       });
+      dispatch(getAllSubscriptions({ page: 1, limit: 5 }));
     } catch (error) {
       console.error('Failed to update status:', error);
       ToastAtTopRight.fire({

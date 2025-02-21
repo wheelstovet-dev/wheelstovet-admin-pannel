@@ -41,6 +41,27 @@ export const getEnquiryId = createAsyncThunk<
   }
 });
 
+// Delete enquiry by ID
+export const deleteEnquiry = createAsyncThunk<
+  string, // Return type (ID of deleted enquiry)
+  string, // Argument type (ID of enquiry to delete)
+  { rejectValue: any }
+>(
+  'enquiry/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiCall('DELETE', `/admin/enquiries/${id}`);
+      return id; // Return the deleted ID
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || 'Failed to delete enquiry');
+    }
+  }
+);
+
+
+
+
+
 // -----------PENDING SUBSCRIPTION SECTION --------------
 
 // Action to get Pending Subscriptions
