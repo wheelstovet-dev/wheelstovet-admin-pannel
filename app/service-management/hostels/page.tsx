@@ -95,7 +95,7 @@ export default function HostelVisitPage() {
 
   useEffect(() => {
     if (services.length) {
-      const HostelService = services.find(service => service.serviceName === "To Hostel");
+      const HostelService = services.find(service => service.serviceName === "Hostel");
       if (HostelService) {
         const initialCharges: ChargeFormValues = {
           FixedCharges: HostelService.fixedCharge || 0,

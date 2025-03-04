@@ -179,17 +179,27 @@ export const columns: ColumnDef<any>[] = [
       return date && !isNaN(date.getTime()) ? format(date, 'hh:mm a') : 'N/A';
     },
   },
+  {
+    accessorKey: 'LatePickup',
+    header: 'On time Pickup',
+    cell: ({ row }) => (
+      <div 
+        style={{ borderRadius: "20px" }}
+        className={`flex items-center me-5 justify-between px-4 py-2 ${
+          row.original.LatePickup ? 'bg-red-400' : 'bg-green-400'
+        }`}
+      >
+        {row.original.LatePickup ? (
+          <X width={16} height={16} className="text-red-900 mr-2" />
+        ) : (
+          <Check width={16} height={16} className="text-green-900 mr-2" />
+        )}
+        <span className='text-black'>{row.original.LatePickup ? 'No' : 'Yes'}</span>
+      </div>
+    )
+  },
   
   
-  // {
-  //   accessorKey: 'LatePickup',
-  //   header: 'Ontime Pickup',
-  //   cell: ({ row }) => (
-  //     <div className='text-center'>
-  //       <span>{row.original.LatePickup ? "No" : "Yes"}</span>
-  //     </div>
-  //   ),
-  // },  
   // {
   //   accessorKey: 'LateDrop',
   //   header: 'Ontime Drop',
@@ -230,6 +240,32 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'Status',
     header: 'Status',
-    cell: ({ row }) => <span>{row.original?.Status || 'N/A'}</span>,
+    cell: ({ row }) => {
+      const status = row.original?.Status || 'N/A';
+      let bgColor = '';
+  
+      switch (status) {
+        case 'scheduled':
+          bgColor = 'bg-yellow-400';
+          break;
+        case 'in-progress':
+          bgColor = 'bg-yellow-400';
+          break;
+        case 'completed':
+          bgColor = 'bg-green-400';
+          break;
+        case 'missed':
+          bgColor = 'bg-red-400';
+          break;
+        default:
+          bgColor = 'bg-gray-400';
+      }
+  
+      return (
+        <div className={`text-center ${bgColor} text-white p-1 rounded-md`}>
+          <span>{status}</span>
+        </div>
+      );
+    },
   },
 ];

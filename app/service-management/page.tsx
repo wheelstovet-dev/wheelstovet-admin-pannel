@@ -15,7 +15,7 @@ const servicesData = [
   { name: 'PET TAXI', folderRoute: "pettaxi", icon: '/images/taxi.png' },
   { name: 'PET HANDLING', folderRoute: "pethandling", icon: '/images/handle.png' },
   { name: 'PET RESCUE', folderRoute: "petrescue", icon: '/images/rescue.png' },
-  { name: 'TO HOSTEL', folderRoute: "hostels", icon: '/images/rescue.png' },
+  { name: 'Hostel', folderRoute: "hostels", icon: '/images/rescue.png' },
   { name: 'OUTING WITH PET', folderRoute: "outingWithPet", icon: '/images/Frame (2).png' },
   { name: 'PET RELOCATION', folderRoute: "petRelocation", icon: '/images/taxi.png' },
   { name: 'ONE TIME DOG WALKING', folderRoute: "oneTimeDogWalking", icon: '/images/Frame (2).png' },
