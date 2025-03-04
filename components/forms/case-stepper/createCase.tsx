@@ -33,6 +33,17 @@ const caseFormSchema = z.object({
   charges: z.number().optional(),
   paymentMode: z.string().optional(),
   timeSlot: z.string().optional(),
+  PetHandler: z.boolean().optional(),
+  ParentAccompanied: z.boolean(),
+  SpecialRequest: z.string().optional(),
+  BuyMedicines: z.boolean(),
+  BuyAccessories: z.boolean(),
+  GroomingType: z.string().optional(),
+  TransactionStatus: z.string().optional(),
+  HealthHistory: z.string().optional(),
+  ProblemWithPet: z.string().optional(),
+  Rating: z.number().optional(),
+  Review: z.string().optional(),
   emp: z.object({
     empName: z.string().optional(),
     mobileno: z.string().optional(),
@@ -102,6 +113,18 @@ export const CreateCaseForm: React.FC = () => {
         charges: selectedCase.Charges ?? 0,
         paymentMode: selectedCase.PaymentMode,
         timeSlot: selectedCase.TimeSlot || '',
+        PetHandler: selectedCase.PetHandler ||'',
+        ParentAccompanied: selectedCase.ParentAccompanied || '',
+        SpecialRequest: selectedCase.SpecialRequest || '',
+        BuyMedicines: selectedCase.BuyMedicines || '',
+        BuyAccessories: selectedCase.BuyAccessories || '',
+        GroomingType: selectedCase.GroomingType || '',
+        TransactionStatus: selectedCase.TransactionStatus || '',
+        HealthHistory: selectedCase.HealthHistory || '',
+        ProblemWithPet: selectedCase.ProblemWithPet || '',
+        Rating: selectedCase.Rating || 0,
+        Review: selectedCase.Review || '',
+
         emp: selectedCase.EmpId
         ? {
             empName: selectedCase.EmpId.Name,
@@ -425,7 +448,112 @@ export const CreateCaseForm: React.FC = () => {
               )}
             />
             </div>)}
-            
+
+
+            {/* Common Questions*/}
+            <div className="p-4 bg-white rounded-xl shadow-md col-span-3">
+        <h2 className="text-lg font-semibold text-gray-700 mb-3">Case Related</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+            control={control}
+            name="PetHandler"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pet handler Included ?</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} value={field.value ? 'Yes' : 'No'} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="ParentAccompanied"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Will Parent Accompany the Pet ?</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} value={field.value ? 'Yes' : 'No'} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="SpecialRequest"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Additional Requestion ?</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="BuyMedicines"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Do you want us to Buy Medicines ?</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} value={field.value ? 'Yes' : 'No'} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="HealthHistory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Health History</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="ProblemWithPet"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Problem With Pet</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="GroomingType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Grooming Type</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="BuyAccessories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Want us to buy Accessories ?</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} value={field.value ? 'Yes' : 'No'} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          
+          </div>
+            </div>
       {/* Other Details */}
       <div className="p-4 bg-white rounded-xl shadow-md col-span-3">
         <h2 className="text-lg font-semibold text-gray-700 mb-3">Other Details</h2>
@@ -435,7 +563,19 @@ export const CreateCaseForm: React.FC = () => {
             name="currentStatus"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Current Status</FormLabel>
+                <FormLabel>Case Status</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="TransactionStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Transaction Status</FormLabel>
                 <FormControl>
                   <Input type="text" disabled className="border-gray-300" {...field} />
                 </FormControl>
@@ -498,6 +638,31 @@ export const CreateCaseForm: React.FC = () => {
                 <FormLabel>Time Slot</FormLabel>
                 <FormControl>
                   <Input type="text" disabled className="border-gray-300" {...field} value={field.value || ''} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={control}
+            name="Rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rating</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="Review"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Review</FormLabel>
+                <FormControl>
+                  <Input type="text" disabled className="border-gray-300" {...field} />
                 </FormControl>
               </FormItem>
             )}

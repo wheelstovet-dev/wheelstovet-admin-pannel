@@ -49,15 +49,15 @@ const employeeFormSchema = z.object({
   City: z.string().min(1, 'City is required'),
   State: z.string().min(1, 'State is required'),
   Role: z.string().min(1, 'Role is required'),
-  Rating: z.string().optional(),
+  // Rating: z.string().optional(),
 
   /*------When backend is configured for ratings use the below schema for rating and remove above one*/
 
-  // Rating: z
-  //   .number()
-  //   .min(1, { message: "Rating must be at least 1" })
-  //   .max(5, { message: "Rating cannot exceed 5" })
-  //   .nullable(),
+  Rating: z
+    .number()
+    .min(1, { message: "Rating must be at least 1" })
+    .max(5, { message: "Rating cannot exceed 5" })
+    .nullable(),
 });
 
 interface EmployeeFormProps {
@@ -116,6 +116,7 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
             form.reset({
               ...finalData,
               DateOfBirth: finalData.DateOfBirth ? new Date(finalData.DateOfBirth) : undefined,
+              Rating: finalData.Rating ?? "4", // Set default rating to 4 if not provided
             });
           }
           setRole(data?.data?.Role);
@@ -358,7 +359,7 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
                         placeholder="Enter Rating"
                         {...field}
                         onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                        disabled={currentMode === 'view'}
+                        disabled={true}
                       />
                     </FormControl>
                     <FormMessage>{renderErrorMessage(errors.Rating)}</FormMessage>
