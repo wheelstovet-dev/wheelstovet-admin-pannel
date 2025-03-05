@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { nullable, z } from 'zod';
 import { useDispatch } from 'react-redux';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { AppDispatch } from '@/app/redux/store';
 import { setLoading } from '@/app/redux/slices/authslice';
 import { createEmployee, getEmployeeById, updateEmployee } from '@/app/redux/actions/employeeAction';
@@ -22,6 +22,11 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+import apiCall from '@/lib/axios';
+import Image from 'next/image';
+import { useRouter } from "next/navigation"; // ✅ Import router
+import { FaRegStar, FaStar } from 'react-icons/fa';
+
 
 // Employee form schema for validation
 const employeeFormSchema = z.object({
@@ -54,10 +59,19 @@ const employeeFormSchema = z.object({
   /*------When backend is configured for ratings use the below schema for rating and remove above one*/
 
   Rating: z
-    .number()
-    .min(1, { message: "Rating must be at least 1" })
-    .max(5, { message: "Rating cannot exceed 5" })
-    .nullable(),
+  .union([
+    z.number(),
+    z.string().transform((val) => Number(val))
+  ])
+  .refine((val) => val >= 1 && val <= 5, {
+    message: "Rating must be between 1 and 5",
+  })
+  .nullable(),
+
+
+
+    ProfilePic: z.string().optional(), // Store image URL here
+
 });
 
 interface EmployeeFormProps {
@@ -66,7 +80,7 @@ interface EmployeeFormProps {
 
 export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
+  const router = useRouter(); // ✅ Initialize router
   const [role, setRole] = useState();
 
 
@@ -77,6 +91,9 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
   const [currentMode, setCurrentMode] = useState<'create' | 'view' | 'update'>(propMode || (urlMode as 'create' | 'view' | 'update') || 'create');
   const [employeeData, setEmployeeData] = useState();
   const [loader, setLoader] = useState<boolean>(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (urlMode) {
@@ -99,7 +116,8 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
       City: '',
       State: '',
       Role: '',
-      Rating: undefined,
+      Rating : null,
+      ProfilePic: '',
     },
   });
 
@@ -134,42 +152,71 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
 
   const { control, handleSubmit, formState: { errors } } = form;
 
+
+
+  //form submit data
   const onSubmit: SubmitHandler<any> = async (data: any) => {
     console.log("Form data to be submitted:", data);
+    
     const formattedData = {
       ...data,
       DateOfBirth: data.DateOfBirth ? data.DateOfBirth.toISOString() : null,
-    }
+    };
+  
     dispatch(setLoading(true));
-
+  
     try {
       let resultAction: any;
-
-      if (currentMode === 'create') {
+  
+      if (currentMode === "create") {
         resultAction = await dispatch(createEmployee(formattedData));
-      } else if (currentMode === 'update') {
+      } else if (currentMode === "update") {
         resultAction = await dispatch(updateEmployee({ id: employeeId, employeeData: formattedData }));
       }
-
-      if (resultAction.type.endsWith('/fulfilled')) {
+  
+      if (resultAction.type.endsWith("/fulfilled")) {
         ToastAtTopRight.fire({
-          icon: 'success',
-          title: `Employee ${currentMode === 'create' ? 'created' : 'updated'} successfully!`,
+          icon: "success",
+          title: `Employee ${currentMode === "create" ? "created" : "updated"} successfully!`,
         });
-        router.push('/employee-management');
+        router.push("/employee-management");
       } else {
-        throw new Error(resultAction.payload.message);
+        throw resultAction.payload; // Throwing payload directly for handling in catch
       }
     } catch (error: any) {
+      console.log("Error:", error?.message?.message || error); // Logs deep error message
+  
+      let errorMessage = "Failed to process request";
+  
+      // Extract deep error message properly
+      if (error?.message?.message) {
+        errorMessage = error.message.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.payload) {
+        errorMessage = typeof error.payload === "string" ? error.payload : JSON.stringify(error.payload);
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else {
+        try {
+          errorMessage = JSON.stringify(error);
+        } catch {
+          errorMessage = "An unknown error occurred";
+        }
+      }
+  
       ToastAtTopRight.fire({
-        icon: 'error',
-        title: error.message || `Failed to ${currentMode} employee`,
+        icon: "error",
+        title: `Failed to ${currentMode} employee`,
+        text: errorMessage, // Displays full error message
       });
     } finally {
       dispatch(setLoading(false));
     }
   };
-
+  
   const renderErrorMessage = (error: any) => {
     if (!error) return null;
     if (typeof error === 'string') return error;
@@ -177,6 +224,60 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
   };
 
   if (loader) return <div>Loading...</div>;
+
+
+
+  //upload image functionality
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      ToastAtTopRight.fire({
+        icon: 'warning',
+        title: 'No file selected!',
+      });
+      return;
+    }
+  
+    setImageUploading(true);
+    ToastAtTopRight.fire({
+      icon: 'info',
+      title: 'Uploading image, please wait...',
+    });
+  
+    try {
+      const formData = new FormData();
+      formData.append('image', file); // Ensure key matches API
+  
+      // Call API to upload image
+      const response = await apiCall('POST', `/image/upload-image`, formData);
+      console.log('response', response);
+  
+      // Check if response contains imageUrl
+      if (response?.data?.imageUrl) {
+        form.setValue('ProfilePic', response.data.imageUrl); // Update ProfilePic field in form
+        
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Image uploaded successfully!',
+        });
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error: any) {
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message || 'Image upload failed',
+      });
+    } finally {
+      setImageUploading(false);
+    }
+  };
+  
+  
+  
+  
+  
 
   return (
     <>
@@ -188,6 +289,46 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-3">
+             
+
+            {/* Image Upload Field */}
+            <FormField control={control} name="ProfilePic" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profile Picture </FormLabel>
+
+                <FormControl>
+                  {/* Show input only in create or update mode */}
+                  {currentMode !== 'view' && (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={imageUploading}
+                      />
+                      
+                    </>
+                  )}
+                </FormControl>
+
+                {/* Show uploaded image */}
+                {field.value && (
+                  <Image
+                    src={field.value}
+                    alt="Uploaded"
+                    width={80} // Adjust size as needed
+                    height={80}
+                    className="mt-2 object-cover rounded"
+                  />
+                )}
+
+                <FormMessage>{errors.ProfilePic?.message}</FormMessage>
+              </FormItem>
+            )} />
+
+
+
+
               <FormField control={control} name="Name" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -347,25 +488,29 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
                 </FormItem>
               )} />
 
-              <FormField
-                control={control}
-                name="Rating"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rating</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter Rating"
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                        disabled={true}
-                      />
-                    </FormControl>
-                    <FormMessage>{renderErrorMessage(errors.Rating)}</FormMessage>
-                  </FormItem>
-                )}
-              />
+<FormField
+  control={control}
+  name="Rating"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Rating</FormLabel>
+      <FormControl>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            (Number(field.value) || 0) >= star ? (
+              <FaStar key={star} className="text-yellow-500 text-xl" />
+            ) : (
+              <FaRegStar key={star} className="text-gray-400 text-xl" />
+            )
+          ))}
+        </div>
+      </FormControl>
+      <FormMessage>{renderErrorMessage(errors.Rating)}</FormMessage>
+    </FormItem>
+  )}
+/>
+
+
 
             </div>
 
