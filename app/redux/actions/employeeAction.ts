@@ -89,7 +89,7 @@ export const getAllEmployees = createAsyncThunk<
   'employees/getAll',
   async ({ page, limit }, { rejectWithValue }) => {
     try {
-      const response = await apiCall('GET', `/admin/allEmp?page=${page}&limit=${limit}`);
+      const response = await apiCall('GET', `/admin/allEmp`);
       // console.log('API Response for all employees:', response);
       return response; // Return full response including employees and pagination data
     } catch (error: any) {
