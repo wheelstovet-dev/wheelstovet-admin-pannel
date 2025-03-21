@@ -397,48 +397,45 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
                   <FormMessage>{renderErrorMessage(errors.DateOfBirth)}</FormMessage>
                 </FormItem>
               )} /> */}
-              <FormField
-              control={control}
-              name="DateOfBirth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date Of Birth</FormLabel>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                            disabled={currentMode === 'view'}
-                          >
-                            {field.value ? (
-                              format(field.value, "dd MMM yyyy")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={currentMode === 'view'}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage>{errors.DateOfBirth?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
+              {/* <FormField
+  control={control}
+  name="DateOfBirth"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Date Of Birth</FormLabel>
+      <FormControl>
+        <input
+          type="date"
+          className="w-full border "
+          {...field}
+          disabled={currentMode === "view"}
+        />
+      </FormControl>
+      <FormMessage>{errors.DateOfBirth?.message}</FormMessage>
+    </FormItem>
+  )}
+/> */}
+    <FormField
+  control={control}
+  name="DateOfBirth"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Date Of Birth</FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          placeholder="Enter Date Of Birth"
+          value={field.value ? format(new Date(field.value), "yyyy-MM-dd") : ""}
+          onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+          disabled={currentMode === "view"}
+          max={format(new Date(), "yyyy-MM-dd")} // Disables future dates
+        />
+      </FormControl>
+      <FormMessage>{renderErrorMessage(errors.DateOfBirth)}</FormMessage>
+    </FormItem>
+  )}
+/>
+
 
               <FormField control={control} name="StreetAddress" render={({ field }) => (
                 <FormItem>

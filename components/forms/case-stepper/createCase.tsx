@@ -204,7 +204,7 @@ export const CreateCaseForm: React.FC = () => {
 
 
       {/* Transaction Section */}
-      <div className="p-4 bg-white rounded-xl shadow-md">
+      {/* <div className="p-4 bg-white rounded-xl shadow-md">
         <h2 className="text-lg font-semibold text-gray-700 mb-3">Transaction Details</h2>
         <FormField
           control={control}
@@ -230,7 +230,7 @@ export const CreateCaseForm: React.FC = () => {
             </FormItem>
           )}
         />
-      </div>
+      </div> */}
 
       {/* User Information */}
       <div className="p-4 bg-white rounded-xl shadow-md">

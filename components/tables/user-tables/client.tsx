@@ -76,7 +76,7 @@ export const UserClient: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Users (${totalRecords})`} description="" />
+        <Heading title={`Users `} description="" />
         {/* Search Input */}
       <div className="mb-4">
         <input
@@ -103,7 +103,7 @@ export const UserClient: React.FC = () => {
       )}
 
       {/* Pagination */}
-      <div className="flex justify-end space-x-2 py-2">
+      {/* <div className="flex justify-end space-x-2 py-2">
         <div className="space-x-2">
           <Button variant="outline" size="sm" onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
             Previous
@@ -120,7 +120,7 @@ export const UserClient: React.FC = () => {
             Next
           </Button>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

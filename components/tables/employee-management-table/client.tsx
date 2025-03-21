@@ -27,7 +27,7 @@ export const EmployeeManagementClient: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [loader, setLoader] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [searchValue, setSearchValue] = useState<string>('');
 
@@ -123,7 +123,7 @@ export const EmployeeManagementClient: React.FC = () => {
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Employee (${totalRecords})`} description="" />
+      <Heading title={`Employee `} description="" />
         <Button className="text-xs md:text-sm bg-yellow-500 hover:bg-yellow-600" onClick={() => router.push(`/employee-form`)}>
           Add New
         </Button>
@@ -180,7 +180,7 @@ export const EmployeeManagementClient: React.FC = () => {
         />
       )}
 
-      <div className="flex justify-end space-x-2 py-2">
+      {/* <div className="flex justify-end space-x-2 py-2">
         <div className="space-x-2">
           <Button variant="outline" size="sm" onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
             Previous
@@ -192,7 +192,7 @@ export const EmployeeManagementClient: React.FC = () => {
             Next
           </Button>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
