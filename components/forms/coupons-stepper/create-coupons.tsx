@@ -20,10 +20,12 @@ import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import apiCall from '@/lib/axios';
+import Image from 'next/image';
 
 const couponFormSchema = z
   .object({
-    CouponType: z.enum(['petTaxi', 'subscription','reward']).optional(),
+    CouponType: z.enum(['petTaxi', 'subscription']).optional(),
     CouponCode: z.string().min(1, 'Coupon Code is required'),
     DiscountType: z.enum(['price', 'percentage']),
     StartDate: z.date({ required_error: 'Starting Date is required.' }),
@@ -35,6 +37,7 @@ const couponFormSchema = z
     UsageLimit: z.string().optional(),
     UsageCount: z.string().optional(),
     Status: z.enum(['active', 'inactive']),
+    Image: z.string().optional(), // Store image URL here
   })
   .and(
     z
@@ -67,6 +70,10 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
   const [couponData, setCouponData] = useState({} as CouponFormSchema);
   console.log(couponData);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [loader, setLoader] = useState<boolean>(false);
+    const [imageUploading, setImageUploading] = useState(false);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // const { selectedCoupons, loading } = useSelector((state: RootState) => state.coupons);
   const [currentMode, setCurrentMode] = useState<'create' | 'update' | 'view'>(
@@ -121,6 +128,7 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
       UsageLimit: '',
       UsageCount: '0',
       Status: 'active',
+      Image: '',
     },
   });
 
@@ -167,7 +175,54 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
     }
   };
 
+  //upload image functionality
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      ToastAtTopRight.fire({
+        icon: 'warning',
+        title: 'No file selected!',
+      });
+      return;
+    }
   
+    setImageUploading(true);
+    ToastAtTopRight.fire({
+      icon: 'info',
+      title: 'Uploading image, please wait...',
+    });
+  
+    try {
+      const formData = new FormData();
+      formData.append('image', file); // Ensure key matches API
+  
+      // Call API to upload image
+      const response = await apiCall('POST', `/image/upload-image`, formData);
+      console.log('response', response);
+  
+      // Check if response contains imageUrl
+      if (response?.data?.imageUrl) {
+        form.setValue('Image', response.data.imageUrl); // Update ProfilePic field in form
+        
+        ToastAtTopRight.fire({
+          icon: 'success',
+          title: 'Image uploaded successfully!',
+        });
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error: any) {
+      console.log(error);
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error.message.message || 'Image upload failed',
+      });
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+
 
   return (
     <div>
@@ -191,6 +246,41 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
       <Form {...form}>
       <form onSubmit={currentMode !== 'view' ? handleSubmit(onSubmit, (err) => console.log('Validation Errors:', err)) : undefined} className="space-y-8">
       <div className="w-full gap-8 md:grid md:grid-cols-3">
+
+        {/* Image Upload Field */}
+                    <FormField control={control} name="Image" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Coupon Image </FormLabel>
+        
+                        <FormControl>
+                          {/* Show input only in create or update mode */}
+                          {currentMode !== 'view' && (
+                            <>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                disabled={imageUploading}
+                              />
+                              
+                            </>
+                          )}
+                        </FormControl>
+        
+                        {/* Show uploaded image */}
+                        {field.value && (
+                          <Image
+                            src={field.value}
+                            alt="Uploaded"
+                            width={80} // Adjust size as needed
+                            height={80}
+                            className="mt-2 object-cover rounded"
+                          />
+                        )}
+        
+                        <FormMessage>{errors.Image?.message}</FormMessage>
+                      </FormItem>
+                    )} />
             {/* Coupon Type */}
             <FormField
               control={control}
@@ -214,7 +304,6 @@ export const CreateCoupons: React.FC<{ mode?: 'create' | 'update' | 'view' }> = 
                           <SelectContent>
                             <SelectItem value="petTaxi">Pet Taxi</SelectItem>
                             <SelectItem value="subscription">Subscription</SelectItem>
-                            <SelectItem value="reward">Reward</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
