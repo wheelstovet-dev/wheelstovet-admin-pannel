@@ -166,23 +166,34 @@ export const CreateEmployeeForm: React.FC<EmployeeFormProps> = ({ mode: propMode
     dispatch(setLoading(true));
   
     try {
-      let resultAction: any;
   
       if (currentMode === "create") {
-        resultAction = await dispatch(createEmployee(formattedData));
-      } else if (currentMode === "update") {
-        resultAction = await dispatch(updateEmployee({ id: employeeId, employeeData: formattedData }));
-      }
-  
-      if (resultAction.type.endsWith("/fulfilled")) {
+        const resultAction = await dispatch(createEmployee(formattedData));
+        console.log("resultAction",resultAction);
         ToastAtTopRight.fire({
           icon: "success",
-          title: `Employee ${currentMode === "create" ? "created" : "updated"} successfully!`,
+          title: resultAction.payload.message.message || `Employee created successfully!`,
         });
         router.push("/employee-management");
-      } else {
-        throw resultAction.payload; // Throwing payload directly for handling in catch
+      } else if (currentMode === "update") {
+        const resultAction = await dispatch(updateEmployee({ id: employeeId, employeeData: formattedData }));
+        console.log("resultAction",resultAction);
+        ToastAtTopRight.fire({
+          icon: "success",
+          title: resultAction.payload.message || "Employee updated ..."
+        });
+        router.push("/employee-management");
       }
+  
+      // if (resultAction.type.endsWith("/fulfilled")) {
+      //   ToastAtTopRight.fire({
+      //     icon: "success",
+      //     title: `Employee ${currentMode === "create" ? "created" : "updated"} successfully!`,
+      //   });
+      //   router.push("/employee-management");
+      // } else {
+      //   throw resultAction.payload; // Throwing payload directly for handling in catch
+      // }
     } catch (error: any) {
       console.log("Error:", error?.message?.message || error); // Logs deep error message
   

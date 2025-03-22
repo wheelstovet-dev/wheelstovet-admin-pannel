@@ -43,9 +43,9 @@ const employeeSlice = createSlice({
         state.loading = true;
       })
       .addCase(createEmployee.fulfilled, (state, action: PayloadAction<AxiosResponse<any>>) => {
-        // console.log('emp'+ action.payload.data);
+         console.log('emp'+ action.payload);
         state.loading = false;
-        const newEmployee = action.payload.data;
+        const newEmployee = action.payload;
         state.employees.push(newEmployee);
       })
       .addCase(createEmployee.rejected, (state, action: PayloadAction<any>) => {
