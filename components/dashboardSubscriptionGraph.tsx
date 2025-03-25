@@ -116,7 +116,7 @@ const DashboardSubscriptionChart: React.FC = () => {
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
           ) : (
-            <div className="w-full">
+            <div className="w-full h-60">
               <Bar
                 data={{
                   labels,
@@ -148,7 +148,7 @@ const DashboardSubscriptionChart: React.FC = () => {
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
           ) : (
-            <div className="w-full">
+            <div className="w-full h-60">
               <Bar
                 data={{
                   labels,
