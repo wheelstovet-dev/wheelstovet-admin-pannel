@@ -156,7 +156,7 @@ const DashboardCasesGraph: React.FC = () => {
               </button>
             ))}
           </div>
-          <div className="w-full h-auto">
+          <div className="w-full h-80">
             <Line data={graphData}
             options={getDynamicOptions(maxData)} />
           </div>
