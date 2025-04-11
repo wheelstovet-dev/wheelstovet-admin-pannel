@@ -127,7 +127,7 @@ export const assignEmployeeByCase = createAsyncThunk<
       const response = await apiCall<any>('POST', '/admin/assignEmployee', { caseId, employeeId });
       return response;
     } catch (error: any) {
-      console.log("error response",error?.message?.fields?.message);
+      console.log("error response",error);
       return rejectWithValue(error?.message?.fields?.message);
     }
   }

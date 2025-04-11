@@ -24,22 +24,22 @@ export const CellAction: React.FC<any> = ({ data }) => {
   };
 
   const viewCase = () => {
-    router.push(`/caseManagement-form/view/?id=${data._id}`);
+    router.push(`/caseManagement-form/view/?id=${data?._id}`);
   };
 
   const assignEmployee = () => {
     console.log("Data ",data);
 
     if (data.EmpId && data.CurrentStatus === "Assigned") {
-      router.push(`/employee-management?caseId=${data._id}`);
+      router.push(`/employee-management?caseId=${data?._id}`);
       return;
     }
     if (!data.EmpId) {
-      router.push(`/employee-management?caseId=${data._id}`);
+      router.push(`/employee-management?caseId=${data?._id}`);
     } else {
       ToastAtTopRight.fire({
-        icon: 'error',
-        title:'Employee Already assigned for this case',
+        icon: 'warning',
+        title: `Employee:${data?.EmpId?.Name} Already assigned — Status: ${data?.CurrentStatus}`,
       });
     }
   };
