@@ -28,6 +28,12 @@ export const CellAction: React.FC<any> = ({ data }) => {
   };
 
   const assignEmployee = () => {
+    console.log("Data ",data);
+
+    if (data.EmpId && data.CurrentStatus === "Assigned") {
+      router.push(`/employee-management?caseId=${data._id}`);
+      return;
+    }
     if (!data.EmpId) {
       router.push(`/employee-management?caseId=${data._id}`);
     } else {

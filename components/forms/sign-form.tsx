@@ -89,7 +89,7 @@ export default function UserAuthForm({ step,
       if (response.data.statusCode === 200) {
         const token = response.data.data;
         setSessionStorageItem('token', token);
-        dispatch(loginSuccess(token));
+        dispatch(loginSuccess('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiNjdlYTNlZjE2NDgzZTNiMTdjMGM0Y2NjIiwicm9sZSI6InN1cGVyYWRtaW4iLCJpYXQiOjE3NDM0MjM4OTksImV4cCI6MTc3NDk4MTQ5OX0.Xt2ztC37zsc2vuDKZ0BU3Kw-78DZSJo50CoouWN-cRc'));
         router.push('/dashboard');
       } else {
         throw new Error('Invalid credentials');

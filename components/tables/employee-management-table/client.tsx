@@ -89,19 +89,28 @@ export const EmployeeManagementClient: React.FC = () => {
           router.push('/subscription-management');
         }
       } else if (caseId) {
-        const response = await dispatch(assignEmployeeByCase({ caseId, employeeId: selectedEmployeeId })).unwrap();
+        const response:any = await dispatch(assignEmployeeByCase({ caseId, employeeId: selectedEmployeeId })).unwrap();
         if (response.status) {
           ToastAtTopRight.fire({
             icon: 'success',
-            title: 'Employee assigned to case successfully!',
+            title: response?.message ||'Employee assigned to case successfully!',
           });
           router.push('/case-management');
         }
       }
     } catch (error: any) {
+      console.log("error", error);
+    
+      const errorMessage =
+        typeof error === 'object' && error.message
+          ? error.message
+          : typeof error === 'string'
+          ? error
+          : 'Employee already assigned or failed to assign';
+    
       ToastAtTopRight.fire({
         icon: 'error',
-        title: 'Employee already assigned or failed to assign',
+        title: errorMessage,
       });
     } finally {
       setLoader(false);

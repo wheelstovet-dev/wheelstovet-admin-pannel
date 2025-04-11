@@ -127,10 +127,12 @@ export const assignEmployeeByCase = createAsyncThunk<
       const response = await apiCall<any>('POST', '/admin/assignEmployee', { caseId, employeeId });
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to assign employee');
+      console.log("error response",error?.message?.fields?.message);
+      return rejectWithValue(error?.message?.fields?.message);
     }
   }
 );
+
 
 // Action to get assigned cases of employee by ID
 export const getAssignedCasesById = createAsyncThunk<
